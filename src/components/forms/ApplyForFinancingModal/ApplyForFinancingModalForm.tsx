@@ -49,7 +49,6 @@ const ApplyForFinancingModalForm = ({
     handleSubmit,
     getValues,
     trigger,
-    clearErrors,
     setValue,
     reset,
     formState: { errors },
@@ -68,6 +67,9 @@ const ApplyForFinancingModalForm = ({
     email: false,
     phone: false,
   })
+
+  // Consent checkbox state
+  const [consent, setConsent] = useState(false)
 
   const settings = {
     accessibility: false,
@@ -100,6 +102,13 @@ const ApplyForFinancingModalForm = ({
     [setValue, trigger],
   )
 
+  const handleCheckboxChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setConsent(e.target.checked)
+    },
+    [],
+  )
+
   // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
@@ -110,7 +119,6 @@ const ApplyForFinancingModalForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    data.business_objectives = ''
     setIsSubmitting(true)
     axios
       .post(
@@ -119,12 +127,10 @@ const ApplyForFinancingModalForm = ({
       )
       .then(async (response) => {
         if (response.data.success && response.status === 200) {
-          // Send email notification to admin
           await browserSendEmail({
             subject: EMAIL_SUBJECT.FINANCING,
             htmlMessage: messages.admin(data),
           })
-          // Send email notification to user
           await browserSendEmail({
             to: data.email,
             subject: EMAIL_SUBJECT.FINANCING,
@@ -141,11 +147,11 @@ const ApplyForFinancingModalForm = ({
               email: false,
               phone: false,
             })
+            setConsent(false)
           }, 1000)
         }
       })
       .catch((err) => {
-        // Set error message and clear it after 3 seconds
         setSubmittedError(err.response.data.message)
         setTimeout(() => setSubmittedError(null), 3000)
       })
@@ -170,15 +176,6 @@ const ApplyForFinancingModalForm = ({
     setCurrentSlide((prevState) => prevState - 1)
     sliderRef.current?.slickPrev()
   }, [])
-
-  const handleCheckboxChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target
-      setValue(name as keyof IFormInput, value)
-      clearErrors(name as keyof IFormInput)
-    },
-    [clearErrors, setValue],
-  )
 
   return (
     <>
@@ -207,7 +204,6 @@ const ApplyForFinancingModalForm = ({
                   {...register('amount_of_financing_requested')}
                   key={`financing-checkbox-0-${index}`}
                   option={option}
-                  onChange={handleCheckboxChange}
                 />
               ))}
               {errors.amount_of_financing_requested?.message ? (
@@ -217,6 +213,7 @@ const ApplyForFinancingModalForm = ({
               ) : null}
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               What&apos;s your average monthly sales?
@@ -232,7 +229,6 @@ const ApplyForFinancingModalForm = ({
                   {...register('average_of_monthly_sales')}
                   key={`financing-checkbox-1-${index}`}
                   option={option}
-                  onChange={handleCheckboxChange}
                 />
               ))}
               {errors.average_of_monthly_sales?.message ? (
@@ -242,6 +238,7 @@ const ApplyForFinancingModalForm = ({
               ) : null}
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               Tell us about yourself
@@ -267,6 +264,7 @@ const ApplyForFinancingModalForm = ({
               />
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               How can we connect?
@@ -290,15 +288,25 @@ const ApplyForFinancingModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
-              <PPMessage />
+              <label className={styles['consent-container']}>
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={handleCheckboxChange}
+                  required
+                />{' '}
+                <PPMessage />
+              </label>
             </div>
           </div>
         </Slider>
+
         {submittedError ? (
           <p className={classNames(styles['form-error'], styles['static'])}>
             {submittedError}
           </p>
         ) : null}
+
         <div className={styles['form-navigation']}>
           <Button
             variant="outlined"
@@ -327,7 +335,7 @@ const ApplyForFinancingModalForm = ({
               currentSlide !== 3 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !consent}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
