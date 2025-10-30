@@ -59,6 +59,9 @@ const BecomeAPartnerModalForm = ({
     email: false,
   })
 
+  // Consent checkbox state
+  const [consent, setConsent] = useState(false)
+
   const settings = {
     accessibility: false,
     swipe: false,
@@ -89,6 +92,13 @@ const BecomeAPartnerModalForm = ({
       await trigger(name as keyof IFormInput)
     },
     [setValue, trigger],
+  )
+
+  const handleCheckboxChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setConsent(e.target.checked)
+    },
+    [],
   )
 
   // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
@@ -131,11 +141,11 @@ const BecomeAPartnerModalForm = ({
               phone: false,
               email: false,
             })
+            setConsent(false)
           }, 1000)
         }
       })
       .catch((err) => {
-        // Set error message and clear it after 3 seconds
         setSubmittedError(err.response.data.message)
         setTimeout(() => setSubmittedError(null), 3000)
       })
@@ -189,6 +199,7 @@ const BecomeAPartnerModalForm = ({
               />
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               Tell us about yourself
@@ -205,6 +216,7 @@ const BecomeAPartnerModalForm = ({
               />
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               How can we connect?
@@ -229,15 +241,28 @@ const BecomeAPartnerModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
-              <PPMessage />
+              <div className={styles['consent-container']}>
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={handleCheckboxChange}
+                  required
+                  id="consent"
+                />
+                <label htmlFor="consent">
+                  <PPMessage />
+                </label>
+              </div>
             </div>
           </div>
         </Slider>
+
         {submittedError ? (
           <p className={classNames(styles['form-error'], styles['static'])}>
             {submittedError}
           </p>
         ) : null}
+
         <div className={styles['form-navigation']}>
           <Button
             variant="outlined"
@@ -266,7 +291,7 @@ const BecomeAPartnerModalForm = ({
               currentSlide !== 2 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !consent}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
