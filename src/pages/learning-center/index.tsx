@@ -36,11 +36,16 @@ export default function LearningCenter() {
 }
 
 export const getStaticProps = async () => {
-  const { data } = await getCategories()
-
+  let categories = []
+  try {
+    const result = await getCategories()
+    if (result?.data) categories = result.data
+  } catch (err) {
+    console.warn('Skipping categories fetch – API URL missing or invalid')
+  }
   return {
     props: {
-      categories: data || [],
+      categories,
     },
   }
 }
