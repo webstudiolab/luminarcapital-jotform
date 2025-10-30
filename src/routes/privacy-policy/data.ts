@@ -17,7 +17,7 @@ Your use of our Site and provision of Personal Information online constitutes ac
 	<li>Information collected through our Site data or through an ISO (independent sales organization), or other data that we receive from other sources, such as public records, and other background information supplied by information services or third parties.</li>
 </ul>
 <h4>What We Do With The Personal Information Collected</h4>
-<p>We will use the information you provide to us to evaluate your business’s eligibility for products provided through Luminar, respond to your inquiries, and to provide you with information relating to our company or services that we believe you may find of interest. We may also use that information to market products or services to you by calls or text messages to mobile, cellular or similar devices and by using an automated telephone dialing system and/or artificial voices or prerecorded messages, even if you incur charges for receiving such communications and by any other applicable medium such as mail, email and facsimile.</p>
+<p>No mobile information will be shared with third parties/affiliates for marketing/promotional purposes. All the stated categories in this privacy policy exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties. End users can opt out of receiving further messages by replying STOP or ask for more information by replying HELP. Message frequency may vary. Message and data rates may apply</p>
 <p>We may disclose personal information to third parties for the following purposes:</p>
 <ul>
 	<li>In response to a subpoena or other legal process by a governmental entity or third party, or if otherwise required by law;</li>
