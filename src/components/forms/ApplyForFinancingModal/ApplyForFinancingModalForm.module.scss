@@ -1,157 +1,178 @@
 @import "@/styles/global/mixins";
 @import "@/styles/library/grid/variables/grid-variables";
 
-.form{
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	max-width: 624rem;
-	margin: 0 auto;
-	
-		&-step{
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			padding-top: 70rem;
-			
-				@include maxWidth($sm-max){
-					padding-top: 62rem;
-				}
-			
-				&-title{
-					font: var(--font-heading-h4);
-					text-align: center;
-					
-						@include maxWidth($sm-max){
-							font: var(--font-heading-h5);
-						}
-				}
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 624rem;
+  margin: 0 auto;
 
-				&-body{
-					position: relative;
-					display: flex;
-					flex-direction: column;
-					gap: 20rem;
-					max-width: 406rem;
-					margin: 0 auto;
-					padding: 40rem 0;
-					
-						@include maxWidth($sm-max){
-							padding: 31rem 0 20rem;
-						}
-					
-						&.checkboxes{
-							gap: 12rem;
-						}
-				}
-		}
-	
-		&-slider{
-			position: relative;
-			padding: 0 0 38rem;
-			
-				@include maxWidth($sm-max){
-					padding: 0 0 20rem;
-				}
-			
-				&-dots{
-					position: absolute;
-					top: -5rem;
-					left: 50%;
-					display: flex !important;
-					gap: 87rem;
-					align-items: center;
-					transform: translateX(-50%);
-					pointer-events: none;
-					
-						@include maxWidth($sm-max){
-							gap: 50rem;
-						}
-					
-						li{
-							position: relative;
-							padding: 4rem;
-							background-color: var(--color-white);
-							border-radius: 50%;
-						}
-				}
-		}
-	
-		&-navigation{
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			
-				@include maxWidth($sm-max) {
-					gap: 24rem;
-				}
-			
-				&-item{
-					@include maxWidth($sm-max){
-						width: 100%;
-					}
-				}
-		}
-	
-		&-action{
-			position: absolute;
-			right: 0;
-			bottom: 0;
-			
-				@include maxWidth($sm-max){
-					width: calc(50% - 12rem);
-				}
-			
-				&-icon{
-					position: relative;
-					width: 18rem;
-					height: 18rem;
-				}
-		}
-	
-		&-error{
-			position: absolute;
-			bottom: 16rem;
-			color: var(--color-secondary-red);
-			font: var(--font-body-sm);
-			
-				@include maxWidth($sm-max){
-					bottom: 0;
-				}
-			
-				&.static{
-					position: relative;
-					bottom: 0;
-					text-align: center;
-				}
-		}
+  &-step {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 70rem;
+
+    @include maxWidth($sm-max) {
+      padding-top: 62rem;
+    }
+
+    &-title {
+      font: var(--font-heading-h4);
+      text-align: center;
+
+      @include maxWidth($sm-max) {
+        font: var(--font-heading-h5);
+      }
+    }
+
+    &-body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 20rem;
+      max-width: 406rem;
+      margin: 0 auto;
+      padding: 40rem 0;
+
+      @include maxWidth($sm-max) {
+        padding: 31rem 0 20rem;
+      }
+
+      &.checkboxes {
+        gap: 12rem;
+      }
+    }
+  }
+
+  &-slider {
+    position: relative;
+    padding: 0 0 38rem;
+
+    @include maxWidth($sm-max) {
+      padding: 0 0 20rem;
+    }
+
+    &-dots {
+      position: absolute;
+      top: -5rem;
+      left: 50%;
+      display: flex !important;
+      gap: 87rem;
+      align-items: center;
+      transform: translateX(-50%);
+      pointer-events: none;
+
+      @include maxWidth($sm-max) {
+        gap: 50rem;
+      }
+
+      li {
+        position: relative;
+        padding: 4rem;
+        background-color: var(--color-white);
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @include maxWidth($sm-max) {
+      gap: 24rem;
+    }
+
+    &-item {
+      @include maxWidth($sm-max) {
+        width: 100%;
+      }
+    }
+  }
+
+  &-action {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    @include maxWidth($sm-max) {
+      width: calc(50% - 12rem);
+    }
+
+    &-icon {
+      position: relative;
+      width: 18rem;
+      height: 18rem;
+    }
+  }
+
+  &-error {
+    position: absolute;
+    bottom: 16rem;
+    color: var(--color-secondary-red);
+    font: var(--font-body-sm);
+
+    @include maxWidth($sm-max) {
+      bottom: 0;
+    }
+
+    &.static {
+      position: relative;
+      bottom: 0;
+      text-align: center;
+    }
+  }
 }
 
-.dot-item{
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 30rem;
-	height: 30rem;
-	color: var(--color-gray-50);
-	font-size: 12rem;
-	font-family: var(--font-primary-medium);
-	background-color: var(--color-white);
-	border: 1rem var(--color-gray-50) solid;
-	border-radius: 50%;
-	transition:  all var(--transition-duration-button) var(--transition-easing-button);
+.dot-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30rem;
+  height: 30rem;
+  color: var(--color-gray-50);
+  font-size: 12rem;
+  font-family: var(--font-primary-medium);
+  background-color: var(--color-white);
+  border: 1rem var(--color-gray-50) solid;
+  border-radius: 50%;
+  transition: all var(--transition-duration-button)
+    var(--transition-easing-button);
 }
 
-.hidden{
-	opacity: 0;
-	transition: opacity var(--transition-duration-button) var(--transition-easing-button);
-	pointer-events: none;
-	
-		&.prev{
-			@include maxWidth($sm-max){
-				display: none;
-			}
-		}
+.hidden {
+  opacity: 0;
+  transition: opacity var(--transition-duration-button)
+    var(--transition-easing-button);
+  pointer-events: none;
+
+  &.prev {
+    @include maxWidth($sm-max) {
+      display: none;
+    }
+  }
+}
+
+/* ================== CONSENT CHECKBOX ================== */
+.consent-container {
+  display: flex;
+  flex-direction: row; // checkbox and text on same row
+  align-items: flex-start; // checkbox top aligns with first line of text
+  gap: 8px; // space between checkbox and text
+  margin-top: 12px;
+
+  label {
+    flex: 1; // text wraps naturally
+    line-height: 1.4; // ensure proper wrapping
+  }
+
+  input[type="checkbox"] {
+    flex-shrink: 0; // checkbox size stays fixed
+    margin-top: 0.2em; // vertically aligns checkbox with first line of text
+  }
 }
