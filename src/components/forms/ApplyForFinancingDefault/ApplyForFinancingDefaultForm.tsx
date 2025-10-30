@@ -8,11 +8,11 @@ import Button from '@/ui/components/Button/Button'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { schema } from './schema'
 import TextAreaField from '@/ui/components/TextField/TextAreaField'
-import axios from 'axios'
+// import axios from 'axios'
 import {
   AMOUNT_OPTIONS,
   EMAIL_SUBJECT,
-  WORDPRESS_API_PATHS,
+  // WORDPRESS_API_PATHS,
 } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import SelectField from '@/ui/components/SelectField/SelectField'
@@ -79,53 +79,71 @@ const ApplyForFinancingDefaultForm = ({
     }))
   }
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!consent) {
+      alert('Please check the consent box to proceed.')
+      return
+    }
+
     setIsSubmitting(true)
-    axios
-      .post(
+    try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+      
+      /*
+      const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-financial`,
         data,
       )
-      .then(async (response) => {
-        if (response.data.success && response.status === 200) {
-          await browserSendEmail({
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.admin(data),
-          })
-          await browserSendEmail({
-            to: data.email,
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.user(),
-          })
 
-          setIsSubmittedSuccess(true)
+      if (response.data.success && response.status === 200) {
+      */
+      
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.admin(data),
+      })
 
-          setTimeout(() => {
-            reset()
-            setIsFocused({
-              name: false,
-              business_name: false,
-              email: false,
-              amount_of_financing_requested: false,
-              average_of_monthly_sales: false,
-              phone: false,
-              business_objectives: false,
-            })
-          }, 1000)
-        }
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.user(),
       })
-      .catch((err) => {
-        setSubmittedError(
-          err.response?.data?.message || 'Error submitting form',
-        )
-        setTimeout(() => setSubmittedError(null), 3000)
-      })
-      .finally(() => {
-        setIsSubmitting(false)
-        setTimeout(() => {
-          setIsSubmittedSuccess(false)
-        }, 5000)
-      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          name: false,
+          business_name: false,
+          email: false,
+          amount_of_financing_requested: false,
+          average_of_monthly_sales: false,
+          phone: false,
+          business_objectives: false,
+        })
+        setConsent(false)
+      }, 1000)
+      
+      /*
+      }
+      */
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setSubmittedError(
+        error.response?.data?.message || 'Submission failed. Please try again.',
+      )
+      setTimeout(() => setSubmittedError(null), 3000)
+    } finally {
+      setIsSubmitting(false)
+      setTimeout(() => {
+        setIsSubmittedSuccess(false)
+      }, 5000)
+    }
   }
 
   const handleChange = useCallback(
