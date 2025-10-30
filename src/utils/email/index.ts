@@ -9,7 +9,8 @@ export interface ISendEmail {
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
+  port: Number(process.env.SMTP_PORT),
+  secure: true, // true for port 465
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -21,12 +22,16 @@ export const sendEmail = async ({
   subject,
   htmlMessage = '',
 }: ISendEmail) => {
+  const recipient = to || process.env.RECIPIENT_EMAIL
+  
+  console.log('Sending email to:', recipient)
+  
   return await transporter.sendMail({
     from: {
       name: process.env.SENDER_NAME!,
       address: process.env.SENDER_EMAIL!,
     },
-    to,
+    to: recipient,
     subject,
     text: striptags(htmlMessage),
     html: htmlMessage,
