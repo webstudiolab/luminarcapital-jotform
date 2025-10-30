@@ -1,0 +1,71 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.card{
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+	height: 100%;
+	padding: 24rem 24rem 23rem 132rem;
+	border: 1rem var(--color-primary-dark-blue) solid;
+	border-radius: 20px;
+	
+		@include maxWidth($md-max){
+			gap: 32rem;
+			justify-content: flex-start;
+			padding: 23rem;
+		}
+	
+		@include maxWidth($sm-max){
+			//width: calc(100vw - 32rem);
+			width: 100%;
+		}
+	
+		&-title{
+			margin-bottom: 12rem;
+			
+			@include maxWidth($md-max){
+				font: var(--font-heading-h4);
+			}
+		}
+	
+		&-description{
+			margin-top: 12rem;
+			
+				@include maxWidth($md-max){
+					margin-top: 0;
+					font: var(--font-body-lg);
+				}
+		}
+	
+		&-action{
+			margin-top: 31rem;
+			
+				@include maxWidth($md-max){
+					margin-top: 0;
+				}
+		}
+	
+		&-icon{
+			position: absolute;
+			top: 23rem;
+			left: 24rem;
+			width: 80rem;
+			height: 80rem;
+			padding: 20rem;
+			background-color: var(--color-primary-dark-blue);
+			border-radius: 10px;
+			
+				@include maxWidth($md-max){
+					position: relative;
+					top: 0;
+					left: 0;
+				}
+			
+				svg{
+					color: var(--color-white);
+				}
+		}
+}

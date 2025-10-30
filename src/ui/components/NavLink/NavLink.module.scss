@@ -1,0 +1,43 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.navLink{
+	display: inline-block;
+	color: var(--color-black);
+	font-size: 15rem;
+	font-family: var(--font-primary-bold);
+	transition: color var(--transition-duration-button) var(--transition-easing-button), background-color var(--transition-duration-button) var(--transition-easing-button);
+	
+		@include hover($md-max){
+			&:hover{
+				color: var(--color-primary-dark-blue);
+			}
+		}
+	
+		@include maxWidth($md-max){
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 16rem 12rem;
+			font-size: 18rem;
+			border-radius: 8px;
+		}
+	
+		&.active{
+			color: var(--color-primary-dark-blue);
+			
+				@include maxWidth($md-max){
+					color: inherit;
+					background-color: var(--color-gray-10);
+				}
+		}
+	
+		&-icon{
+			width: 24rem;
+			height: 24rem;
+			
+				@include minWidth($md-max + 1){
+					display: none;
+				}
+		}
+}

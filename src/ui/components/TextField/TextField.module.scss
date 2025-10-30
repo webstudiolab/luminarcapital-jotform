@@ -1,0 +1,116 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.textField{
+		&-container{
+			position: relative;
+			display: inline-block;
+			width: 100%;
+		}
+	
+		&-item,
+		&-area{
+			width: 100%;
+			height: 42rem;
+			padding: 15rem 16rem 7rem;
+			color: var(--color-black);
+			font: var(--font-body-md);
+			background-color: var(--color-white);
+			border: 1rem var(--color-gray-50) solid;
+			border-radius: 8px;
+			transition: border-color var(--transition-duration-button) var(--transition-easing-button);
+			
+				@include hover(990){
+					&:hover{
+						border-color: var(--color-black);
+					}
+				}
+			
+				&:-webkit-autofill {
+					box-shadow:0 0 0 42rem var(--color-white) inset;
+					-webkit-text-fill-color: var(--color-black);
+					
+						& ~ .textField-placeholder{
+							top: 7rem;
+							font-size: 8rem;
+						}
+				}
+				
+				&:-webkit-autofill:focus {
+					box-shadow: 0 0 0 42rem var(--color-white) inset;
+					-webkit-text-fill-color: var(--color-black);
+					
+						& ~ .textField-placeholder{
+							top: 7rem;
+							font-size: 8rem;
+						}
+				}
+			
+				&:focus{
+						& ~ .textField-placeholder{
+							top: 7rem;
+							font-size: 8rem;
+						}
+				}
+			
+				&:disabled{
+					background-color: var(--color-gray-10);
+					border-color: var(--color-gray-10);
+					
+						& ~ .textField-placeholder{
+							background-color: var(--color-gray-10);
+            }
+				}
+			
+				&.error{
+					border-color: var(--color-secondary-red);
+				}
+		}
+	
+		&-area{
+			height: 100rem;
+			resize: none;
+			
+				&:-webkit-autofill {
+					box-shadow:0 0 0 100rem var(--color-white) inset;
+				}
+				
+				&:-webkit-autofill:focus {
+					box-shadow: 0 0 0 100rem var(--color-white) inset;
+				}
+		}
+	
+		&-placeholder{
+			position: absolute;
+			top: 12rem;
+			left: 16rem;
+			color: var(--color-gray-70);
+			font: var(--font-body-md);
+			background-color: var(--color-white);
+			transition: font-size var(--transition-duration-button) var(--transition-easing-button), top var(--transition-duration-button) var(--transition-easing-button);
+			pointer-events: none;
+			
+				&-active{
+					top: 7rem;
+					font-size: 8rem;
+				}
+		}
+	
+		&-error{
+			position: absolute;
+			top: calc(100% + 3rem);
+			left: 0;
+			color: var(--color-secondary-red);
+			font: var(--font-body-sm);
+			
+				@include maxWidth($sm-max){
+					top: 100%;
+				}
+		}
+}
+
+@keyframes onAutoFillStart {
+}
+
+@keyframes onAutoFillCancel {
+}

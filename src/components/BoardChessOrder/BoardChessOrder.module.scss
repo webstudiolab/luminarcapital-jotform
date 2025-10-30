@@ -1,0 +1,150 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	&-list{
+		margin: -10rem 0;
+		
+			@include maxWidth($md-max){
+				margin: -20rem 0;
+			}
+		
+			&.odd{
+				.section-list-item{
+					padding: 10rem 0;
+					
+						@include maxWidth($md-max){
+							padding: 20rem 0;
+						}
+					
+						@include minWidth($md-max + 1) {
+							&:nth-child(even){
+								[class^="col-"]{
+									&:nth-child(1){
+										order: 2;
+									}
+									
+									&:nth-child(2){
+										order: 1;
+										
+										//.section-banner{
+										//	margin: 0 0 0 auto;
+										//}
+									}
+								}
+							}
+							
+							&:nth-child(odd){
+								.section{
+									&-content{
+										padding-left: 78rem;
+										
+										&-description{
+											max-width: 100%;
+										}
+									}
+									
+									&-banner{
+										margin: 0 auto 0 0;
+									}
+								}
+							}
+						}
+				}
+			}
+		
+			&.even{
+				.section-list-item{
+					padding: 10rem 0;
+					
+						@include maxWidth($md-max){
+							padding: 20rem 0;
+						}
+					
+						@include minWidth($md-max + 1) {
+							&:nth-child(odd){
+								[class^="col-"]{
+									&:nth-child(1){
+										order: 2;
+									}
+									
+									&:nth-child(2){
+										order: 1;
+										
+										//.section-banner{
+										//	margin: 0 0 0 auto;
+										//}
+									}
+								}
+							}
+							
+							&:nth-child(even){
+								.section{
+									&-content{
+										padding-left: 78rem;
+										
+										&-description{
+											max-width: 100%;
+										}
+									}
+									
+									//&-banner{
+									//	margin: 0 auto 0 0;
+									//}
+								}
+							}
+						}
+				}
+			}
+	}
+	
+	&-content{
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		height: 100%;
+		row-gap: 8rem;
+		
+			@include maxWidth($md-max){
+				row-gap: 6rem;
+			}
+			
+			&-label{
+				color: var(--color-primary-dark-blue);
+				font-size: 16rem;
+				font-family: var(--font-primary-bold);
+				text-transform: uppercase;
+			}
+			
+			&-title{
+				max-width: 95%;
+				margin-bottom: 16rem;
+				
+					@include maxWidth($md-max){
+						font: var(--font-heading-h3);
+					}
+			}
+			
+			&-description{
+				max-width: 88%;
+				
+					@include maxWidth($md-max){
+						max-width: 100%;
+					}
+			}
+	}
+	
+	&-banner{
+		position: relative;
+		width: 548rem;
+		height: 440rem;
+		margin: 0 auto;
+		
+			@include maxWidth($sm-max){
+				width: 343rem;
+				height: 238rem;
+				margin: 12rem auto 0;
+			}
+	}
+}

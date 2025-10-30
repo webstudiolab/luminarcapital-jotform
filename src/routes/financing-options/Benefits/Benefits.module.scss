@@ -1,0 +1,100 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	padding-bottom: 80rem;
+	
+		@include maxWidth($sm-max){
+			padding-bottom: 45rem;
+		}
+	
+		&-title{
+			margin-bottom: 24rem;
+		}
+	
+		&-tabs{
+			position: sticky;
+			top: 62rem;
+			z-index: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 35rem;
+			background-color: var(--color-gray-5);
+			
+				@include maxWidth($sm-max){
+					top: 40rem;
+					align-items: flex-end;
+					justify-content: flex-start;
+					height: 84rem;
+					margin-top: 15rem;
+					overflow: hidden;
+					
+						&::-webkit-scrollbar {
+							display: none;
+						}
+				}
+			
+				&-panel{
+					display: flex;
+					gap: 12rem;
+					align-items: center;
+					padding: 24rem 16rem;
+					
+						@include maxWidth($sm-max){
+							display: block;
+							gap: 0;
+							margin-bottom: -12rem;
+							padding: 0 16rem 12rem;
+							overflow-x: auto;
+							white-space: nowrap;
+						}
+				}
+		}
+	
+		&-list{
+			margin: 0 -5rem;
+			padding-top: 37rem;
+			
+				@include maxWidth($md-max){
+					margin: 0;
+					padding-top: 10rem;
+				}
+		}
+}
+
+.tab{
+	height: 56rem;
+	padding: 16rem 24rem;
+	font-size: 16rem;
+	font-family: var(--font-primary-medium);
+	border: 1rem var(--color-primary-dark-blue) solid;
+	border-radius: 8px;
+	transition: all var(--transition-duration-button) var(--transition-easing-button);
+	
+		@include hover($md-max){
+			&:hover{
+				color: var(--color-gray-90);
+				border-color: var(--color-gray-90);
+				cursor: pointer;
+			}
+		}
+	
+		@include maxWidth($sm-max){
+			display: inline-block;
+			width: 146rem;
+			height: 60rem;
+			padding: 12rem;
+			font: var(--font-body-md);
+			white-space: normal;
+			
+				&:not(:last-child){
+					margin-right: 12rem;
+				}
+		}
+	
+		&.active{
+			color: var(--color-white);
+			background-color: var(--color-primary-dark-blue);
+		}
+}

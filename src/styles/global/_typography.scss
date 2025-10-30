@@ -1,0 +1,79 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+$headings: (1, 2, 3, 4, 5, 6);
+$font-sizes: xl, lg, md, sm;
+
+:root{
+	--font-heading-h1: 500 42rem / 1.333em var(--font-primary-medium);
+	--font-heading-h2: 500 32rem / 1.333em var(--font-primary-medium);
+	--font-heading-h3: 600 26rem / 1.357em var(--font-primary-semibold);
+	--font-heading-h4: 500 22rem / 1.333em var(--font-primary-medium);
+	--font-heading-h5: 500 18rem / 1.444em var(--font-primary-medium);
+	--font-heading-h6: 500 16rem / 1.250em var(--font-primary-medium);
+	--font-heading-display: 500 48rem / 1.35em var(--font-primary-medium);
+	
+	--font-body-xl: 400 17rem / 1.444em var(--font-primary-regular);
+	--font-body-lg: 400 16rem / 1.375em var(--font-primary-regular);
+	--font-body-md: 400 14rem / 1.286em var(--font-primary-regular);
+	--font-body-sm: 400 12rem / 1.333em var(--font-primary-regular);
+	
+	--font-button-lg: 700 16rem var(--font-primary-bold);
+	--font-button-md: 700 15rem var(--font-primary-bold);
+	--font-button-sm: 700 12rem var(--font-primary-bold);
+}
+
+@include maxWidth($md-max){
+	:root{
+		--font-heading-h1: 500 46rem / 1.333em var(--font-primary-medium);
+		--font-heading-h2: 500 38rem / 1.333em var(--font-primary-medium);
+		--font-heading-h3: 600 44rem / 1.357em var(--font-primary-semibold);
+		--font-heading-h4: 500 28rem / 1.333em var(--font-primary-medium);
+		--font-heading-h5: 500 26rem / 1.444em var(--font-primary-medium);
+		--font-heading-h6: 500 24rem / 1.250em var(--font-primary-medium);
+	}
+}
+
+@include maxWidth($sm-max){
+	:root{
+		--font-heading-h1: 500 36rem / 1.333em var(--font-primary-medium);
+		--font-heading-h2: 500 36rem / 1.333em var(--font-primary-medium);
+		--font-heading-h3: 600 28rem / 1.357em var(--font-primary-semibold);
+		--font-heading-h4: 500 24rem / 1.333em var(--font-primary-medium);
+		--font-heading-h5: 500 18rem / 1.444em var(--font-primary-medium);
+		--font-heading-h6: 500 14rem / 1.250em var(--font-primary-medium);
+		--font-heading-display: 500 32rem / 1.35em var(--font-primary-medium);
+		
+		--font-button-md: 700 14rem var(--font-primary-bold);
+	}
+}
+
+// headings
+@each $heading in $headings {
+	h#{$heading} {
+		margin: 0;
+		font: var(--font-heading-h#{$heading});
+	}
+}
+
+p{
+	font: inherit;
+}
+
+strong, b{
+	font-weight: inherit;
+	font-family: var(--font-primary-bold);
+}
+
+.font {
+	&-body {
+		@each $size in $font-sizes {
+			&-#{$size} {
+				font: var(--font-body-#{$size});
+			}
+		}
+	}
+	&-display{
+		font: var(--font-heading-display);
+	}
+}

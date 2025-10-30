@@ -1,0 +1,68 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	margin-top: -18rem;
+	padding: 0 0 60rem;
+	
+		@include maxWidth($sm-max){
+			margin-top: -7rem;
+		}
+	
+		&-panel{
+			display: flex;
+			gap: 32rem;
+			align-items: center;
+			justify-content: center;
+			
+				@include maxWidth($sm-max){
+					flex-direction: column;
+					gap: 20rem;
+					align-items: flex-start;
+					justify-content: flex-start;
+				}
+		}
+}
+
+.link{
+	display: inline-flex;
+	gap: 8rem;
+	align-items: center;
+	color: var(--color-black);
+	font: var(--font-body-lg);
+	transition: color var(--transition-duration-button) var(--transition-easing-button);
+	
+		&-icon{
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 27rem;
+			height: 27rem;
+			color: var(--color-white);
+			background-color: var(--color-primary-dark-blue);
+			border-radius: 10rem;
+			
+				@include hover($md-max){
+					&:hover{
+						cursor: pointer;
+					}
+				}
+			
+				svg{
+					width: 16rem;
+					height: 16rem;
+				}
+		}
+	
+		&-label{
+			user-select: all;
+		}
+}
+
+a[href].link{
+	@include hover($md-max){
+		&:hover{
+			color: var(--color-primary-dark-blue);
+		}
+	}
+}

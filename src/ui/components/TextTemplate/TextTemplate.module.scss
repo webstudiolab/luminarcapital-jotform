@@ -1,0 +1,81 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	padding-bottom: 80rem;
+
+		@include maxWidth($sm-max){
+			padding-bottom: 60rem;
+		}
+	
+		&-hero{
+			padding: 57rem 0 54rem;
+			
+				@include maxWidth($sm-max){
+					padding: 24rem 0 31rem;
+				}
+
+				&-title{
+					text-align: center;
+				}
+		}
+	
+		&-body{
+			color: var(--color-gray-90);
+			font: var(--font-body-lg);
+
+				@include maxWidth($sm-max){
+					font: var(--font-body-md);
+				}
+			
+				h1, h2, h3, h4, h5, h6{
+					margin: 16rem 0;
+					color: var(--color-black);
+				}
+			
+				h4{
+					@include maxWidth($sm-max){
+						font: var(--font-heading-h5);
+					}
+				}
+			
+			  p{
+          & + p{
+	          margin-top: 22rem;
+	          
+	            @include maxWidth($sm-max){
+		            margin-top: 18rem;
+	            }
+          }
+        }
+			
+				ul{
+					display: flex;
+					flex-direction: column;
+					gap: 12rem;
+					align-items: flex-start;
+					margin: 16px 0;
+					padding: 0 0 0 10rem;
+					
+						li{
+							position: relative;
+							padding-left: 15rem;
+							
+								&::before{
+									position: absolute;
+									top: 8rem;
+									left: 1rem;
+									width: 6rem;
+									height: 6rem;
+									background-color: var(--color-black);
+									border-radius: 50%;
+									content: '';
+								}
+						}
+				}
+			
+				a{
+					text-decoration: underline;
+				}
+		}
+}

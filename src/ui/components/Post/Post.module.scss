@@ -1,0 +1,97 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.post{
+	position: relative;
+	margin: 15rem 0;
+	padding: 8rem;
+	background-color: var(--color-white);
+	border: 1rem var(--color-gray-50) solid;
+	border-radius: 16px;
+	
+		@include maxWidth($md-max){
+			margin: 6rem 0;
+		}
+	
+		&-thumb{
+			position: relative;
+			display: block;
+			height: 204rem;
+			overflow: hidden;
+			background-color: var(--color-gray-10);
+			//background-image: url('/logo_icon.svg');
+			//background-repeat: no-repeat;
+			//background-position: center;
+			//background-size: 90rem;
+			border: 1rem var(--color-primary-dark-blue) solid;
+			border-radius: 12px;
+			
+				@include maxWidth($md-max){
+					height: 171rem;
+				}
+			
+				&-image{
+					object-fit: cover;
+					object-position: center;
+					border-radius: 12px;
+				}
+		}
+	
+		&-body{
+			position: relative;
+			padding: 24rem 24rem 20rem;
+			
+				@include maxWidth($md-max){
+					padding: 16rem 16rem 11rem;
+				}
+			
+				&-title{
+					display: -webkit-box;
+					margin-bottom: 8rem;
+					overflow: hidden;
+					font: var(--font-heading-h3);
+					-webkit-box-orient: vertical;
+					-webkit-line-clamp: 2;
+					
+						@include maxWidth($md-max){
+							margin-bottom: 7rem;
+							font: var(--font-heading-h4);
+						}
+				}
+			
+				&-description{
+					display: -webkit-box;
+					margin: 8rem 0 23rem;
+					overflow: hidden;
+					-webkit-box-orient: vertical;
+					-webkit-line-clamp: 2;
+					
+						@include maxWidth($md-max){
+							margin: 7rem 0 20rem;
+							font: var(--font-body-lg);
+							-webkit-line-clamp: 3;
+						}
+				}
+			
+				&-date{
+					display: inline-block;
+					font: var(--font-body-lg);
+					
+						@include maxWidth($md-max){
+              font: var(--font-body-md);
+            }
+				}
+			
+				&-action{
+					position: absolute;
+					right: 24rem;
+					bottom: 24rem;
+					
+						@include maxWidth($md-max){
+              right: 16rem;
+              bottom: 15rem;
+							font: var(--font-button-md) !important;
+            }
+				}
+		}
+}

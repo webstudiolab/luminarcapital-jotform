@@ -1,0 +1,62 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.article{
+	padding: 57rem 0;
+	
+		@include maxWidth($sm-max){
+			padding: 24rem 0;
+		}
+	
+		&-title{
+			margin-bottom: 26rem;
+			text-align: center;
+			
+				@include maxWidth($sm-max){
+					margin-bottom: 30rem;
+					text-align: left;
+				}
+		}
+	
+		&-banner{
+			position: relative;
+			width: 100%;
+			//max-width: 842rem;
+			height: 501rem;
+			margin: 0 auto;
+			overflow: hidden;
+			border: 1rem var(--color-primary-dark-blue) solid;
+			border-radius: 12px;
+			
+				@include maxWidth($sm-max){
+					height: 162rem;
+				}
+		}
+	
+		&-text{
+			padding: 61rem 0 40rem;
+			
+				@include maxWidth($sm-max){
+					padding: 40rem 0;
+					font: var(--font-body-lg);
+				}
+			
+				h1, h2, h3, h4, h5, h6{
+					margin: 24rem 0;
+				}
+			
+				p{
+					&:not(:last-child){
+						margin-bottom: 25rem;
+					}
+
+					&:empty{
+						display: none;
+					}
+				}
+			
+				strong, b{
+					font-family: var(--font-primary-medium);
+				}
+		}
+}

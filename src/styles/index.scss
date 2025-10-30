@@ -1,0 +1,228 @@
+@import "global";
+@import "library";
+
+html{
+	font-size: calc(100vw / 1440);
+	
+		@media only screen and (width > 1540px) {
+			font-size: calc(100vw / 2056);
+		}
+	
+		@media only screen and (width <= $lg-max) {
+			font-size: calc(100vw / 1380);
+		}
+	
+		@media only screen and (width <= $md-max) {
+			font-size: calc(100vw / 900);
+		}
+	
+		@media only screen and (width <= $sm-max) {
+			font-size: calc(100vw / 375);
+		}
+}
+
+body{
+	color: var(--color-black);
+	font: var(--font-body-xl);
+	background-color: var(--color-gray-5);
+}
+
+.content-block{
+	padding: 0 80rem;
+	
+		@include maxWidth($md-max){
+			padding: 0 16rem;
+		}
+	
+		@include maxWidth($sm-max){
+			padding: 0 16rem;
+		}
+}
+
+.slick-dots{
+	display: flex !important;
+	gap: 6rem;
+	align-items: center;
+	justify-content: center;
+	margin-top: 23rem;
+	
+		li{
+			position: relative;
+			display: inline-block;
+			width: 30rem;
+			height: 4rem;
+			background-color: var(--color-gray-50);
+			border-radius: 30px;
+			transition: var(--transition-duration-button) var(--transition-easing-button);
+			
+				&.slick-active{
+					background-color: var(--color-primary-dark-blue);
+				}
+			
+				button{
+					position: absolute;
+					font-size: 0;
+					inset: 0;
+					opacity: 0;
+				}
+		}
+}
+
+.reviews-carousel{
+		.slick-list{
+			@include maxWidth($sm-max){
+				padding-left: 22rem !important;
+			}
+		}
+}
+
+.informBox{
+	& + .footer-abstract{
+		bottom: -282rem;
+			
+			@include maxWidth($sm-max){
+				bottom: -145rem;
+			}
+	}
+}
+
+.posts{
+	& + .footer-abstract{
+		bottom: -180rem;
+		
+			@include maxWidth($sm-max){
+        bottom: -115rem;
+      }
+	}
+}
+
+.advantage{
+	& ~ .footer-abstract{
+		@include minWidth($sm-max){
+			bottom: -280rem;
+		}
+	}
+}
+
+.portfolio{
+	& ~ .footer-abstract{
+		@include minWidth($sm-max){
+			bottom: -270rem;
+		}
+	}
+}
+
+.personalized-experience{
+	& ~ .footer-abstract{
+    @include minWidth($sm-max){
+      bottom: -280rem;
+    }
+  }
+}
+
+.text-template{
+	& ~ .footer-abstract{
+		display: none;
+	}
+}
+
+svg{
+	width: 100%;
+	height: 100%;
+}
+
+.modal-slider{
+		&-dots{
+			overflow: hidden;
+
+				li{
+					position: relative;
+					width: 38rem;
+					height: 38rem;
+					
+						&::before,
+						&::after{
+							position: absolute;
+							top: 50%;
+							left: 100%;
+							width: 100rem;
+							height: 1rem;
+							content: '';
+							
+								@include maxWidth($sm-max){
+									width: 60rem;
+								}
+						}
+					
+						&::before{
+							background-color: var(--color-gray-50);
+						}
+					
+						&::after{
+							background-color: var(--color-primary-blue);
+							transition: width 1s var(--transition-easing-button);
+						}
+					
+					.modal-slider-dot{
+						background-color: var(--color-primary-dark-blue);
+						border-color: var(--color-primary-dark-blue);
+						
+							&::before{
+								position: absolute;
+								background-color: var(--color-primary-dark-blue);
+								background-image: url('/icons/checkmark.svg');
+								background-repeat: no-repeat;
+								background-position: center center;
+								background-size: 20rem;
+								border-radius: 50%;
+								opacity: 1;
+								transition: opacity var(--transition-duration-button) var(--transition-easing-button);
+								content: '';
+								inset: 0;
+							}
+					}
+
+					&.slick-active{
+							&::after{
+								width: 0;
+							}
+
+							.modal-slider-dot{
+								color: var(--color-white);
+								background-color: var(--color-primary-dark-blue);
+								border-color: var(--color-primary-dark-blue);
+									
+									&::before{
+										opacity: 0;
+									}
+							}
+						
+							& ~ li{
+									&::after{
+										width: 0;
+									}
+								
+									.modal-slider-dot{
+										background-color: var(--color-white);
+										border-color: var(--color-gray-50);
+										
+											&::before{
+												opacity: 0;
+											}
+									}
+							}
+					}
+				}
+		}
+}
+
+.board-slider{
+	.slick-slide{
+		height: 100%;
+		padding: 0 16rem;
+		
+			& > div{
+				height: 100%;
+			}
+	}
+}

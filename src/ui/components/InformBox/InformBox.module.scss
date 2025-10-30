@@ -1,0 +1,57 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	padding-bottom: 100rem;
+	
+		@include maxWidth($sm-max){
+			padding-bottom: 60rem;
+		}
+	
+		&-box{
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 60rem 24rem 58rem;
+			background-color: var(--color-white);
+			background-image: url('/abstract/inform-abstract-desktop.svg');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			border: 1rem var(--color-primary-dark-blue) solid;
+			border-radius: 40px;
+			row-gap: 28rem;
+			
+				@include maxWidth($sm-max){
+					padding: 57rem 24rem 60rem;
+					text-align: center;
+					row-gap: 30rem;
+					background-image: url('/abstract/inform-abstract-mobile.svg');
+					background-position: 0 0;
+					background-size: 70% 70%;
+				}
+			
+				&-icon{
+					position: relative;
+					width: 90rem;
+					height: 90rem;
+				}
+			
+				&-title{
+						@include maxWidth($sm-max){
+							font: var(--font-heading-h2);
+						}
+				}
+			
+				&-description{
+					margin-top: -12rem;
+					
+						@include maxWidth($sm-max){
+							margin-top: -15rem;
+							font: var(--font-body-lg);
+						}
+				}
+		}
+}

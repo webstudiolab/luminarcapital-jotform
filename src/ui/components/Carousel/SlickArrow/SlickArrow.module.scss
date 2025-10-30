@@ -1,0 +1,52 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.arrow{
+	position: absolute;
+	top: 50%;
+	width: 24rem;
+	height: 24rem;
+	transform: translateY(-50%);
+	
+		@include hover($md-max){
+			&:hover{
+				cursor: pointer;
+			}
+		}
+	
+		@include maxWidth($sm-max){
+			top: auto;
+			bottom: 41rem;
+		}
+	
+		&-next{
+			right: -32rem;
+			
+				@include maxWidth($md-max){
+					right: 0;
+				}
+			
+				@include maxWidth($sm-max){
+					right: 50%;
+					transform: translateX(calc(100% + 21rem));
+				}
+		}
+	
+		&-prev{
+			left: -32rem;
+			
+				@include maxWidth($md-max){
+					left: 0;
+				}
+			
+				@include maxWidth($sm-max){
+					left: 50%;
+					transform: translateX(calc(-100% - 21rem));
+				}
+		}
+	
+		svg{
+			width: 100%;
+			height: 100%;
+		}
+}

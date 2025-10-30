@@ -1,0 +1,54 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.tabs{
+	display: flex;
+	justify-content: center;
+
+		&-panel{
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+				&::before{
+					position: absolute;
+					border: 1rem var(--color-gray-50) solid;
+					border-radius: 10px;
+					content: '';
+					inset: 0;
+				}
+		}
+}
+
+.tab{
+	position: relative;
+	display: inline-block;
+	padding: 0 12rem;
+	color: var(--color-gray-70);
+	font-size: 16rem;
+	font-family: var(--font-primary-bold);
+	line-height: 38rem;
+	white-space: nowrap;
+	text-align: center;
+	background-color: transparent;
+	border-radius: 10px;
+	transition: color var(--transition-duration-button) var(--transition-easing-button), background-color var(--transition-duration-button) var(--transition-easing-button);
+
+		@include maxWidth($sm-max){
+			padding: 0 12rem;
+			font-size: 14rem;
+		}
+	
+		@include hover($md-max){
+			&:hover{
+				color: var(--color-black);
+				cursor: pointer;
+			}
+		}
+
+		&.active{
+			color: var(--color-white);
+			background-color: var(--color-primary-dark-blue);
+		}
+}

@@ -1,0 +1,85 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.modal{
+	position: fixed;
+	z-index: 3;
+	display: flex;
+	padding: 36rem 24rem;
+	overflow-y: auto;
+	inset: 0;
+	
+		@include maxWidth($sm-max){
+			padding: 66rem 16rem;
+		}
+	
+		&-background{
+			position: fixed;
+			background-color: var(--color-black);
+			opacity: .5;
+			inset: 0;
+		}
+	
+		&-box{
+			position: relative;
+			width: 100%;
+			height: auto;
+			margin: auto;
+			padding: 60rem 24rem;
+			background-color: var(--color-white);
+			background-image: url('/abstract/modal-abstract-desktop.svg');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			border: 1rem var(--color-primary-dark-blue) solid;
+			border-radius: 40px;
+			
+				@include maxWidth($sm-max){
+					padding: 80rem 24rem 60rem;
+					background-image: url('/abstract/modal-abstract-mobile.svg');
+					background-size: 100% 100%;
+				}
+			
+				// Modal box sizes
+				&.xl{
+					max-width: 1062rem;
+				}
+			
+				&.lg{
+					max-width: 842rem;
+				}
+			
+				&.md{
+					max-width: 552rem;
+				}
+		}
+	
+		&-trigger{
+			position: absolute;
+			top: 34rem;
+			right: 34rem;
+			z-index: 1;
+			width: 24rem;
+			height: 24rem;
+			color: var(--color-black);
+			transition: color var(--transition-duration-button) var(--transition-easing-button);
+			
+				@include maxWidth($sm-max){
+					top: 23rem;
+					right: 23rem;
+				}
+			
+				@include hover($md-max){
+					&:hover{
+						color: var(--color-gray-70);
+						cursor: pointer;
+					}
+				}
+			
+				&-icon{
+					width: 24rem;
+					height: 24rem;
+					color: inherit;
+				}
+		}
+}

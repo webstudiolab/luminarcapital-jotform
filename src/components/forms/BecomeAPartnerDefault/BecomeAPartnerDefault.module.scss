@@ -1,0 +1,33 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.form{
+	max-width: 406rem;
+	margin: 0 auto;
+	
+		&-body{
+			display: flex;
+			flex-direction: column;
+			gap: 20rem;
+			align-items: center;
+			
+				@include maxWidth($sm-max){
+					gap: 16rem;
+				}
+		}
+	
+		&-action{
+			margin-top: 20rem;
+			
+				@include maxWidth($sm-max){
+					width: 100%;
+					margin-top: 15rem;
+				}
+				
+				&-icon{
+					position: relative;
+					width: 18rem;
+					height: 18rem;
+				}
+		}
+}

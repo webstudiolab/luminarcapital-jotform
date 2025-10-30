@@ -1,0 +1,10 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.skeleton{
+	height: 450rem;
+	
+		@include maxWidth($md-max){
+			height: 400rem;
+		}
+}

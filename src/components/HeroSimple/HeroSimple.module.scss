@@ -1,0 +1,43 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.heroSimple{
+	padding: 57rem 0;
+	text-align: center;
+	
+		@include maxWidth($sm-max){
+			padding: 24rem 0 40rem;
+			text-align: left;
+		}
+	
+		&-box{
+			display: flex;
+			flex-direction: column;
+			gap: 19rem;
+			align-items: center;
+			justify-content: flex-start;
+			
+				@include maxWidth($sm-max){
+					gap: 23rem;
+				}
+		}
+	
+		&-title{
+				&:empty{
+					display: none;
+				}
+		}
+	
+		&-description{
+			max-width: 622rem;
+			margin: 0 auto;
+			
+				@include maxWidth($sm-max){
+					font: var(--font-body-lg);
+				}
+			
+				&:empty{
+					display: none;
+				}
+		}
+}

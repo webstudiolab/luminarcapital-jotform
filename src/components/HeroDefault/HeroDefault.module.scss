@@ -1,0 +1,108 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.heroDefault{
+	position: relative;
+	padding: 60rem 0;
+	
+		@include maxWidth($sm-max){
+			padding: 24rem 0 60rem;
+		}
+	
+		&-content{
+			display: flex;
+			flex-direction: column;
+			gap: 20rem;
+			align-items: flex-start;
+			justify-content: center;
+			height: 100%;
+			padding-bottom: 5rem;
+			
+				@include maxWidth($xs-max){
+					gap: 23rem;
+				}
+			
+				& > *{
+					&:empty{
+						display: none;
+					}
+				}
+		}
+	
+		&-description{
+		
+		}
+	
+		&-banner{
+			position: relative;
+			width: 596rem;
+			height: 360rem;
+			margin: 0 0 0 auto;
+			overflow: hidden;
+			background-color: var(--color-white);
+			border: 1rem var(--color-primary-dark-blue) solid;
+			border-radius: 20px;
+			box-shadow: 0 14rem 20rem 0 #8995A31A;
+			
+				@include maxWidth($md-max){
+					width: 100%;
+					height: auto;
+					margin: 40rem auto 0;
+				}
+			
+				@include maxWidth($sm-max){
+					margin: 35rem auto 0;
+				}
+			
+				&-item{
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					object-position: center;
+				}
+		}
+	
+		&-actions{
+			display: flex;
+			gap: 16rem;
+			align-items: center;
+			margin-top: 18rem;
+			
+				@include maxWidth($sm-max){
+					width: 100%;
+					margin-top: 9rem;
+				}
+			
+				button{
+						@include maxWidth($sm-max){
+							width: 100%;
+						}
+				}
+		}
+	
+		&-abstract{
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: -1;
+			width: 100%;
+			height: 555rem;
+			overflow: hidden;
+			background-image: url('/abstract/hero-abstract-desktop-full.svg');
+			background-repeat: no-repeat;
+			background-position: center top;
+			background-size: auto 100%;
+			pointer-events: none;
+			
+				@include maxWidth($sm-max){
+					height: 656rem;
+					background-image: url('/abstract/hero-abstract-mobile.svg');
+				}
+		}
+	
+		& + section{
+			@include maxWidth($sm-max){
+				padding-top: 0;
+			}
+		}
+}

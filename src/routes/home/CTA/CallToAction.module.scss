@@ -1,0 +1,8 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+		@include maxWidth($sm-max){
+			padding: 0 0 60rem;
+		}
+}

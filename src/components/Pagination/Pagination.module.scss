@@ -1,0 +1,56 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.pagination{
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+		&-panel{
+			display: flex;
+			gap: 12rem;
+			align-items: center;
+			list-style: none;
+		}
+	
+		&-page{
+			position: relative;
+			
+				&:empty{
+					display: none;
+				}
+			
+				&-link{
+					position: relative;
+					display: inline-block;
+					width: 34rem;
+					height: 34rem;
+					color: var(--color-black);
+					font-size: 14rem;
+					font-family: var(--font-primary-bold);
+					line-height: 34rem;
+					text-align: center;
+					background-color: transparent;
+					border: 1rem var(--color-primary-dark-blue) solid;
+					border-radius: 8px;
+					transition: background-color var(--transition-duration-button) var(--transition-easing-button), color var(--transition-duration-button) var(--transition-easing-button);
+					
+						@include hover($md-max){
+							&:hover{
+								cursor: pointer;
+							}
+
+							&:not(.pagination-page-link.active):hover{
+								color: var(--color-gray-90);
+								border-color: var(--color-gray-90);
+							}
+						}
+					
+						&.active{
+							color: var(--color-white);
+							background-color: var(--color-primary-dark-blue);
+						}
+				}
+		}
+}

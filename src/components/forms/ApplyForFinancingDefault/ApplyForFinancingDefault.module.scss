@@ -1,0 +1,57 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.form{
+	max-width: 624rem;
+	margin: 0 auto;
+	
+		&-body{
+			display: flex;
+			flex-direction: column;
+			gap: 20rem;
+			align-items: center;
+			
+				@include maxWidth($sm-max){
+					gap: 16rem;
+				}
+			
+				&-grid{
+					display: flex;
+					flex-wrap: wrap;
+					gap: 20rem;
+					width: 100%;
+					
+						@include maxWidth($sm-max){
+							gap: 16rem;
+						}
+					
+						&-item{
+							width: calc(50% - 10rem);
+							
+								@include maxWidth($md-max){
+                  width: 100%;
+                }
+						}
+				}
+		}
+		
+		&-action{
+			margin-top: 12rem;
+			
+			@include maxWidth($sm-max){
+				width: 100%;
+				margin-top: 15rem;
+			}
+			
+				&-icon{
+					position: relative;
+					width: 18rem;
+					height: 18rem;
+				}
+		}
+	
+		&-error{
+			color: var(--color-secondary-red);
+			font: var(--font-body-md);
+		}
+}

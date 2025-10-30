@@ -1,0 +1,37 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.select{
+	position: relative;
+	width: 100%;
+		
+		&::before{
+			position: absolute;
+			z-index: 1;
+			border: 1rem var(--color-secondary-red) solid;
+			border-radius: 8px;
+			opacity: 0;
+			transition: opacity var(--transition-duration-button) var(--transition-easing-button);
+			content: '';
+			pointer-events: none;
+			inset: 0;
+		}
+	
+		&.error{
+			&::before{
+				opacity: 1;
+			}
+		}
+	
+		&-error{
+			position: absolute;
+			top: calc(100% + 3rem);
+			left: 0;
+			color: var(--color-secondary-red);
+			font: var(--font-body-sm);
+			
+				@include maxWidth($sm-max){
+					top: 100%;
+				}
+		}
+}

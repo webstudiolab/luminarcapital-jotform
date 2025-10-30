@@ -1,0 +1,14 @@
+@include font('InstrumentSans-Bold', 700);
+@include font('InstrumentSans-Medium', 500);
+@include font('InstrumentSans-Regular', 400);
+@include font('InstrumentSans-SemiBold', 600);
+
+@include font('OpenSans-Bold', 700);
+
+:root{
+	--font-primary-bold: 'InstrumentSans-Bold';
+	--font-primary-medium: 'InstrumentSans-Medium';
+	--font-primary-regular: 'InstrumentSans-Regular';
+	--font-primary-semibold: 'InstrumentSans-SemiBold';
+	--font-secondary-bold: 'OpenSans-Bold';
+}

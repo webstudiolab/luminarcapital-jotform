@@ -1,0 +1,81 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+		@include minWidth($sm-max){
+			padding-bottom: 0;
+		}
+}
+
+.carousel{
+	margin-top: -8rem;
+	margin-bottom: 52rem;
+	padding: 0;
+	
+		@include maxWidth($md-max){
+			margin: -8rem -16rem 52rem;
+			padding: 0 16rem;
+		}
+	
+		@include maxWidth($sm-max){
+			margin: -2rem -16rem 0;
+			padding: 0 0 88rem;
+		}
+	
+		&-arrows{
+			position: absolute;
+			top: 50%;
+			right: -54rem;
+			left: -54rem;
+			height: 24rem;
+			transform: translateY(-50%);
+		}
+	
+		&-arrow{
+			position: absolute;
+			width: 24rem;
+			height: 24rem;
+			padding: 0;
+			background-color: transparent;
+			background-image: url('/icons/carousel-arrow.svg');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: contain;
+			border: none;
+			
+				&_prev{
+					left: 0;
+				}
+			
+				&_next{
+					right: 0;
+					transform: scaleX(-1);
+				}
+			
+				svg{
+					display: none;
+				}
+		}
+	
+		&-slide{
+			margin: 0 8rem;
+			
+				@include maxWidth($sm-max){
+					width: calc(100vw - 56rem);
+					margin: 0 6rem;
+				}
+		}
+	
+		&-action{
+			display: flex;
+			justify-content: center;
+		}
+	
+		&-arrow{
+				@include maxWidth($sm-max){
+					top: auto;
+					bottom: 0;
+					transform: none;
+				}
+		}
+}

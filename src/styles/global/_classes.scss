@@ -1,0 +1,72 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.h1{
+	@extend h1;
+}
+
+.h2{
+	@extend h2;
+}
+
+.p{
+		&-100-0{
+			padding: 100rem 0;
+			
+				@include maxWidth($sm-max){
+					padding: 60rem 0;
+				}
+		}
+		&-80-0{
+			padding: 80rem 0;
+			
+				@include maxWidth($sm-max){
+					padding: 60rem 0;
+				}
+		}
+}
+
+.text{
+		&-left{
+			text-align: left;
+		}
+		&-center{
+			text-align: center;
+		}
+		&-right{
+			text-align: right;
+		}
+}
+
+.section{
+		&-title{
+			margin-bottom: 60rem;
+			
+				@include maxWidth($sm-max){
+					margin-bottom: 40rem;
+				}
+		}
+		&-description{
+			
+				@include maxWidth($sm-max){
+					font: var(--font-body-lg);
+				}
+		}
+		&-bg{
+			position: relative;
+			
+				&:before{
+					content: '';
+					position: absolute;
+					inset: 0 20rem;
+					background-color: var(--color-gray-10);
+					pointer-events: none;
+					z-index: -1;
+					border-radius: 40px;
+						
+						@include maxWidth($md-max){
+							inset: 0;
+						}
+				}
+		}
+}

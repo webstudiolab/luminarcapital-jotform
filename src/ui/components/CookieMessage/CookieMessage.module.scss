@@ -1,0 +1,92 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+	width: 100%;
+	padding: 42rem 0;
+
+		@include maxWidth($md-max){
+			padding: 24rem 0;
+		}
+	
+		&-box{
+			position: relative;
+			display: flex;
+			gap: 40rem;
+			align-items: flex-end;
+			width: 100%;
+			padding: 23rem 22rem;
+			background-color: var(--color-white);
+			border: 1rem var(--color-primary-dark-blue) solid;
+			border-radius: 20px;
+			box-shadow: 0 14px 20px 0 #8995A31A;
+			
+				@include maxWidth($sm-max){
+					flex-direction: column;
+					gap: 24rem;
+				}
+			
+				&-content{
+					display: flex;
+					flex-direction: column;
+					gap: 24rem;
+					
+						@include maxWidth($sm-max){
+							gap: 12rem;
+						}
+					
+						&-description{
+							@include maxWidth($sm-max){
+								font: var(--font-body-sm);
+							}
+						}
+				}
+			
+				&-action{
+					display: flex;
+					gap: 16rem;
+					align-items: center;
+					
+						@include maxWidth($sm-max){
+							flex-direction: column;
+							gap: 12rem;
+							align-items: flex-start;
+							width: 100%;
+						}
+				}
+		}
+	
+		&-trigger{
+			position: absolute;
+			top: 23rem;
+			right: 24rem;
+			width: 24rem;
+			height: 24rem;
+			color: var(--color-gray-70);
+			transition: color var(--transition-duration-button) var(--transition-easing-button);
+			
+				@include hover($md-max){
+					&:hover{
+						color: var(--color-black);
+						cursor: pointer;
+					}
+				}
+			
+				&-icon{
+					width: 100%;
+					height: 100%;
+				}
+		}
+}
+
+.button{
+	text-transform: capitalize;
+	
+		@include maxWidth($sm-max){
+			width: 100%;
+		}
+}

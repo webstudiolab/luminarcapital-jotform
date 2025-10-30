@@ -1,0 +1,28 @@
+@mixin font($name, $weight:normal) {
+	@font-face {
+		font-family: $name;
+		src: url("/fonts/"+ $name +".woff") format("woff"),
+		url("/fonts/"+ $name +".woff2") format("woff2");
+		font-weight: $weight;
+		font-style: normal;
+		font-display: swap;
+	}
+}
+
+@mixin hover($width) {
+	@media only screen and (min-width: $width + "px"), (any-hover: hover) {
+		@content;
+	}
+}
+
+@mixin maxWidth($width) {
+	@media only screen and (max-width: $width) {
+		@content;
+	}
+}
+
+@mixin minWidth($width) {
+	@media only screen and (min-width: $width) {
+		@content;
+	}
+}

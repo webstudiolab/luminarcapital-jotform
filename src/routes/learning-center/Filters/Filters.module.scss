@@ -1,0 +1,63 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.filters{
+	padding: 2rem 0;
+	
+		@include maxWidth($md-max){
+			padding: 0;
+		}
+	
+		&-box{
+			display: flex;
+			align-items: center;
+		}
+
+		&-panel{
+			display: inline-flex;
+			align-items: center;
+			margin: 0 auto;
+			padding: 12rem;
+			column-gap: 12rem;
+			background-color: var(--color-gray-10);
+			border-radius: 10px;
+			
+				@include maxWidth($md-max){
+					flex-wrap: wrap;
+					padding: 0;
+					column-gap: 10rem;
+					background-color: transparent;
+					row-gap: 12rem;
+				}
+		}
+	
+		&-button{
+			padding: 0 12rem;
+			color: var(--color-gray-90);
+			font-size: 16rem;
+			font-family: var(--font-primary-medium);
+			line-height: 38rem;
+			white-space: nowrap;
+			background-color: transparent;
+			border-radius: 8px;
+			transition: background-color var(--transition-duration-button) var(--transition-easing-button), color var(--transition-duration-button) var(--transition-easing-button);
+			
+				@include hover($md-max){
+					&:hover{
+						color: var(--color-black);
+					}
+				}
+			
+				@include maxWidth($md-max){
+					font-size: 16rem;
+					font-family: var(--font-primary-regular);
+					line-height: 34rem;
+					background-color: var(--color-gray-10);
+				}
+			
+				&.active{
+					color: var(--color-white);
+					background-color: var(--color-primary-dark-blue);
+				}
+		}
+}

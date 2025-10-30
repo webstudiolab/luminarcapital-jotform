@@ -1,0 +1,19 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.section{
+	padding: 38rem 0 84rem;
+	
+		@include maxWidth($sm-max){
+			padding: 31rem 0 54rem;
+		}
+	
+		&-title{
+			margin-bottom: 24rem;
+			
+				@include maxWidth($sm-max){
+					margin-bottom: 33rem;
+					font: var(--font-heading-h3);
+				}
+		}
+}

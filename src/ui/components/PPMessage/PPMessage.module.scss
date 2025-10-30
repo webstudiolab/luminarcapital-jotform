@@ -1,0 +1,16 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.message{
+	font: var(--font-body-sm);
+	
+		a, span{
+			color: var(--color-primary-dark-blue);
+			
+				@include hover($md-max) {
+					&:hover{
+						cursor: pointer;
+					}
+				}
+		}
+}
