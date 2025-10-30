@@ -5,8 +5,9 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import TextField from '@/ui/components/TextField/TextField'
 import Button from '@/ui/components/Button/Button'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axios from 'axios'
-import { EMAIL_SUBJECT, WORDPRESS_API_PATHS } from '@/config/constants'
+// import axios from 'axios'
+// import { EMAIL_SUBJECT, WORDPRESS_API_PATHS } from '@/config/constants'
+import { EMAIL_SUBJECT } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import { schema } from './schema'
 import { browserSendEmail } from '@/utils/email/bowserSendEmail'
@@ -77,39 +78,51 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
 
     setIsSubmitting(true)
     try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+      
+      /*
       const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
         data,
       )
 
       if (response.data.success && response.status === 200) {
-        await browserSendEmail({
-          subject: EMAIL_SUBJECT.PARTNER,
-          htmlMessage: messages.admin(data),
+      */
+      
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.PARTNER,
+        htmlMessage: messages.admin(data),
+      })
+
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.PARTNER,
+        htmlMessage: messages.user(),
+      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          name: false,
+          email: false,
+          company_name: false,
+          phone: false,
         })
-
-        await browserSendEmail({
-          to: data.email,
-          subject: EMAIL_SUBJECT.PARTNER,
-          htmlMessage: messages.user(),
-        })
-
-        setIsSubmittedSuccess(true)
-
-        setTimeout(() => {
-          reset()
-          setIsFocused({
-            name: false,
-            email: false,
-            company_name: false,
-            phone: false,
-          })
-          setConsent(false)
-        }, 1000)
+        setConsent(false)
+      }, 1000)
+      
+      /*
       }
+      */
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } }
-      setSubmittedError(error.response?.data?.message || 'Submission failed')
+      setSubmittedError(error.response?.data?.message || 'Submission failed. Please try again.')
       setTimeout(() => setSubmittedError(null), 3000)
     } finally {
       setIsSubmitting(false)
