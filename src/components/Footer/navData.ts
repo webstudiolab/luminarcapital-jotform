@@ -30,27 +30,27 @@ export const navData: INavData = {
     {
       title: 'LinkedIn',
       icon: LinkedinIcon,
-      href: '/',
+      href: 'https://www.linkedin.com/company/luminar-capital/',
     },
     {
       title: 'TrustPilot',
       icon: TrustPilotIcon,
-      href: '/',
+      href: 'https://www.trustpilot.com/review/luminarcapital.com',
     },
     {
       title: 'Facebook',
       icon: FacebookIcon,
-      href: '/',
+      href: 'https://www.facebook.com/share/1K71fM8RP1/?mibextid=wwXIfr',
     },
     {
       title: 'Instagram',
       icon: InstagramIcon,
-      href: '/',
+      href: 'https://www.instagram.com/luminarcapital/',
     },
     {
-      title: 'Twitter',
+      title: 'X',
       icon: TwitterIcon,
-      href: '/',
+      href: 'https://x.com/luminarcapital',
     },
   ],
   main: [
@@ -112,7 +112,7 @@ export const navData: INavData = {
       href: '/privacy-policy',
     },
     {
-      title: 'Terms and Service',
+      title: 'Terms of Service',
       href: '/terms-of-service',
     },
   ],

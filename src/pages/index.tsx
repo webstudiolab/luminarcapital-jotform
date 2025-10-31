@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import FinancingOptions from '@/routes/home/FinancingOptions/FinancingOptions'
 import Button from '@/ui/components/Button/Button'
-import ClientReviews from '@/routes/home/ClientReviews/ClientReviews'
 import CallToAction from '@/ui/components/CTA/CallToAction'
 import HeroHome from '@/components/HeroHome/HeroHome'
 import { useAppDispatch } from '@/hooks'
@@ -12,9 +11,8 @@ import { getReviews } from '@/utils/axios/getReviews'
 import { IGoogleReview } from '@/types'
 import CTAStyles from '@/routes/home/CTA/CallToAction.module.scss'
 
-export default function Home({ reviews }: { reviews: IGoogleReview[] }) {
+export default function Home() {
   const dispatch = useAppDispatch()
-
   return (
     <>
       <Head>
@@ -55,7 +53,9 @@ export default function Home({ reviews }: { reviews: IGoogleReview[] }) {
         order="even"
         className="personalized-experience"
       />
+      {/* Hide Google Reviews
       <ClientReviews data={reviews} />
+      */}
       <CallToAction
         title="Ready To Secure Business Financing?"
         description="Contact us and connect with one of our financing professionals that can help you navigate through the steps!"
@@ -67,8 +67,13 @@ export default function Home({ reviews }: { reviews: IGoogleReview[] }) {
 }
 
 export const getStaticProps = async () => {
-  const { data: reviews = [] } = await getReviews()
-
+  let reviews: IGoogleReview[] = []
+  try {
+    const result = await getReviews()
+    if (result?.data) reviews = result.data
+  } catch (err) {
+    console.warn('Skipping reviews fetch – API URL missing or invalid')
+  }
   return {
     props: {
       reviews,

@@ -1,12 +1,13 @@
 import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
-import axios from 'axios'
+// import axios from 'axios'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Slider from 'react-slick'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextField from '@/ui/components/TextField/TextField'
-import { EMAIL_SUBJECT, WORDPRESS_API_PATHS } from '@/config/constants'
+import { EMAIL_SUBJECT } from '@/config/constants'
+// import { WORDPRESS_API_PATHS } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import { schema } from '../BecomeAPartnerDefault/schema'
 import Button from '@/ui/components/Button/Button'
@@ -59,6 +60,9 @@ const BecomeAPartnerModalForm = ({
     email: false,
   })
 
+  // Consent checkbox state
+  const [consent, setConsent] = useState(false)
+
   const settings = {
     accessibility: false,
     swipe: false,
@@ -91,6 +95,13 @@ const BecomeAPartnerModalForm = ({
     [setValue, trigger],
   )
 
+  const handleCheckboxChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setConsent(e.target.checked)
+    },
+    [],
+  )
+
   // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
@@ -100,48 +111,65 @@ const BecomeAPartnerModalForm = ({
     }))
   }
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!consent) {
+      alert('Please check the consent box to proceed.')
+      return
+    }
+
     setIsSubmitting(true)
-    axios
-      .post(
+    try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+
+      /*
+      const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
         data,
       )
-      .then(async (response) => {
-        if (response.data.success && response.status === 200) {
-          // Send email notification to admin
-          await browserSendEmail({
-            subject: EMAIL_SUBJECT.PARTNER,
-            htmlMessage: messages.admin(data),
-          })
-          // Send email notification to user
-          await browserSendEmail({
-            to: data.email,
-            subject: EMAIL_SUBJECT.PARTNER,
-            htmlMessage: messages.user(),
-          })
 
-          setIsSubmittedSuccess(true)
+      if (response.data.success && response.status === 200) {
+      */
 
-          setTimeout(() => {
-            reset()
-            setIsFocused({
-              company_name: false,
-              name: false,
-              phone: false,
-              email: false,
-            })
-          }, 1000)
-        }
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.PARTNER,
+        htmlMessage: messages.admin(data),
       })
-      .catch((err) => {
-        // Set error message and clear it after 3 seconds
-        setSubmittedError(err.response.data.message)
-        setTimeout(() => setSubmittedError(null), 3000)
+
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.PARTNER,
+        htmlMessage: messages.user(),
       })
-      .finally(() => {
-        setIsSubmitting(false)
-      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          company_name: false,
+          name: false,
+          phone: false,
+          email: false,
+        })
+        setConsent(false)
+      }, 1000)
+
+      /*
+      }
+      */
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setSubmittedError(
+        error.response?.data?.message || 'Submission failed. Please try again.',
+      )
+      setTimeout(() => setSubmittedError(null), 3000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleNext = useCallback(async () => {
@@ -189,6 +217,7 @@ const BecomeAPartnerModalForm = ({
               />
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               Tell us about yourself
@@ -205,6 +234,7 @@ const BecomeAPartnerModalForm = ({
               />
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               How can we connect?
@@ -229,15 +259,28 @@ const BecomeAPartnerModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
-              <PPMessage />
+              <div className={styles['consent-container']}>
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={handleCheckboxChange}
+                  required
+                  id="consent"
+                />
+                <label htmlFor="consent">
+                  <PPMessage />
+                </label>
+              </div>
             </div>
           </div>
         </Slider>
+
         {submittedError ? (
           <p className={classNames(styles['form-error'], styles['static'])}>
             {submittedError}
           </p>
         ) : null}
+
         <div className={styles['form-navigation']}>
           <Button
             variant="outlined"
@@ -266,7 +309,7 @@ const BecomeAPartnerModalForm = ({
               currentSlide !== 2 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !consent}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>

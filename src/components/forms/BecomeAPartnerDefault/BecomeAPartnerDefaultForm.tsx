@@ -5,8 +5,9 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import TextField from '@/ui/components/TextField/TextField'
 import Button from '@/ui/components/Button/Button'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axios from 'axios'
-import { EMAIL_SUBJECT, WORDPRESS_API_PATHS } from '@/config/constants'
+// import axios from 'axios'
+// import { EMAIL_SUBJECT, WORDPRESS_API_PATHS } from '@/config/constants'
+import { EMAIL_SUBJECT } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import { schema } from './schema'
 import { browserSendEmail } from '@/utils/email/bowserSendEmail'
@@ -26,7 +27,6 @@ interface IFormInput {
 }
 
 const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
-  // Using useForm hook with yupResolver to validate the form based on a schema
   const {
     register,
     handleSubmit,
@@ -37,13 +37,13 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
     reset,
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
+    mode: 'onBlur',
   })
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [isSubmittedSuccess, setIsSubmittedSuccess] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmittedSuccess, setIsSubmittedSuccess] = useState(false)
   const [submittedError, setSubmittedError] = useState<string | null>(null)
 
-  // State to track focus status for each field. Initially, all fields are not focused.
   const [isFocused, setIsFocused] = useState({
     name: false,
     email: false,
@@ -51,62 +51,14 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
     phone: false,
   })
 
-  // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
+  const [consent, setConsent] = useState(false)
+
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
     setIsFocused((prev) => ({
       ...prev,
       [name]: !!getValues(name as keyof IFormInput),
     }))
-  }
-
-  // Function that handles form submission
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    setIsSubmitting(true)
-
-    axios
-      .post(
-        `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
-        data,
-      )
-      .then(async (response) => {
-        if (response.data.success && response.status === 200) {
-          // Send email notification to admin
-          await browserSendEmail({
-            subject: EMAIL_SUBJECT.PARTNER,
-            htmlMessage: messages.admin(data),
-          })
-          // Send email notification to user
-          await browserSendEmail({
-            to: data.email,
-            subject: EMAIL_SUBJECT.PARTNER,
-            htmlMessage: messages.user(),
-          })
-
-          setIsSubmittedSuccess(true)
-
-          setTimeout(() => {
-            reset()
-            setIsFocused({
-              name: false,
-              email: false,
-              company_name: false,
-              phone: false,
-            })
-          }, 1000)
-        }
-      })
-      .catch((err) => {
-        // display error message
-        setSubmittedError(err.response.data.message)
-        // clear error message
-        setTimeout(() => setSubmittedError(null), 3000)
-      })
-      .finally(() => {
-        setIsSubmitting(false)
-        // hide success message
-        setTimeout(() => setIsSubmittedSuccess(false), 5000)
-      })
   }
 
   const handleChange = useCallback(
@@ -118,10 +70,81 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
     [setValue, trigger],
   )
 
-  // Array of field configurations. Each object contains the field's name, placeholder text, and any error messages.
-  const fields: { name: string; placeholder: string; error?: string }[] = [
-    { name: 'name', placeholder: 'Full Name', error: errors.name?.message },
-    { name: 'email', placeholder: 'Email', error: errors.email?.message },
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!consent) {
+      alert('Please check the consent box to proceed.')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+      
+      /*
+      const response = await axios.post(
+        `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
+        data,
+      )
+
+      if (response.data.success && response.status === 200) {
+      */
+      
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.PARTNER,
+        htmlMessage: messages.admin(data),
+      })
+
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.PARTNER,
+        htmlMessage: messages.user(),
+      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          name: false,
+          email: false,
+          company_name: false,
+          phone: false,
+        })
+        setConsent(false)
+      }, 1000)
+      
+      /*
+      }
+      */
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setSubmittedError(error.response?.data?.message || 'Submission failed. Please try again.')
+      setTimeout(() => setSubmittedError(null), 3000)
+    } finally {
+      setIsSubmitting(false)
+      setTimeout(() => setIsSubmittedSuccess(false), 5000)
+    }
+  }
+
+  const fields: {
+    name: keyof IFormInput
+    placeholder: string
+    error?: string
+  }[] = [
+    {
+      name: 'name',
+      placeholder: 'Full Name',
+      error: errors.name?.message,
+    },
+    {
+      name: 'email',
+      placeholder: 'Email',
+      error: errors.email?.message,
+    },
     {
       name: 'company_name',
       placeholder: 'Company Name',
@@ -141,34 +164,57 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
           {fields.map((field) => (
             <TextField
               key={field.name}
-              {...register(field.name as keyof IFormInput)}
+              {...register(field.name)}
               className={styles['form-body-grid-item']}
               placeholder={field.placeholder}
               error={field.error}
-              isFocused={isFocused[field.name as keyof IFormInput]}
+              isFocused={isFocused[field.name]}
               onBlur={handleBlur}
               onChange={handleChange}
             />
           ))}
-          <PPMessage />
+
+          <div className={styles['form-body-grid-item']}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px',
+                margin: '12px 0',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                required
+                style={{ marginTop: '4px' }}
+              />
+              <span style={{ lineHeight: 1.4 }}>
+                <PPMessage />
+              </span>
+            </label>
+          </div>
+
           <Button
             className={styles['form-action']}
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? (
+            {isSubmitting && (
               <div className={styles['form-action-icon']}>
                 <Image src="/animated-spinner.svg" alt="submitting" fill />
               </div>
-            ) : null}
+            )}
             Submit
           </Button>
-          {submittedError ? (
+
+          {submittedError && (
             <p className={styles['form-error']}>{submittedError}</p>
-          ) : null}
+          )}
         </form>
       </div>
-      {isSubmittedSuccess ? <SuccessMessage type="partner" /> : null}
+      {isSubmittedSuccess && <SuccessMessage type="partner" />}
     </>
   )
 }

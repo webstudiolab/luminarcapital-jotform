@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
-import axios from 'axios'
+// import axios from 'axios'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Slider from 'react-slick'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,7 +9,7 @@ import TextField from '@/ui/components/TextField/TextField'
 import {
   AMOUNT_OPTIONS,
   EMAIL_SUBJECT,
-  WORDPRESS_API_PATHS,
+  // WORDPRESS_API_PATHS,
 } from '@/config/constants'
 import CheckboxField from '@/ui/components/CheckboxField/CheckboxField'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
@@ -49,7 +49,6 @@ const ApplyForFinancingModalForm = ({
     handleSubmit,
     getValues,
     trigger,
-    clearErrors,
     setValue,
     reset,
     formState: { errors },
@@ -68,6 +67,9 @@ const ApplyForFinancingModalForm = ({
     email: false,
     phone: false,
   })
+
+  // Consent checkbox state
+  const [consent, setConsent] = useState(false)
 
   const settings = {
     accessibility: false,
@@ -100,6 +102,13 @@ const ApplyForFinancingModalForm = ({
     [setValue, trigger],
   )
 
+  const handleCheckboxChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setConsent(e.target.checked)
+    },
+    [],
+  )
+
   // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
@@ -109,49 +118,65 @@ const ApplyForFinancingModalForm = ({
     }))
   }
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    data.business_objectives = ''
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!consent) {
+      alert('Please check the consent box to proceed.')
+      return
+    }
+
     setIsSubmitting(true)
-    axios
-      .post(
+    try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+
+      /*
+      const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-financial`,
         data,
       )
-      .then(async (response) => {
-        if (response.data.success && response.status === 200) {
-          // Send email notification to admin
-          await browserSendEmail({
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.admin(data),
-          })
-          // Send email notification to user
-          await browserSendEmail({
-            to: data.email,
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.user(),
-          })
 
-          setIsSubmittedSuccess(true)
+      if (response.data.success && response.status === 200) {
+      */
 
-          setTimeout(() => {
-            reset()
-            setIsFocused({
-              name: false,
-              business_name: false,
-              email: false,
-              phone: false,
-            })
-          }, 1000)
-        }
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.admin(data),
       })
-      .catch((err) => {
-        // Set error message and clear it after 3 seconds
-        setSubmittedError(err.response.data.message)
-        setTimeout(() => setSubmittedError(null), 3000)
+
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.user(),
       })
-      .finally(() => {
-        setIsSubmitting(false)
-      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          name: false,
+          business_name: false,
+          email: false,
+          phone: false,
+        })
+        setConsent(false)
+      }, 1000)
+
+      /*
+      }
+      */
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setSubmittedError(
+        error.response?.data?.message || 'Submission failed. Please try again.',
+      )
+      setTimeout(() => setSubmittedError(null), 3000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleNext = useCallback(async () => {
@@ -170,15 +195,6 @@ const ApplyForFinancingModalForm = ({
     setCurrentSlide((prevState) => prevState - 1)
     sliderRef.current?.slickPrev()
   }, [])
-
-  const handleCheckboxChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target
-      setValue(name as keyof IFormInput, value)
-      clearErrors(name as keyof IFormInput)
-    },
-    [clearErrors, setValue],
-  )
 
   return (
     <>
@@ -207,7 +223,6 @@ const ApplyForFinancingModalForm = ({
                   {...register('amount_of_financing_requested')}
                   key={`financing-checkbox-0-${index}`}
                   option={option}
-                  onChange={handleCheckboxChange}
                 />
               ))}
               {errors.amount_of_financing_requested?.message ? (
@@ -217,6 +232,7 @@ const ApplyForFinancingModalForm = ({
               ) : null}
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               What&apos;s your average monthly sales?
@@ -232,7 +248,6 @@ const ApplyForFinancingModalForm = ({
                   {...register('average_of_monthly_sales')}
                   key={`financing-checkbox-1-${index}`}
                   option={option}
-                  onChange={handleCheckboxChange}
                 />
               ))}
               {errors.average_of_monthly_sales?.message ? (
@@ -242,6 +257,7 @@ const ApplyForFinancingModalForm = ({
               ) : null}
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               Tell us about yourself
@@ -267,6 +283,7 @@ const ApplyForFinancingModalForm = ({
               />
             </div>
           </div>
+
           <div className={styles['form-step']}>
             <p className={classNames(styles['form-step-title'])}>
               How can we connect?
@@ -290,15 +307,25 @@ const ApplyForFinancingModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
-              <PPMessage />
+              <label className={styles['consent-container']}>
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={handleCheckboxChange}
+                  required
+                />{' '}
+                <PPMessage />
+              </label>
             </div>
           </div>
         </Slider>
+
         {submittedError ? (
           <p className={classNames(styles['form-error'], styles['static'])}>
             {submittedError}
           </p>
         ) : null}
+
         <div className={styles['form-navigation']}>
           <Button
             variant="outlined"
@@ -327,7 +354,7 @@ const ApplyForFinancingModalForm = ({
               currentSlide !== 3 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !consent}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>

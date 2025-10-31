@@ -8,11 +8,11 @@ import Button from '@/ui/components/Button/Button'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { schema } from './schema'
 import TextAreaField from '@/ui/components/TextField/TextAreaField'
-import axios from 'axios'
+// import axios from 'axios'
 import {
   AMOUNT_OPTIONS,
   EMAIL_SUBJECT,
-  WORDPRESS_API_PATHS,
+  // WORDPRESS_API_PATHS,
 } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import SelectField from '@/ui/components/SelectField/SelectField'
@@ -40,7 +40,6 @@ interface IFormInput {
 const ApplyForFinancingDefaultForm = ({
   className,
 }: IApplyForFinancingDefault) => {
-  // Using useForm hook with yupResolver to validate the form based on a schema
   const {
     register,
     handleSubmit,
@@ -54,11 +53,10 @@ const ApplyForFinancingDefaultForm = ({
     resolver: yupResolver(schema),
   })
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [isSubmittedSuccess, setIsSubmittedSuccess] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmittedSuccess, setIsSubmittedSuccess] = useState(false)
   const [submittedError, setSubmittedError] = useState<string | null>(null)
 
-  // State to track focus status for each field. Initially, all fields are not focused.
   const [isFocused, setIsFocused] = useState({
     name: false,
     business_name: false,
@@ -69,7 +67,8 @@ const ApplyForFinancingDefaultForm = ({
     business_objectives: false,
   })
 
-  // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
+  const [consent, setConsent] = useState(false)
+
   const handleBlur = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -80,56 +79,71 @@ const ApplyForFinancingDefaultForm = ({
     }))
   }
 
-  // Function that handles form submission
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!consent) {
+      alert('Please check the consent box to proceed.')
+      return
+    }
+
     setIsSubmitting(true)
-    axios
-      .post(
+    try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+      
+      /*
+      const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-financial`,
         data,
       )
-      .then(async (response) => {
-        if (response.data.success && response.status === 200) {
-          // Send email notification to admin
-          await browserSendEmail({
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.admin(data),
-          })
-          // Send email notification to user
-          await browserSendEmail({
-            to: data.email,
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.user(),
-          })
 
-          setIsSubmittedSuccess(true)
+      if (response.data.success && response.status === 200) {
+      */
+      
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.admin(data),
+      })
 
-          setTimeout(() => {
-            reset()
-            setIsFocused({
-              name: false,
-              business_name: false,
-              email: false,
-              amount_of_financing_requested: false,
-              average_of_monthly_sales: false,
-              phone: false,
-              business_objectives: false,
-            })
-          }, 1000)
-        }
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.user(),
       })
-      .catch((err) => {
-        // Set error message and clear it after 3 seconds
-        setSubmittedError(err.response.data.message)
-        setTimeout(() => setSubmittedError(null), 3000)
-      })
-      .finally(() => {
-        setIsSubmitting(false)
-        // Automatically hide the success message after 8 seconds
-        setTimeout(() => {
-          setIsSubmittedSuccess(false)
-        }, 5000)
-      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          name: false,
+          business_name: false,
+          email: false,
+          amount_of_financing_requested: false,
+          average_of_monthly_sales: false,
+          phone: false,
+          business_objectives: false,
+        })
+        setConsent(false)
+      }, 1000)
+      
+      /*
+      }
+      */
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setSubmittedError(
+        error.response?.data?.message || 'Submission failed. Please try again.',
+      )
+      setTimeout(() => setSubmittedError(null), 3000)
+    } finally {
+      setIsSubmitting(false)
+      setTimeout(() => {
+        setIsSubmittedSuccess(false)
+      }, 5000)
+    }
   }
 
   const handleChange = useCallback(
@@ -147,14 +161,12 @@ const ApplyForFinancingDefaultForm = ({
       fieldName: keyof IFormInput,
     ) => {
       if (Array.isArray(newValue)) {
-        // Check if the value is an array (MultiValue), iterate through each option
         newValue.forEach((option) => {
           if ('value' in option) {
             setValue(fieldName, option.value)
           }
         })
       } else {
-        // For SingleValue option, log the value
         if (newValue && 'value' in newValue) {
           setValue(fieldName, newValue.value)
         }
@@ -166,7 +178,7 @@ const ApplyForFinancingDefaultForm = ({
 
   return (
     <>
-      <div className={classNames(styles['form'], className)}>
+      <div className={classNames(styles.form, className)}>
         <form onSubmit={handleSubmit(onSubmit)} className={styles['form-body']}>
           <div className={styles['form-body-grid']}>
             <TextField
@@ -174,7 +186,7 @@ const ApplyForFinancingDefaultForm = ({
               className={styles['form-body-grid-item']}
               placeholder="Full Name"
               error={errors.name?.message}
-              isFocused={isFocused['name']}
+              isFocused={isFocused.name}
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -183,7 +195,7 @@ const ApplyForFinancingDefaultForm = ({
               className={styles['form-body-grid-item']}
               placeholder="Business Name"
               error={errors.business_name?.message}
-              isFocused={isFocused['business_name']}
+              isFocused={isFocused.business_name}
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -192,7 +204,7 @@ const ApplyForFinancingDefaultForm = ({
               className={styles['form-body-grid-item']}
               placeholder="Phone Number"
               error={errors.phone?.message}
-              isFocused={isFocused['phone']}
+              isFocused={isFocused.phone}
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -201,7 +213,7 @@ const ApplyForFinancingDefaultForm = ({
               className={styles['form-body-grid-item']}
               placeholder="Email"
               error={errors.email?.message}
-              isFocused={isFocused['email']}
+              isFocused={isFocused.email}
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -247,25 +259,47 @@ const ApplyForFinancingDefaultForm = ({
             isFocused={isFocused.business_objectives}
             onBlur={handleBlur}
           />
-          <PPMessage />
+
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '8px',
+              margin: '12px 0',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              required
+              style={{ marginTop: '4px' }}
+            />
+            <span style={{ lineHeight: 1.4 }}>
+              <PPMessage />
+            </span>
+          </label>
+
           <Button
             className={styles['form-action']}
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? (
+            {isSubmitting && (
               <div className={styles['form-action-icon']}>
                 <Image src="/animated-spinner.svg" alt="submitting" fill />
               </div>
-            ) : null}
+            )}
             Submit
           </Button>
-          {submittedError ? (
+
+          {submittedError && (
             <p className={styles['form-error']}>{submittedError}</p>
-          ) : null}
+          )}
         </form>
       </div>
-      {isSubmittedSuccess ? <SuccessMessage type="financing" /> : null}
+
+      {isSubmittedSuccess && <SuccessMessage type="financing" />}
     </>
   )
 }
