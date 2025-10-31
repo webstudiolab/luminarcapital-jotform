@@ -119,10 +119,7 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
       */
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } }
-      setSubmittedError(
-        error.response?.data?.message ||
-          'Submission failed. Please try again.',
-      )
+      setSubmittedError(error.response?.data?.message || 'Submission failed')
       setTimeout(() => setSubmittedError(null), 3000)
     } finally {
       setIsSubmitting(false)
