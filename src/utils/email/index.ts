@@ -23,9 +23,9 @@ export const sendEmail = async ({
   htmlMessage = '',
 }: ISendEmail) => {
   const recipient = to || process.env.RECIPIENT_EMAIL
-  
+
   console.log('Sending email to:', recipient)
-  
+
   return await transporter.sendMail({
     from: {
       name: process.env.SENDER_NAME!,
