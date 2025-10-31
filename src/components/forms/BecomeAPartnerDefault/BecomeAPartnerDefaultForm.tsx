@@ -80,7 +80,6 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
     try {
       // TEMPORARY: WordPress API commented out until backend is ready
       // Once WordPress is set up, uncomment the code below and remove the direct email approach
-      
       /*
       const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
@@ -89,7 +88,6 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
 
       if (response.data.success && response.status === 200) {
       */
-      
       // TEMPORARY: Send emails directly without WordPress API
       // Send email to admin
       await browserSendEmail({
@@ -116,13 +114,15 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
         })
         setConsent(false)
       }, 1000)
-      
       /*
       }
       */
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } }
-      setSubmittedError(error.response?.data?.message || 'Submission failed. Please try again.')
+      setSubmittedError(
+        error.response?.data?.message ||
+          'Submission failed. Please try again.',
+      )
       setTimeout(() => setSubmittedError(null), 3000)
     } finally {
       setIsSubmitting(false)
