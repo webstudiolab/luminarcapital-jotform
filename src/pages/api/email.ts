@@ -35,9 +35,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // If no 'to' is specified, route based on subject
     if (!to) {
       if (subject && subject.includes('Partner')) {
-        recipientEmail = process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
+        recipientEmail =
+          process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
       } else if (subject && subject.includes('Financing')) {
-        recipientEmail = process.env.FINANCING_EMAIL || 'clientsuccess@luminarcapital.com'
+        recipientEmail =
+          process.env.FINANCING_EMAIL || 'clientsuccess@luminarcapital.com'
       } else {
         recipientEmail = process.env.RECIPIENT_EMAIL
       }
