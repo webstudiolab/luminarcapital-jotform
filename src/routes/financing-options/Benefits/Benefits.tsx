@@ -43,7 +43,7 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
     [router],
   )
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (router.query.scroll) {
       ref.current?.scrollIntoView()
