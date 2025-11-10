@@ -2,35 +2,24 @@ import classNames from 'classnames'
 import Image from 'next/image'
 import styles from './BoardChessOrder.module.scss'
 
-interface AdvantageFields {
-  title?: string
-  description?: string
-  bannerImage?: {
-    node?: {
-      sourceUrl?: string
-    }
-  }
-}
-
-interface CardData {
-  advantageFields?: AdvantageFields
-}
-
 interface IBoardChessOrder {
-  data: CardData[]
+  data: any[]
   order: 'even' | 'odd'
   title: string
   className?: string
 }
 
 interface BannerCardProps {
-  data: CardData
+  data: any
   order: 'even' | 'odd'
   className?: string
 }
 
 const BannerCard = ({ data, order, className }: BannerCardProps) => {
-  const imageUrl = data.advantageFields?.bannerImage?.node?.sourceUrl || ''
+  const imageUrl =
+    data.advantageFields?.bannerImage?.node?.sourceUrl ||
+    data.experienceCardFields?.image?.node?.sourceUrl ||
+    ''
 
   return (
     <div
@@ -44,17 +33,22 @@ const BannerCard = ({ data, order, className }: BannerCardProps) => {
         <div className={styles['banner-card-img']}>
           <Image
             src={imageUrl}
-            alt={data.advantageFields?.title || ''}
+            alt={
+              data.advantageFields?.title ||
+              data.experienceCardFields?.title ||
+              ''
+            }
             width={600}
             height={400}
           />
         </div>
         <div className={styles['banner-card-content']}>
           <h3 className={styles['banner-card-title']}>
-            {data.advantageFields?.title}
+            {data.advantageFields?.title || data.experienceCardFields?.title}
           </h3>
           <p className={styles['banner-card-description']}>
-            {data.advantageFields?.description}
+            {data.advantageFields?.description ||
+              data.experienceCardFields?.description}
           </p>
         </div>
       </div>

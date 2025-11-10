@@ -26,7 +26,7 @@ export default function Home({
   experienceCards,
   homePageData,
 }: {
-  experienceCards: unknown[]
+  experienceCards: any[]
   homePageData: HomePageData
 }) {
   const dispatch = useAppDispatch()

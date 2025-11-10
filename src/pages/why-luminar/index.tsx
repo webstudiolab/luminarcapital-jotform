@@ -27,8 +27,8 @@ export default function WhyLuminar({
   values,
   pageData,
 }: {
-  advantages: unknown[]
-  values: unknown[]
+  advantages: any[]
+  values: any[]
   pageData: WhyLuminarPageData
 }) {
   const dispatch = useAppDispatch()

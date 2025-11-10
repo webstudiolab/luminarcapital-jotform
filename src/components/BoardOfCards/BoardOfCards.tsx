@@ -3,36 +3,21 @@ import classNames from 'classnames'
 import styles from './BoardOfCards.module.scss'
 import { getIconComponent } from '@/lib/iconMap'
 
-interface CardFields {
-  title?: string
-  description?: string
-  icon?: string
-}
-
-interface Card {
-  id: string
-  partnershipFields?: CardFields
-  valueFields?: CardFields
-  benefitFields?: CardFields
-}
-
 interface IBoardOfCards {
   title: string
-  cards: Card[]
+  cards: any[]
   className?: string
   columns?: 'auto'
 }
 
-const getCardType = (
-  card: Card,
-): 'partnership' | 'value' | 'benefit' | null => {
+const getCardType = (card: any): 'partnership' | 'value' | 'benefit' | null => {
   if (card.partnershipFields) return 'partnership'
   if (card.valueFields) return 'value'
   if (card.benefitFields) return 'benefit'
   return null
 }
 
-const getCardFields = (card: Card): CardFields | undefined => {
+const getCardFields = (card: any): any => {
   const type = getCardType(card)
   if (type === 'partnership') return card.partnershipFields
   if (type === 'value') return card.valueFields
@@ -41,7 +26,7 @@ const getCardFields = (card: Card): CardFields | undefined => {
 }
 
 interface ICard {
-  data: Card
+  data: any
   className?: string
 }
 

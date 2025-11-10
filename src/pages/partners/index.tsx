@@ -25,7 +25,7 @@ export default function Partners({
   partnerships,
   pageData,
 }: {
-  partnerships: unknown[]
+  partnerships: any[]
   pageData: PartnersPageData
 }) {
   const dispatch = useAppDispatch()
