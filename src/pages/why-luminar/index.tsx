@@ -13,6 +13,15 @@ const BoardOfCards = dynamic(
   { ssr: false },
 )
 
+interface WhyLuminarPageData {
+  whyLuminarPageFields?: {
+    heroTitle?: string
+    heroDescription?: string
+    advantagesSectionTitle?: string
+    valuesSectionTitle?: string
+  }
+}
+
 export default function WhyLuminar({
   advantages,
   values,
@@ -20,7 +29,7 @@ export default function WhyLuminar({
 }: {
   advantages: unknown[]
   values: unknown[]
-  pageData: unknown
+  pageData: WhyLuminarPageData
 }) {
   const dispatch = useAppDispatch()
   const pageFields = pageData?.whyLuminarPageFields || {}

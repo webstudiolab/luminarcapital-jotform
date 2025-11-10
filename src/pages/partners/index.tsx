@@ -13,12 +13,20 @@ const BoardOfCards = dynamic(
   { ssr: false },
 )
 
+interface PartnersPageData {
+  partnersPageFields?: {
+    heroTitle?: string
+    heroDescription?: string
+    portfolioSectionTitle?: string
+  }
+}
+
 export default function Partners({
   partnerships,
   pageData,
 }: {
   partnerships: unknown[]
-  pageData: unknown
+  pageData: PartnersPageData
 }) {
   const dispatch = useAppDispatch()
   const pageFields = pageData?.partnersPageFields || {}

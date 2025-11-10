@@ -4,7 +4,16 @@ import DefaultForms from '@/components/DefaultForms/DefaultForms'
 import ContactsData from '@/routes/contact/ContactsData/ContactsData'
 import { getPageBySlug } from '@/lib/wordpress'
 
-export default function Contact({ pageData }: { pageData: unknown }) {
+interface ContactPageData {
+  contactPageFields?: {
+    phone?: string
+    email?: string
+    address?: string
+    googleMapsEmbedUrl?: string
+  }
+}
+
+export default function Contact({ pageData }: { pageData: ContactPageData }) {
   const contactFields = pageData?.contactPageFields || {}
 
   return (

@@ -8,12 +8,22 @@ import CTASolid from '@/ui/components/CTASolid/CTASolid'
 import { openModal } from '@/store/slices/modalSlice'
 import { getBenefits, getPageBySlug } from '@/lib/wordpress'
 
+interface FinancingPageData {
+  financingOptionsPageFields?: {
+    heroTitle?: string
+    heroDescription?: string
+    benefitsSectionTitle?: string
+    ctaTitle?: string
+    ctaDescription?: string
+  }
+}
+
 export default function FinancingOptions({
   benefits,
   pageData,
 }: {
   benefits: unknown[]
-  pageData: unknown
+  pageData: FinancingPageData
 }) {
   const dispatch = useAppDispatch()
   const pageFields = pageData?.financingOptionsPageFields || {}
