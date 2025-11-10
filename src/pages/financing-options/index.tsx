@@ -22,7 +22,7 @@ export default function FinancingOptions({
   benefits,
   pageData,
 }: {
-  benefits: any[]
+  benefits: unknown[]
   pageData: FinancingPageData
 }) {
   const dispatch = useAppDispatch()

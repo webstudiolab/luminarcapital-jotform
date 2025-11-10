@@ -9,21 +9,9 @@ import styles from './Benefits.module.scss'
 import { scrollTo } from '@/utils/window/scrollTo'
 import { getIconComponent } from '@/lib/iconMap'
 
-interface BenefitFields {
-  title?: string
-  description?: string
-  icon?: string
-  order?: number
-}
-
-interface Benefit {
-  id: string
-  benefitFields?: BenefitFields
-}
-
 interface IBenefits {
   className?: string
-  benefits?: Benefit[]
+  benefits?: unknown[]
   sectionTitle?: string
 }
 
@@ -65,7 +53,6 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
     if (router.query.origin && !router.query.scroll) {
       scrollTo('benefits-description')
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.origin])
 
   // If WordPress benefits provided, use those instead of tabs
@@ -91,9 +78,9 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
         <div className={styles['section-list']}>
           <div className="content-block">
             <div className="row center-lg">
-              {benefits.map((benefit, index) => {
-                const fields = benefit.benefitFields
-                const iconName = fields?.icon || 'check'
+              {benefits.map((benefit: Record<string, any>, index: number) => {
+                const fields = benefit.benefitFields || {}
+                const iconName = fields.icon || 'check'
                 const IconComponent = getIconComponent(iconName)
 
                 return (
@@ -107,10 +94,10 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
                       </div>
                       <div className={styles['benefit-card-content']}>
                         <h3 className={styles['benefit-card-title']}>
-                          {fields?.title}
+                          {fields.title}
                         </h3>
                         <p className={styles['benefit-card-description']}>
-                          {fields?.description}
+                          {fields.description}
                         </p>
                       </div>
                     </div>
