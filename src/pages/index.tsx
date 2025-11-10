@@ -33,8 +33,6 @@ export default function Home({
 }) {
   const dispatch = useAppDispatch()
   const homeFields = homePageData?.homePageFields || {}
-  const dispatch = useAppDispatch()
-  const homeFields = homePageData?.homePageFields || {}
 
   return (
     <>
