@@ -2,108 +2,94 @@ import classNames from 'classnames'
 import Image from 'next/image'
 import styles from './BoardChessOrder.module.scss'
 
+interface AdvantageFields {
+  title?: string
+  description?: string
+  bannerImage?: {
+    node?: {
+      sourceUrl?: string
+    }
+  }
+}
+
+interface CardData {
+  advantageFields?: AdvantageFields
+}
+
 interface IBoardChessOrder {
-  className?: string
-  title: string
-  data: any[] // WordPress data
+  data: CardData[]
   order: 'even' | 'odd'
+  title: string
+  className?: string
+}
+
+interface BannerCardProps {
+  data: CardData
+  order: 'even' | 'odd'
+  className?: string
+}
+
+const BannerCard = ({ data, order, className }: BannerCardProps) => {
+  const imageUrl = data.advantageFields?.bannerImage?.node?.sourceUrl || ''
+
+  return (
+    <div
+      className={classNames(
+        styles['banner-card'],
+        styles[`banner-card--${order}`],
+        className,
+      )}
+    >
+      <div className={styles['banner-card-wrapper']}>
+        <div className={styles['banner-card-img']}>
+          <Image
+            src={imageUrl}
+            alt={data.advantageFields?.title || ''}
+            width={600}
+            height={400}
+          />
+        </div>
+        <div className={styles['banner-card-content']}>
+          <h3 className={styles['banner-card-title']}>
+            {data.advantageFields?.title}
+          </h3>
+          <p className={styles['banner-card-description']}>
+            {data.advantageFields?.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const BoardChessOrder = ({
-  className,
+  data,
+  order,
   title,
-  data = [],
-  order = 'odd',
+  className,
 }: IBoardChessOrder) => {
-  
-  // Transform WordPress data to component format
-  const formattedData = data.map((item: any) => {
-    // Check if it's advantages or experience cards based on fields
-    const isAdvantage = item.advantageFields
-    const isExperienceCard = item.experienceCardFields
-    
-    if (isAdvantage) {
-      return {
-        title: item.title,
-        description: item.content?.replace(/<[^>]*>/g, '') || '',
-        image: item.advantageFields?.bannerImage?.node?.sourceUrl || '',
-        label: undefined
-      }
-    }
-    
-    if (isExperienceCard) {
-      return {
-        title: item.title,
-        description: item.content?.replace(/<[^>]*>/g, '') || '',
-        image: item.experienceCardFields?.bannerImage?.node?.sourceUrl || '',
-        label: item.experienceCardFields?.label || undefined
-      }
-    }
-    
-    return {
-      title: item.title,
-      description: item.content?.replace(/<[^>]*>/g, '') || '',
-      image: '',
-      label: undefined
-    }
-  })
-  
-  if (formattedData.length > 0) {
-    return (
-      <section
-        className={classNames(
-          styles['section'],
-          'p-80-0 section-bg',
-          className,
-        )}
-      >
-        <div className="content-block">
-          <div className="section-title text-center">
-            <h2 className="h1">{title}</h2>
-          </div>
-          <div className={classNames(styles['section-list'], styles[order])}>
-            {formattedData.map((item, index) => (
-              <div
-                key={`board-chess-item-${index}`}
-                className={styles['section-list-item']}
-              >
-                <div className="row">
-                  <div className="col-md-12 col-lg-6 col-gutter-lr">
-                    <div className={styles['section-content']}>
-                      {item.label ? (
-                        <p className={styles['section-content-label']}>
-                          {item.label}
-                        </p>
-                      ) : null}
-                      <p
-                        className={classNames(
-                          styles['section-content-title'],
-                          'h2',
-                        )}
-                      >
-                        {item.title}
-                      </p>
-                      <p className={styles['section-content-description']}>
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col-md-12 col-lg-6 col-gutter-lr">
-                    <div className={styles['section-banner']}>
-                      {item.image && (
-                        <Image src={item.image} alt={item.title} fill />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+  return (
+    <section className={classNames(styles['section'], className)}>
+      <div className="content-block">
+        <div className={styles['section-panel']}>
+          <h2 className="h1">{title}</h2>
         </div>
-      </section>
-    )
-  }
-  return null
+        <div className={styles['section-panel']}>
+          {data.map((item, index) => {
+            const cardOrder =
+              index % 2 === 0 ? order : order === 'even' ? 'odd' : 'even'
+            return (
+              <BannerCard
+                key={`banner-card-${index}`}
+                data={item}
+                order={cardOrder}
+              />
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default BoardChessOrder

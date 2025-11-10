@@ -4,9 +4,9 @@ import DefaultForms from '@/components/DefaultForms/DefaultForms'
 import ContactsData from '@/routes/contact/ContactsData/ContactsData'
 import { getPageBySlug } from '@/lib/wordpress'
 
-export default function Contact({ pageData }: any) {
+export default function Contact({ pageData }: { pageData: unknown }) {
   const contactFields = pageData?.contactPageFields || {}
-  
+
   return (
     <>
       <Head>
@@ -28,11 +28,11 @@ export default function Contact({ pageData }: any) {
 
 export const getStaticProps = async () => {
   const pageData = await getPageBySlug('contact')
-  
+
   return {
     props: {
-      pageData
+      pageData,
     },
-    revalidate: 60
+    revalidate: 60,
   }
 }

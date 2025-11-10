@@ -13,10 +13,18 @@ const BoardOfCards = dynamic(
   { ssr: false },
 )
 
-export default function WhyLuminar({ advantages, values, pageData }: any) {
+export default function WhyLuminar({
+  advantages,
+  values,
+  pageData,
+}: {
+  advantages: unknown[]
+  values: unknown[]
+  pageData: unknown
+}) {
   const dispatch = useAppDispatch()
   const pageFields = pageData?.whyLuminarPageFields || {}
-  
+
   return (
     <>
       <Head>
@@ -28,7 +36,10 @@ export default function WhyLuminar({ advantages, values, pageData }: any) {
       </Head>
       <HeroDefault
         title={pageFields.heroTitle || 'Why Luminar Capital'}
-        description={pageFields.heroDescription || 'There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals.'}
+        description={
+          pageFields.heroDescription ||
+          'There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals.'
+        }
         banner="/json/why_lum.json"
         actions={
           <>
@@ -50,9 +61,9 @@ export default function WhyLuminar({ advantages, values, pageData }: any) {
           </>
         }
       />
-      <BoardOfCards 
-        title={pageFields.valuesSectionTitle || 'Our Values'} 
-        cards={values} 
+      <BoardOfCards
+        title={pageFields.valuesSectionTitle || 'Our Values'}
+        cards={values}
       />
       <BoardChessOrder
         title={pageFields.advantagesSectionTitle || 'The Luminar Advantage'}
@@ -73,13 +84,13 @@ export const getStaticProps = async () => {
   const advantages = await getAdvantages()
   const values = await getValues()
   const pageData = await getPageBySlug('why-luminar')
-  
+
   return {
     props: {
       advantages,
       values,
-      pageData
+      pageData,
     },
-    revalidate: 60
+    revalidate: 60,
   }
 }

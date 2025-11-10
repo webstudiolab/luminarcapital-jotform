@@ -8,10 +8,16 @@ import CTASolid from '@/ui/components/CTASolid/CTASolid'
 import { openModal } from '@/store/slices/modalSlice'
 import { getBenefits, getPageBySlug } from '@/lib/wordpress'
 
-export default function FinancingOptions({ benefits, pageData }: any) {
+export default function FinancingOptions({
+  benefits,
+  pageData,
+}: {
+  benefits: unknown[]
+  pageData: unknown
+}) {
   const dispatch = useAppDispatch()
   const pageFields = pageData?.financingOptionsPageFields || {}
-  
+
   return (
     <>
       <Head>
@@ -23,7 +29,10 @@ export default function FinancingOptions({ benefits, pageData }: any) {
       </Head>
       <HeroDefault
         title={pageFields.heroTitle || 'Financing Options'}
-        description={pageFields.heroDescription || 'Looking for financing catered to your business needs? Our personalized solutions factor incoming revenue and cash flow, not just your credit which provides a different approach compared to conventional products.'}
+        description={
+          pageFields.heroDescription ||
+          'Looking for financing catered to your business needs? Our personalized solutions factor incoming revenue and cash flow, not just your credit which provides a different approach compared to conventional products.'
+        }
         banner="/json/financing.json"
         actions={
           <>
@@ -37,11 +46,20 @@ export default function FinancingOptions({ benefits, pageData }: any) {
           </>
         }
       />
-      <Benefits benefits={benefits} sectionTitle={pageFields.benefitsSectionTitle} />
+      <Benefits
+        benefits={benefits}
+        sectionTitle={pageFields.benefitsSectionTitle}
+      />
       <CTASolid />
       <CallToAction
-        title={pageFields.ctaTitle || 'Want to learn more about our financing options?'}
-        description={pageFields.ctaDescription || 'Contact us and connect with one of our financing professionals that can help you navigate through the steps!'}
+        title={
+          pageFields.ctaTitle ||
+          'Want to learn more about our financing options?'
+        }
+        description={
+          pageFields.ctaDescription ||
+          'Contact us and connect with one of our financing professionals that can help you navigate through the steps!'
+        }
         link={{ label: 'Get in Touch', href: '/contact?origin=1' }}
       />
     </>
@@ -51,12 +69,12 @@ export default function FinancingOptions({ benefits, pageData }: any) {
 export const getStaticProps = async () => {
   const benefits = await getBenefits()
   const pageData = await getPageBySlug('financing-options')
-  
+
   return {
     props: {
       benefits,
-      pageData
+      pageData,
     },
-    revalidate: 60
+    revalidate: 60,
   }
 }

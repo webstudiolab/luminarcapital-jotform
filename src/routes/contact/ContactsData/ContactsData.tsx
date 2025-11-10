@@ -24,16 +24,14 @@ interface IContactsDataItem {
 
 const ContactsDataItem = ({ data: contact }: { data: IContactsDataItem }) => {
   const labelRef = useRef<HTMLSpanElement | null>(null)
-  
+
   return (
     <a
       href={contact.href}
       className={styles['link']}
       target={contact.blank ? '_blank' : '_self'}
     >
-      <span className={styles['link-icon']}>
-        {createElement(contact.icon)}
-      </span>
+      <span className={styles['link-icon']}>{createElement(contact.icon)}</span>
       <span className={styles['link-label']} ref={labelRef}>
         {contact.label}
       </span>
@@ -65,13 +63,17 @@ const ContactsData = ({ className, contactInfo }: IContactsData) => {
 
   const contacts: IContactsDataItem[] = [
     {
-      href: contactInfo?.phone ? `tel:${contactInfo.phone.replace(/[^0-9]/g, '')}` : defaultContacts[0].href,
+      href: contactInfo?.phone
+        ? `tel:${contactInfo.phone.replace(/[^0-9]/g, '')}`
+        : defaultContacts[0].href,
       label: contactInfo?.phone || defaultContacts[0].label,
       blank: false,
       icon: PhoneIcon,
     },
     {
-      href: contactInfo?.email ? `mailto:${contactInfo.email}` : defaultContacts[1].href,
+      href: contactInfo?.email
+        ? `mailto:${contactInfo.email}`
+        : defaultContacts[1].href,
       label: contactInfo?.email || defaultContacts[1].label,
       blank: true,
       icon: MailIcon,

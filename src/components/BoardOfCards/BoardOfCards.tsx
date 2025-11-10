@@ -1,129 +1,95 @@
-import { useEffect, useState, useRef } from 'react'
+import { createElement } from 'react'
 import classNames from 'classnames'
-import Slider from 'react-slick'
-import { cardsCarouselSettings } from '@/config/constants'
-import FinancingOptionCard from '@/ui/components/FinancingOptionCard/FinancingOptionCard'
-import { getIconComponent } from '@/lib/iconMap'
 import styles from './BoardOfCards.module.scss'
+import { getIconComponent } from '@/lib/iconMap'
 
-interface IBoardOfCards {
-  className?: string
-  title: string
-  cards: any[]
+interface CardFields {
+  title?: string
+  description?: string
+  icon?: string
 }
 
-const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
-  const [isDesktop, setIsDesktop] = useState<boolean>(true)
-  const [maxHeightOfCards, setMaxHeightOfCards] = useState<number | 'auto'>('auto')
-  const [trackHeight, setTrackHeight] = useState<number | 'auto'>('auto')
-  const maxHeightRef = useRef<number>(0)
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([])
+interface Card {
+  id: string
+  partnershipFields?: CardFields
+  valueFields?: CardFields
+  benefitFields?: CardFields
+}
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsDesktop(window.innerWidth > 600)
-    }
-  }, [])
+interface IBoardOfCards {
+  title: string
+  cards: Card[]
+  className?: string
+  columns?: 'auto'
+}
 
-  useEffect(() => {
-    let maxHeight = 0
-    cardRefs.current.forEach((card) => {
-      if (card) {
-        const height = card.getBoundingClientRect().height
-        if (height > maxHeight) {
-          maxHeight = height
-        }
-      }
-    })
-    if (maxHeight !== maxHeightRef.current) {
-      maxHeightRef.current = maxHeight
-      setMaxHeightOfCards(maxHeightRef.current)
-    }
-  }, [cards])
+const getCardType = (
+  card: Card,
+): 'partnership' | 'value' | 'benefit' | null => {
+  if (card.partnershipFields) return 'partnership'
+  if (card.valueFields) return 'value'
+  if (card.benefitFields) return 'benefit'
+  return null
+}
 
-  // Transform WordPress data to component format
-  const formattedCards = cards.map((card: any) => {
-    // Get icon name from either partnerships or values
-    const iconName = card.partnershipFields?.iconName || card.valueFields?.iconName || ''
-    
-    return {
-      title: card.title,
-      description: card.content?.replace(/<[^>]*>/g, '') || '',
-      icon: getIconComponent(iconName),
-      href: undefined
-    }
-  })
+const getCardFields = (card: Card): CardFields | undefined => {
+  const type = getCardType(card)
+  if (type === 'partnership') return card.partnershipFields
+  if (type === 'value') return card.valueFields
+  if (type === 'benefit') return card.benefitFields
+  return undefined
+}
 
-  if (formattedCards.length > 0) {
-    return (
-      <section className={classNames(styles['section'], 'p-100-0', className)}>
-        <div className="content-block">
-          <div
-            className={classNames(
-              styles['section-title'],
-              'section-title text-center',
-            )}
-          >
-            <h2 className="h1">{title}</h2>
-          </div>
-          <div className={styles['section-cards']}>
-            {!isDesktop ? (
-              <>
-                <Slider
-                  {...cardsCarouselSettings}
-                  className="board-slider"
-                  onInit={() => {
-                    const track = document.querySelector(
-                      '.board-slider .slick-track',
-                    )
-                    if (track) {
-                      setTrackHeight(track.getBoundingClientRect().height)
-                    }
-                  }}
-                >
-                  {formattedCards.map(({ title, description, icon, href }, index) => (
-                    <div key={`financing-card-${index}`}>
-                      <div style={{ height: trackHeight }}>
-                        <FinancingOptionCard
-                          title={title}
-                          description={description}
-                          icon={icon}
-                          href={href}
-                          className={styles['section-cards-slide']}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </Slider>
-              </>
-            ) : (
-              <div className="row">
-                {formattedCards.map(({ title, description, icon, href }, index) => (
-                  <div
-                    className="col-sm-12 col-md-6"
-                    key={`financing-card-${index}`}
-                    ref={(element) => {
-                      cardRefs.current[index] = element
-                    }}
-                    style={{ height: maxHeightOfCards }}
-                  >
-                    <FinancingOptionCard
-                      title={title}
-                      description={description}
-                      icon={icon}
-                      href={href}
-                      className={styles['section-cards-slide']}
-                    />
-                  </div>
-                ))}
+interface ICard {
+  data: Card
+  className?: string
+}
+
+const Card = ({ data, className }: ICard) => {
+  const fields = getCardFields(data)
+  const iconName = fields?.icon || 'check'
+  const IconComponent = getIconComponent(iconName)
+
+  return (
+    <div className={classNames(styles['card'], className)}>
+      <div className={styles['card-icon']}>{createElement(IconComponent)}</div>
+      <div className={styles['card-content']}>
+        <h3 className={styles['card-title']}>{fields?.title}</h3>
+        <p className={styles['card-description']}>{fields?.description}</p>
+      </div>
+    </div>
+  )
+}
+
+const BoardOfCards = ({
+  cards,
+  title,
+  className,
+  columns = 'auto',
+}: IBoardOfCards) => {
+  return (
+    <section className={classNames(styles['section'], className)}>
+      <div className="content-block">
+        <div className={styles['section-panel']}>
+          <h2 className="h1">{title}</h2>
+        </div>
+        <div
+          className={classNames(
+            styles['section-panel'],
+            styles[`section-panel--columns-${columns}`],
+          )}
+        >
+          <div className="row">
+            {cards.map((card, index) => (
+              <div key={`card-${index}`} className="col-xs-12 col-lg-6">
+                <Card data={card} />
               </div>
-            )}
+            ))}
           </div>
         </div>
-      </section>
-    )
-  }
-  return null
+      </div>
+    </section>
+  )
 }
 
 export default BoardOfCards

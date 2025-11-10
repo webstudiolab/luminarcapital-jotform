@@ -13,10 +13,16 @@ const BoardOfCards = dynamic(
   { ssr: false },
 )
 
-export default function Partners({ partnerships, pageData }: any) {
+export default function Partners({
+  partnerships,
+  pageData,
+}: {
+  partnerships: unknown[]
+  pageData: unknown
+}) {
   const dispatch = useAppDispatch()
   const pageFields = pageData?.partnersPageFields || {}
-  
+
   return (
     <>
       <Head>
@@ -28,7 +34,10 @@ export default function Partners({ partnerships, pageData }: any) {
       </Head>
       <HeroDefault
         title={pageFields.heroTitle || 'Partner with Luminar'}
-        description={pageFields.heroDescription || 'Join us in our mission to empower small businesses with the financing they deserve, backed by a trusted partner.'}
+        description={
+          pageFields.heroDescription ||
+          'Join us in our mission to empower small businesses with the financing they deserve, backed by a trusted partner.'
+        }
         banner="/json/partners.json"
         actions={
           <>
@@ -42,9 +51,9 @@ export default function Partners({ partnerships, pageData }: any) {
           </>
         }
       />
-      <BoardOfCards 
-        title={pageFields.portfolioSectionTitle || 'The Luminar Partnership'} 
-        cards={partnerships} 
+      <BoardOfCards
+        title={pageFields.portfolioSectionTitle || 'The Luminar Partnership'}
+        cards={partnerships}
       />
       <Portfolio />
       <DefaultForms />
@@ -55,12 +64,12 @@ export default function Partners({ partnerships, pageData }: any) {
 export const getStaticProps = async () => {
   const partnerships = await getPartnerships()
   const pageData = await getPageBySlug('partners')
-  
+
   return {
     props: {
       partnerships,
-      pageData
+      pageData,
     },
-    revalidate: 60
+    revalidate: 60,
   }
 }

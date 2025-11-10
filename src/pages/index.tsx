@@ -11,13 +11,19 @@ import CTAStyles from '@/routes/home/CTA/CallToAction.module.scss'
 
 const BoardChessOrder = dynamic(
   () => import('@/components/BoardChessOrder/BoardChessOrder'),
-  { ssr: true }
+  { ssr: true },
 )
 
-export default function Home({ experienceCards, pageData }: any) {
+export default function Home({
+  experienceCards,
+  homePageData,
+}: {
+  experienceCards: unknown[]
+  homePageData: unknown
+}) {
   const dispatch = useAppDispatch()
   const homeFields = pageData?.homePageFields || {}
-  
+
   return (
     <>
       <Head>
@@ -28,8 +34,14 @@ export default function Home({ experienceCards, pageData }: any) {
         />
       </Head>
       <HeroHome
-        title={homeFields.heroTitle || 'Flexible financing options that fuel the growth of small businesses.'}
-        description={homeFields.heroSubtitle || 'Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow.'}
+        title={
+          homeFields.heroTitle ||
+          'Flexible financing options that fuel the growth of small businesses.'
+        }
+        description={
+          homeFields.heroSubtitle ||
+          'Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow.'
+        }
         banner={homeFields.heroLottieJson || '/json/Main_illust.json'}
         actions={
           <>
@@ -53,7 +65,10 @@ export default function Home({ experienceCards, pageData }: any) {
       />
       <FinancingOptions />
       <BoardChessOrder
-        title={homeFields.personalizedExperienceSectionTitle || 'A Personalized Experience'}
+        title={
+          homeFields.personalizedExperienceSectionTitle ||
+          'A Personalized Experience'
+        }
         data={experienceCards}
         order="even"
         className="personalized-experience"
@@ -71,17 +86,17 @@ export default function Home({ experienceCards, pageData }: any) {
 export const getStaticProps = async () => {
   const experienceCards = await getExperienceCards()
   const pageData = await getPageBySlug('home')
-  
+
   console.log('=== PAGE DATA DEBUG ===')
   console.log('Full pageData:', JSON.stringify(pageData, null, 2))
   console.log('homePageFields:', pageData?.homePageFields)
   console.log('======================')
-  
+
   return {
     props: {
       experienceCards,
-      pageData
+      pageData,
     },
-    revalidate: 60
+    revalidate: 60,
   }
 }
