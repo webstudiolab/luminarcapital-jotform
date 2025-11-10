@@ -2,8 +2,11 @@ import Head from 'next/head'
 import HeroSimple from '@/components/HeroSimple/HeroSimple'
 import DefaultForms from '@/components/DefaultForms/DefaultForms'
 import ContactsData from '@/routes/contact/ContactsData/ContactsData'
+import { getPageBySlug } from '@/lib/wordpress'
 
-export default function Contact() {
+export default function Contact({ pageData }: any) {
+  const contactFields = pageData?.contactPageFields || {}
+  
   return (
     <>
       <Head>
@@ -17,14 +20,19 @@ export default function Contact() {
         title="Get In Touch"
         description="Ready to explore your financing options? Interested in becoming a partner? Need assistance with an existing account? Have a question you'd like answered? Reach out, we're here to help!"
       />
-      <ContactsData />
+      <ContactsData contactInfo={contactFields} />
       <DefaultForms />
     </>
   )
 }
 
 export const getStaticProps = async () => {
+  const pageData = await getPageBySlug('contact')
+  
   return {
-    props: {},
+    props: {
+      pageData
+    },
+    revalidate: 60
   }
 }

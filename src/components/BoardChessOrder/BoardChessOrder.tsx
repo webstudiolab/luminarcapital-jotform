@@ -1,12 +1,11 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-import { IBoardChessOrderCard } from '@/types'
 import styles from './BoardChessOrder.module.scss'
 
 interface IBoardChessOrder {
   className?: string
   title: string
-  data: IBoardChessOrderCard[]
+  data: any[] // WordPress data
   order: 'even' | 'odd'
 }
 
@@ -16,7 +15,40 @@ const BoardChessOrder = ({
   data = [],
   order = 'odd',
 }: IBoardChessOrder) => {
-  if (data.length > 0) {
+  
+  // Transform WordPress data to component format
+  const formattedData = data.map((item: any) => {
+    // Check if it's advantages or experience cards based on fields
+    const isAdvantage = item.advantageFields
+    const isExperienceCard = item.experienceCardFields
+    
+    if (isAdvantage) {
+      return {
+        title: item.title,
+        description: item.content?.replace(/<[^>]*>/g, '') || '',
+        image: item.advantageFields?.bannerImage?.node?.sourceUrl || '',
+        label: undefined
+      }
+    }
+    
+    if (isExperienceCard) {
+      return {
+        title: item.title,
+        description: item.content?.replace(/<[^>]*>/g, '') || '',
+        image: item.experienceCardFields?.bannerImage?.node?.sourceUrl || '',
+        label: item.experienceCardFields?.label || undefined
+      }
+    }
+    
+    return {
+      title: item.title,
+      description: item.content?.replace(/<[^>]*>/g, '') || '',
+      image: '',
+      label: undefined
+    }
+  })
+  
+  if (formattedData.length > 0) {
     return (
       <section
         className={classNames(
@@ -30,9 +62,9 @@ const BoardChessOrder = ({
             <h2 className="h1">{title}</h2>
           </div>
           <div className={classNames(styles['section-list'], styles[order])}>
-            {data.map((item, index) => (
+            {formattedData.map((item, index) => (
               <div
-                key={`personalized-experience-${index}`}
+                key={`board-chess-item-${index}`}
                 className={styles['section-list-item']}
               >
                 <div className="row">
@@ -58,7 +90,9 @@ const BoardChessOrder = ({
                   </div>
                   <div className="col-md-12 col-lg-6 col-gutter-lr">
                     <div className={styles['section-banner']}>
-                      <Image src={item.image} alt={item.title} fill />
+                      {item.image && (
+                        <Image src={item.image} alt={item.title} fill />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -69,7 +103,6 @@ const BoardChessOrder = ({
       </section>
     )
   }
-
   return null
 }
 

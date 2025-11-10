@@ -6,10 +6,12 @@ import Benefits from '@/routes/financing-options/Benefits/Benefits'
 import CallToAction from '@/ui/components/CTA/CallToAction'
 import CTASolid from '@/ui/components/CTASolid/CTASolid'
 import { openModal } from '@/store/slices/modalSlice'
+import { getBenefits, getPageBySlug } from '@/lib/wordpress'
 
-export default function FinancingOptions() {
+export default function FinancingOptions({ benefits, pageData }: any) {
   const dispatch = useAppDispatch()
-
+  const pageFields = pageData?.financingOptionsPageFields || {}
+  
   return (
     <>
       <Head>
@@ -20,8 +22,8 @@ export default function FinancingOptions() {
         />
       </Head>
       <HeroDefault
-        title="Financing Options"
-        description="Looking for financing catered to your business needs? Our personalized solutions factor incoming revenue and cash flow, not just your credit which provides a different approach compared to conventional products."
+        title={pageFields.heroTitle || 'Financing Options'}
+        description={pageFields.heroDescription || 'Looking for financing catered to your business needs? Our personalized solutions factor incoming revenue and cash flow, not just your credit which provides a different approach compared to conventional products.'}
         banner="/json/financing.json"
         actions={
           <>
@@ -35,11 +37,11 @@ export default function FinancingOptions() {
           </>
         }
       />
-      <Benefits />
+      <Benefits benefits={benefits} sectionTitle={pageFields.benefitsSectionTitle} />
       <CTASolid />
       <CallToAction
-        title="Want to learn more about our financing options?"
-        description="Contact us and connect with one of our financing professionals that can help you navigate through the steps!"
+        title={pageFields.ctaTitle || 'Want to learn more about our financing options?'}
+        description={pageFields.ctaDescription || 'Contact us and connect with one of our financing professionals that can help you navigate through the steps!'}
         link={{ label: 'Get in Touch', href: '/contact?origin=1' }}
       />
     </>
@@ -47,7 +49,14 @@ export default function FinancingOptions() {
 }
 
 export const getStaticProps = async () => {
+  const benefits = await getBenefits()
+  const pageData = await getPageBySlug('financing-options')
+  
   return {
-    props: {},
+    props: {
+      benefits,
+      pageData
+    },
+    revalidate: 60
   }
 }

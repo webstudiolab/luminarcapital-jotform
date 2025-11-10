@@ -3,20 +3,18 @@ import classNames from 'classnames'
 import Slider from 'react-slick'
 import { cardsCarouselSettings } from '@/config/constants'
 import FinancingOptionCard from '@/ui/components/FinancingOptionCard/FinancingOptionCard'
-import { IFinancingOptionCard } from '@/types'
+import { getIconComponent } from '@/lib/iconMap'
 import styles from './BoardOfCards.module.scss'
 
 interface IBoardOfCards {
   className?: string
   title: string
-  cards: IFinancingOptionCard[]
+  cards: any[]
 }
 
 const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
   const [isDesktop, setIsDesktop] = useState<boolean>(true)
-  const [maxHeightOfCards, setMaxHeightOfCards] = useState<number | 'auto'>(
-    'auto',
-  )
+  const [maxHeightOfCards, setMaxHeightOfCards] = useState<number | 'auto'>('auto')
   const [trackHeight, setTrackHeight] = useState<number | 'auto'>('auto')
   const maxHeightRef = useRef<number>(0)
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
@@ -29,7 +27,6 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
 
   useEffect(() => {
     let maxHeight = 0
-
     cardRefs.current.forEach((card) => {
       if (card) {
         const height = card.getBoundingClientRect().height
@@ -38,14 +35,26 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
         }
       }
     })
-
     if (maxHeight !== maxHeightRef.current) {
       maxHeightRef.current = maxHeight
       setMaxHeightOfCards(maxHeightRef.current)
     }
   }, [cards])
 
-  if (cards.length > 0) {
+  // Transform WordPress data to component format
+  const formattedCards = cards.map((card: any) => {
+    // Get icon name from either partnerships or values
+    const iconName = card.partnershipFields?.iconName || card.valueFields?.iconName || ''
+    
+    return {
+      title: card.title,
+      description: card.content?.replace(/<[^>]*>/g, '') || '',
+      icon: getIconComponent(iconName),
+      href: undefined
+    }
+  })
+
+  if (formattedCards.length > 0) {
     return (
       <section className={classNames(styles['section'], 'p-100-0', className)}>
         <div className="content-block">
@@ -72,7 +81,7 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
                     }
                   }}
                 >
-                  {cards.map(({ title, description, icon, href }, index) => (
+                  {formattedCards.map(({ title, description, icon, href }, index) => (
                     <div key={`financing-card-${index}`}>
                       <div style={{ height: trackHeight }}>
                         <FinancingOptionCard
@@ -89,7 +98,7 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
               </>
             ) : (
               <div className="row">
-                {cards.map(({ title, description, icon, href }, index) => (
+                {formattedCards.map(({ title, description, icon, href }, index) => (
                   <div
                     className="col-sm-12 col-md-6"
                     key={`financing-card-${index}`}
@@ -114,7 +123,6 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
       </section>
     )
   }
-
   return null
 }
 

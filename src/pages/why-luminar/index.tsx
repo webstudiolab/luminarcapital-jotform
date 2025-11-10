@@ -3,20 +3,20 @@ import dynamic from 'next/dynamic'
 import { useAppDispatch } from '@/hooks'
 import Button from '@/ui/components/Button/Button'
 import HeroDefault from '@/components/HeroDefault/HeroDefault'
-import { valuesData } from '@/routes/why-luminar/valuesData'
 import BoardChessOrder from '@/components/BoardChessOrder/BoardChessOrder'
-import { advantageData } from '@/routes/why-luminar/advantageData'
 import CallToAction from '@/ui/components/CTA/CallToAction'
 import { openModal } from '@/store/slices/modalSlice'
+import { getAdvantages, getValues, getPageBySlug } from '@/lib/wordpress'
 
 const BoardOfCards = dynamic(
   () => import('@/components/BoardOfCards/BoardOfCards'),
   { ssr: false },
 )
 
-export default function WhyLuminar() {
+export default function WhyLuminar({ advantages, values, pageData }: any) {
   const dispatch = useAppDispatch()
-
+  const pageFields = pageData?.whyLuminarPageFields || {}
+  
   return (
     <>
       <Head>
@@ -27,8 +27,8 @@ export default function WhyLuminar() {
         />
       </Head>
       <HeroDefault
-        title="Why Luminar Capital"
-        description="There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals."
+        title={pageFields.heroTitle || 'Why Luminar Capital'}
+        description={pageFields.heroDescription || 'There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals.'}
         banner="/json/why_lum.json"
         actions={
           <>
@@ -50,10 +50,13 @@ export default function WhyLuminar() {
           </>
         }
       />
-      <BoardOfCards title="Our Values" cards={valuesData} />
+      <BoardOfCards 
+        title={pageFields.valuesSectionTitle || 'Our Values'} 
+        cards={values} 
+      />
       <BoardChessOrder
-        title="The Luminar Advantage"
-        data={advantageData}
+        title={pageFields.advantagesSectionTitle || 'The Luminar Advantage'}
+        data={advantages}
         order="odd"
         className="advantage"
       />
@@ -67,7 +70,16 @@ export default function WhyLuminar() {
 }
 
 export const getStaticProps = async () => {
+  const advantages = await getAdvantages()
+  const values = await getValues()
+  const pageData = await getPageBySlug('why-luminar')
+  
   return {
-    props: {},
+    props: {
+      advantages,
+      values,
+      pageData
+    },
+    revalidate: 60
   }
 }

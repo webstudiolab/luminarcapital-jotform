@@ -1,18 +1,23 @@
 import Head from 'next/head'
+import dynamic from 'next/dynamic'
 import FinancingOptions from '@/routes/home/FinancingOptions/FinancingOptions'
 import Button from '@/ui/components/Button/Button'
 import CallToAction from '@/ui/components/CTA/CallToAction'
 import HeroHome from '@/components/HeroHome/HeroHome'
 import { useAppDispatch } from '@/hooks'
 import { openModal } from '@/store/slices/modalSlice'
-import BoardChessOrder from '@/components/BoardChessOrder/BoardChessOrder'
-import { personalizedExperienceData } from '@/routes/home/personalizedExperienceData'
-import { getReviews } from '@/utils/axios/getReviews'
-import { IGoogleReview } from '@/types'
+import { getExperienceCards, getPageBySlug } from '@/lib/wordpress'
 import CTAStyles from '@/routes/home/CTA/CallToAction.module.scss'
 
-export default function Home() {
+const BoardChessOrder = dynamic(
+  () => import('@/components/BoardChessOrder/BoardChessOrder'),
+  { ssr: true }
+)
+
+export default function Home({ experienceCards, pageData }: any) {
   const dispatch = useAppDispatch()
+  const homeFields = pageData?.homePageFields || {}
+  
   return (
     <>
       <Head>
@@ -23,9 +28,9 @@ export default function Home() {
         />
       </Head>
       <HeroHome
-        title="Flexible financing options that fuel the growth of small businesses."
-        description="Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow."
-        banner="/json/Main_illust.json"
+        title={homeFields.heroTitle || 'Flexible financing options that fuel the growth of small businesses.'}
+        description={homeFields.heroSubtitle || 'Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow.'}
+        banner={homeFields.heroLottieJson || '/json/Main_illust.json'}
         actions={
           <>
             <Button
@@ -34,28 +39,25 @@ export default function Home() {
                 dispatch(openModal({ modal: 'partner', size: 'lg' }))
               }
             >
-              Become a Partner
+              {homeFields.heroCtaSecondaryText || 'Become a Partner'}
             </Button>
             <Button
               onClick={() =>
                 dispatch(openModal({ modal: 'financing', size: 'xl' }))
               }
             >
-              Apply for Financing
+              {homeFields.heroCtaText || 'Apply for Financing'}
             </Button>
           </>
         }
       />
       <FinancingOptions />
       <BoardChessOrder
-        title="A Personalized Experience"
-        data={personalizedExperienceData}
+        title={homeFields.personalizedExperienceSectionTitle || 'A Personalized Experience'}
+        data={experienceCards}
         order="even"
         className="personalized-experience"
       />
-      {/* Hide Google Reviews
-      <ClientReviews data={reviews} />
-      */}
       <CallToAction
         title="Ready To Secure Business Financing?"
         description="Contact us and connect with one of our financing professionals that can help you navigate through the steps!"
@@ -67,16 +69,19 @@ export default function Home() {
 }
 
 export const getStaticProps = async () => {
-  let reviews: IGoogleReview[] = []
-  try {
-    const result = await getReviews()
-    if (result?.data) reviews = result.data
-  } catch (err) {
-    console.warn('Skipping reviews fetch – API URL missing or invalid')
-  }
+  const experienceCards = await getExperienceCards()
+  const pageData = await getPageBySlug('home')
+  
+  console.log('=== PAGE DATA DEBUG ===')
+  console.log('Full pageData:', JSON.stringify(pageData, null, 2))
+  console.log('homePageFields:', pageData?.homePageFields)
+  console.log('======================')
+  
   return {
     props: {
-      reviews,
+      experienceCards,
+      pageData
     },
+    revalidate: 60
   }
 }
