@@ -43,11 +43,12 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
     [router],
   )
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (router.query.scroll) {
       ref.current?.scrollIntoView()
     }
-  }, [router.query.scroll])
+  }, [])
 
   useEffect(() => {
     if (router.query.origin && !router.query.scroll) {
@@ -78,7 +79,7 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
         <div className={styles['section-list']}>
           <div className="content-block">
             <div className="row center-lg">
-              {benefits.map((benefit: Record<string, any>, index: number) => {
+              {benefits.map((benefit: Record<string, unknown>, index: number) => {
                 const fields = benefit.benefitFields || {}
                 const iconName = fields.icon || 'check'
                 const IconComponent = getIconComponent(iconName)
