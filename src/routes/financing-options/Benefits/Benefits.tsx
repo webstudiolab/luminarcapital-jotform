@@ -43,7 +43,7 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
     [router],
   )
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (router.query.scroll) {
       ref.current?.scrollIntoView()
@@ -79,34 +79,32 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
         <div className={styles['section-list']}>
           <div className="content-block">
             <div className="row center-lg">
-              {benefits.map(
-                (benefit: Record<string, unknown>, index: number) => {
-                  const fields = benefit.benefitFields || {}
-                  const iconName = fields.icon || 'check'
-                  const IconComponent = getIconComponent(iconName)
+              {benefits.map((benefit: any, index: number) => {
+                const fields = (benefit as any).benefitFields || {}
+                const iconName = (fields as any).icon || 'check'
+                const IconComponent = getIconComponent(iconName)
 
-                  return (
-                    <div
-                      key={`benefit-card-${index}`}
-                      className="col-xs-12 col-lg-6"
-                    >
-                      <div className={styles['benefit-card']}>
-                        <div className={styles['benefit-card-icon']}>
-                          {createElement(IconComponent)}
-                        </div>
-                        <div className={styles['benefit-card-content']}>
-                          <h3 className={styles['benefit-card-title']}>
-                            {fields.title}
-                          </h3>
-                          <p className={styles['benefit-card-description']}>
-                            {fields.description}
-                          </p>
-                        </div>
+                return (
+                  <div
+                    key={`benefit-card-${index}`}
+                    className="col-xs-12 col-lg-6"
+                  >
+                    <div className={styles['benefit-card']}>
+                      <div className={styles['benefit-card-icon']}>
+                        {createElement(IconComponent)}
+                      </div>
+                      <div className={styles['benefit-card-content']}>
+                        <h3 className={styles['benefit-card-title']}>
+                          {fields.title}
+                        </h3>
+                        <p className={styles['benefit-card-description']}>
+                          {fields.description}
+                        </p>
                       </div>
                     </div>
-                  )
-                },
-              )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
