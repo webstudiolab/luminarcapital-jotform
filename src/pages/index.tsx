@@ -14,13 +14,27 @@ const BoardChessOrder = dynamic(
   { ssr: true },
 )
 
+interface HomePageData {
+  homePageFields?: {
+    heroTitle?: string
+    heroSubtitle?: string
+    heroCtaText?: string
+    heroCtaSecondaryText?: string
+    personalizedExperienceSectionTitle?: string
+  }
+}
+
 export default function Home({
   experienceCards,
+  homePageData,
 }: {
   experienceCards: unknown[]
+  homePageData: HomePageData
 }) {
   const dispatch = useAppDispatch()
-  const homeFields = pageData?.homePageFields || {}
+  const homeFields = homePageData?.homePageFields || {}
+  const dispatch = useAppDispatch()
+  const homeFields = homePageData?.homePageFields || {}
 
   return (
     <>
