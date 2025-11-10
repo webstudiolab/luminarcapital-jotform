@@ -16,10 +16,8 @@ const BoardChessOrder = dynamic(
 
 export default function Home({
   experienceCards,
-  homePageData,
 }: {
   experienceCards: unknown[]
-  homePageData: unknown
 }) {
   const dispatch = useAppDispatch()
   const homeFields = pageData?.homePageFields || {}
