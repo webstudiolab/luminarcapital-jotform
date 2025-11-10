@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import dynamic from 'next/dynamic'
 import { useAppDispatch } from '@/hooks'
 import Button from '@/ui/components/Button/Button'
 import HeroDefault from '@/components/HeroDefault/HeroDefault'
@@ -7,7 +6,6 @@ import BoardChessOrder from '@/components/BoardChessOrder/BoardChessOrder'
 import CTASolid from '@/ui/components/CTASolid/CTASolid'
 import { openModal } from '@/store/slices/modalSlice'
 import { getExperienceCards, getPageBySlug } from '@/lib/wordpress'
-
 
 interface HomePageData {
   homePageFields?: {
