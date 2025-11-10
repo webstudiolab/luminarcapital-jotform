@@ -8,10 +8,6 @@ import CTASolid from '@/ui/components/CTASolid/CTASolid'
 import { openModal } from '@/store/slices/modalSlice'
 import { getExperienceCards, getPageBySlug } from '@/lib/wordpress'
 
-const BoardOfCards = dynamic(
-  () => import('@/components/BoardOfCards/BoardOfCards'),
-  { ssr: false },
-)
 
 interface HomePageData {
   homePageFields?: {
