@@ -22,7 +22,11 @@ const getCardFields = (card: any): any => {
   if (type === 'partnership') return card.partnershipFields
   if (type === 'value') return card.valueFields
   if (type === 'benefit') return card.benefitFields
-  return undefined
+  return {
+    title: card.title,
+    description: card.content || card.description,
+    icon: 'check',
+  }
 }
 
 interface ICard {

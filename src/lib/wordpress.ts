@@ -207,7 +207,16 @@ export const getBenefits = async () => {
       benefits: WordPressNode<BaseNode>
     }
 
-    return data.benefits.nodes.sort((a, b) => a.databaseId - b.databaseId)
+    return data.benefits.nodes
+      .sort((a, b) => a.databaseId - b.databaseId)
+      .map((node) => ({
+        ...node,
+        benefitFields: {
+          title: node.title,
+          description: stripHTML(node.content),
+          icon: 'check',
+        },
+      }))
   } catch (error) {
     console.error('Error fetching benefits:', error)
     return []
@@ -220,7 +229,16 @@ export const getPartnerships = async () => {
       partnerships: WordPressNode<BaseNode>
     }
 
-    return data.partnerships.nodes.sort((a, b) => a.databaseId - b.databaseId)
+    return data.partnerships.nodes
+      .sort((a, b) => a.databaseId - b.databaseId)
+      .map((node) => ({
+        ...node,
+        partnershipFields: {
+          title: node.title,
+          description: stripHTML(node.content),
+          icon: 'check',
+        },
+      }))
   } catch (error) {
     console.error('Error fetching partnerships:', error)
     return []
@@ -233,25 +251,20 @@ export const getAdvantages = async () => {
       advantages: WordPressNode<BaseNode>
     }
 
-    // Sort and transform to match component expectations
     const sortedNodes = data.advantages.nodes.sort(
       (a, b) => a.databaseId - b.databaseId,
     )
 
     return sortedNodes.map((node, index) => {
       const title = node.title.toLowerCase()
-      let imageUrl = '/banners/advantage-banner-1.svg'
+      let imageUrl = `/banners/advantage-banner-${(index % 3) + 1}.svg`
 
-      // Match by title keywords
       if (title.includes('punctual') || title.includes('time')) {
         imageUrl = '/banners/advantage-banner-1.svg'
       } else if (title.includes('rate') || title.includes('competitive')) {
         imageUrl = '/banners/advantage-banner-2.svg'
       } else if (title.includes('expert') || title.includes('guidance')) {
         imageUrl = '/banners/advantage-banner-3.svg'
-      } else {
-        // Fallback to index
-        imageUrl = `/banners/advantage-banner-${(index % 3) + 1}.svg`
       }
 
       return {
@@ -279,7 +292,16 @@ export const getValues = async () => {
       values: WordPressNode<BaseNode>
     }
 
-    return data.values.nodes.sort((a, b) => a.databaseId - b.databaseId)
+    return data.values.nodes
+      .sort((a, b) => a.databaseId - b.databaseId)
+      .map((node) => ({
+        ...node,
+        valueFields: {
+          title: node.title,
+          description: stripHTML(node.content),
+          icon: 'check',
+        },
+      }))
   } catch (error) {
     console.error('Error fetching values:', error)
     return []
@@ -292,19 +314,17 @@ export const getExperienceCards = async () => {
       experienceCards: WordPressNode<BaseNode>
     }
 
-    // Sort by database ID first
     const sortedNodes = data.experienceCards.nodes.sort(
       (a, b) => a.databaseId - b.databaseId,
     )
 
-    // Define the correct order by title keywords
+    // Order by title keywords
     const orderMap: { [key: string]: number } = {
       share: 0,
       review: 1,
       secure: 2,
     }
 
-    // Sort by matching title keywords to ensure correct order
     const orderedNodes = sortedNodes.sort((a, b) => {
       const aTitle = a.title.toLowerCase()
       const bTitle = b.title.toLowerCase()
@@ -318,12 +338,10 @@ export const getExperienceCards = async () => {
       return aIndex - bIndex
     })
 
-    // Transform with correct images and labels
     return orderedNodes.map((node, index) => {
       const title = node.title.toLowerCase()
       let imageUrl = '/banners/personalized-experience-banner-1.svg'
 
-      // Match by title keywords
       if (title.includes('share') || title.includes('journey')) {
         imageUrl = '/banners/personalized-experience-banner-1.svg'
       } else if (title.includes('review') || title.includes('options')) {

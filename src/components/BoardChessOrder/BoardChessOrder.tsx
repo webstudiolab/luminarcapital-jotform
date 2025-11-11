@@ -19,6 +19,19 @@ const BannerCard = ({ data, order, className }: BannerCardProps) => {
   const imageUrl =
     data.advantageFields?.bannerImage?.node?.sourceUrl ||
     data.experienceCardFields?.image?.node?.sourceUrl ||
+    data.image ||
+    ''
+
+  const title =
+    data.advantageFields?.title ||
+    data.experienceCardFields?.title ||
+    data.title ||
+    ''
+
+  const description =
+    data.advantageFields?.description ||
+    data.experienceCardFields?.description ||
+    data.description ||
     ''
 
   return (
@@ -31,25 +44,18 @@ const BannerCard = ({ data, order, className }: BannerCardProps) => {
     >
       <div className={styles['banner-card-wrapper']}>
         <div className={styles['banner-card-img']}>
-          <Image
-            src={imageUrl}
-            alt={
-              data.advantageFields?.title ||
-              data.experienceCardFields?.title ||
-              ''
-            }
-            width={600}
-            height={400}
-          />
+          {imageUrl && (
+            <Image src={imageUrl} alt={title} width={600} height={400} />
+          )}
         </div>
         <div className={styles['banner-card-content']}>
-          <h3 className={styles['banner-card-title']}>
-            {data.advantageFields?.title || data.experienceCardFields?.title}
-          </h3>
-          <p className={styles['banner-card-description']}>
-            {data.advantageFields?.description ||
-              data.experienceCardFields?.description}
-          </p>
+          {data.experienceCardFields?.label && (
+            <span className={styles['banner-card-label']}>
+              {data.experienceCardFields.label}
+            </span>
+          )}
+          <h3 className={styles['banner-card-title']}>{title}</h3>
+          <p className={styles['banner-card-description']}>{description}</p>
         </div>
       </div>
     </div>
