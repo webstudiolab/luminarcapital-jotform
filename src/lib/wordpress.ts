@@ -101,12 +101,7 @@ export const GET_BENEFITS = `
       nodes {
         id
         title
-        benefitFields {
-          title
-          description
-          icon
-          order
-        }
+        content
       }
     }
   }
@@ -118,12 +113,7 @@ export const GET_PARTNERSHIPS = `
       nodes {
         id
         title
-        partnershipFields {
-          title
-          description
-          icon
-          order
-        }
+        content
       }
     }
   }
@@ -135,16 +125,7 @@ export const GET_ADVANTAGES = `
       nodes {
         id
         title
-        advantageFields {
-          title
-          description
-          bannerImage {
-            node {
-              sourceUrl
-            }
-          }
-          order
-        }
+        content
       }
     }
   }
@@ -156,12 +137,7 @@ export const GET_VALUES = `
       nodes {
         id
         title
-        valueFields {
-          title
-          description
-          icon
-          order
-        }
+        content
       }
     }
   }
@@ -173,17 +149,7 @@ export const GET_EXPERIENCE_CARDS = `
       nodes {
         id
         title
-        experienceCardFields {
-          title
-          label
-          description
-          image {
-            node {
-              sourceUrl
-            }
-          }
-          order
-        }
+        content
       }
     }
   }
