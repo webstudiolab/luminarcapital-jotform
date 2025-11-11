@@ -6,23 +6,20 @@ import Benefits from '@/routes/financing-options/Benefits/Benefits'
 import CallToAction from '@/ui/components/CTA/CallToAction'
 import CTASolid from '@/ui/components/CTASolid/CTASolid'
 import { openModal } from '@/store/slices/modalSlice'
-import { getBenefits, getPageBySlug } from '@/lib/wordpress'
+import { getPageBySlug } from '@/lib/wordpress'
 
 interface FinancingPageData {
   financingOptionsPageFields?: {
     heroTitle?: string
     heroDescription?: string
-    benefitsSectionTitle?: string
     ctaTitle?: string
     ctaDescription?: string
   }
 }
 
 export default function FinancingOptions({
-  benefits,
   pageData,
 }: {
-  benefits: any[]
   pageData: FinancingPageData
 }) {
   const dispatch = useAppDispatch()
@@ -56,10 +53,7 @@ export default function FinancingOptions({
           </>
         }
       />
-      <Benefits
-        benefits={benefits}
-        sectionTitle={pageFields.benefitsSectionTitle}
-      />
+      <Benefits />
       <CTASolid />
       <CallToAction
         title={
@@ -77,12 +71,16 @@ export default function FinancingOptions({
 }
 
 export const getStaticProps = async () => {
-  const benefits = await getBenefits()
-  const pageData = await getPageBySlug('financing-options')
+  let pageData: any = null
+
+  try {
+    pageData = await getPageBySlug('financing-options')
+  } catch (err) {
+    console.warn('WordPress data fetch failed')
+  }
 
   return {
     props: {
-      benefits,
       pageData,
     },
     revalidate: 60,
