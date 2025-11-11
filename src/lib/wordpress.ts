@@ -10,7 +10,7 @@ const client = new GraphQLClient(endpoint, {
   },
 })
 
-// GraphQL Queries - CORRECTED to match actual WordPress structure
+// GraphQL Queries
 export const GET_PAGE_BY_SLUG = `
   query GetPageBySlug($slug: ID!) {
     page(id: $slug, idType: URI) {
@@ -97,10 +97,9 @@ export const GET_PAGE_BY_SLUG = `
   }
 `
 
-// These queries only get basic fields that exist
 export const GET_BENEFITS = `
   query GetBenefits {
-    benefits {
+    benefits(first: 100) {
       nodes {
         id
         databaseId
@@ -114,7 +113,7 @@ export const GET_BENEFITS = `
 
 export const GET_PARTNERSHIPS = `
   query GetPartnerships {
-    partnerships {
+    partnerships(first: 100) {
       nodes {
         id
         databaseId
@@ -128,7 +127,7 @@ export const GET_PARTNERSHIPS = `
 
 export const GET_ADVANTAGES = `
   query GetAdvantages {
-    advantages {
+    advantages(first: 100) {
       nodes {
         id
         databaseId
@@ -142,7 +141,7 @@ export const GET_ADVANTAGES = `
 
 export const GET_VALUES = `
   query GetValues {
-    values {
+    values(first: 100) {
       nodes {
         id
         databaseId
@@ -156,7 +155,7 @@ export const GET_VALUES = `
 
 export const GET_EXPERIENCE_CARDS = `
   query GetExperienceCards {
-    experienceCards {
+    experienceCards(first: 100) {
       nodes {
         id
         databaseId
@@ -183,31 +182,12 @@ interface BaseNode {
 
 // Helper to strip HTML tags
 const stripHTML = (html: string): string => {
-  return html.replace(/<[^>]*>/g, '').replace(/&#8217;/g, "'")
-}
-
-// Helper to get image path based on database ID
-const getImagePath = (type: string, databaseId: number): string => {
-  // Map database IDs to image paths
-  const imageMap: { [key: string]: { [key: number]: string } } = {
-    experienceCard: {
-      226: '/banners/personalized-experience-banner-1.svg',
-      227: '/banners/personalized-experience-banner-2.svg',
-      228: '/banners/personalized-experience-banner-3.svg',
-    },
-    advantage: {
-      219: '/banners/advantage-banner-1.svg',
-      220: '/banners/advantage-banner-2.svg',
-      221: '/banners/advantage-banner-3.svg',
-    },
-  }
-
-  return imageMap[type]?.[databaseId] || ''
-}
-
-// Helper to get step label based on index
-const getStepLabel = (index: number): string => {
-  return `Step ${index + 1}`
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/&#8217;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .trim()
 }
 
 // API Functions
@@ -226,15 +206,8 @@ export const getBenefits = async () => {
     const data = (await client.request(GET_BENEFITS)) as {
       benefits: WordPressNode<BaseNode>
     }
-    
-    // Transform to match component expectations
-    return data.benefits.nodes
-      .sort((a, b) => a.databaseId - b.databaseId)
-      .map((node) => ({
-        ...node,
-        // Components expect benefitFields structure but we don't have it
-        // So we keep basic structure and let components handle it
-      }))
+
+    return data.benefits.nodes.sort((a, b) => a.databaseId - b.databaseId)
   } catch (error) {
     console.error('Error fetching benefits:', error)
     return []
@@ -246,12 +219,8 @@ export const getPartnerships = async () => {
     const data = (await client.request(GET_PARTNERSHIPS)) as {
       partnerships: WordPressNode<BaseNode>
     }
-    
-    return data.partnerships.nodes
-      .sort((a, b) => a.databaseId - b.databaseId)
-      .map((node) => ({
-        ...node,
-      }))
+
+    return data.partnerships.nodes.sort((a, b) => a.databaseId - b.databaseId)
   } catch (error) {
     console.error('Error fetching partnerships:', error)
     return []
@@ -263,22 +232,41 @@ export const getAdvantages = async () => {
     const data = (await client.request(GET_ADVANTAGES)) as {
       advantages: WordPressNode<BaseNode>
     }
-    
-    // Transform to match BoardChessOrder component expectations
-    return data.advantages.nodes
-      .sort((a, b) => a.databaseId - b.databaseId)
-      .map((node) => ({
+
+    // Sort and transform to match component expectations
+    const sortedNodes = data.advantages.nodes.sort(
+      (a, b) => a.databaseId - b.databaseId,
+    )
+
+    return sortedNodes.map((node, index) => {
+      const title = node.title.toLowerCase()
+      let imageUrl = '/banners/advantage-banner-1.svg'
+
+      // Match by title keywords
+      if (title.includes('punctual') || title.includes('time')) {
+        imageUrl = '/banners/advantage-banner-1.svg'
+      } else if (title.includes('rate') || title.includes('competitive')) {
+        imageUrl = '/banners/advantage-banner-2.svg'
+      } else if (title.includes('expert') || title.includes('guidance')) {
+        imageUrl = '/banners/advantage-banner-3.svg'
+      } else {
+        // Fallback to index
+        imageUrl = `/banners/advantage-banner-${(index % 3) + 1}.svg`
+      }
+
+      return {
         ...node,
         advantageFields: {
           title: node.title,
           description: stripHTML(node.content),
           bannerImage: {
             node: {
-              sourceUrl: getImagePath('advantage', node.databaseId),
+              sourceUrl: imageUrl,
             },
           },
         },
-      }))
+      }
+    })
   } catch (error) {
     console.error('Error fetching advantages:', error)
     return []
@@ -290,12 +278,8 @@ export const getValues = async () => {
     const data = (await client.request(GET_VALUES)) as {
       values: WordPressNode<BaseNode>
     }
-    
-    return data.values.nodes
-      .sort((a, b) => a.databaseId - b.databaseId)
-      .map((node) => ({
-        ...node,
-      }))
+
+    return data.values.nodes.sort((a, b) => a.databaseId - b.databaseId)
   } catch (error) {
     console.error('Error fetching values:', error)
     return []
@@ -307,23 +291,61 @@ export const getExperienceCards = async () => {
     const data = (await client.request(GET_EXPERIENCE_CARDS)) as {
       experienceCards: WordPressNode<BaseNode>
     }
-    
-    // Transform to match BoardChessOrder component expectations
-    return data.experienceCards.nodes
-      .sort((a, b) => a.databaseId - b.databaseId)
-      .map((node, index) => ({
+
+    // Sort by database ID first
+    const sortedNodes = data.experienceCards.nodes.sort(
+      (a, b) => a.databaseId - b.databaseId,
+    )
+
+    // Define the correct order by title keywords
+    const orderMap: { [key: string]: number } = {
+      share: 0,
+      review: 1,
+      secure: 2,
+    }
+
+    // Sort by matching title keywords to ensure correct order
+    const orderedNodes = sortedNodes.sort((a, b) => {
+      const aTitle = a.title.toLowerCase()
+      const bTitle = b.title.toLowerCase()
+
+      const aOrder = Object.keys(orderMap).find((key) => aTitle.includes(key))
+      const bOrder = Object.keys(orderMap).find((key) => bTitle.includes(key))
+
+      const aIndex = aOrder !== undefined ? orderMap[aOrder] : 999
+      const bIndex = bOrder !== undefined ? orderMap[bOrder] : 999
+
+      return aIndex - bIndex
+    })
+
+    // Transform with correct images and labels
+    return orderedNodes.map((node, index) => {
+      const title = node.title.toLowerCase()
+      let imageUrl = '/banners/personalized-experience-banner-1.svg'
+
+      // Match by title keywords
+      if (title.includes('share') || title.includes('journey')) {
+        imageUrl = '/banners/personalized-experience-banner-1.svg'
+      } else if (title.includes('review') || title.includes('options')) {
+        imageUrl = '/banners/personalized-experience-banner-2.svg'
+      } else if (title.includes('secure') || title.includes('growth')) {
+        imageUrl = '/banners/personalized-experience-banner-3.svg'
+      }
+
+      return {
         ...node,
         experienceCardFields: {
           title: node.title,
           description: stripHTML(node.content),
           image: {
             node: {
-              sourceUrl: getImagePath('experienceCard', node.databaseId),
+              sourceUrl: imageUrl,
             },
           },
-          label: getStepLabel(index),
+          label: `Step ${index + 1}`,
         },
-      }))
+      }
+    })
   } catch (error) {
     console.error('Error fetching experience cards:', error)
     return []
