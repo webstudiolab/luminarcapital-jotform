@@ -31,11 +31,12 @@ export default function Home({
 }) {
   const dispatch = useAppDispatch()
   const homeFields = homePageData?.homePageFields || {}
-  
+
   // Use WordPress data if available, otherwise use hardcoded
-  const experienceData = experienceCards && experienceCards.length > 0 
-    ? experienceCards 
-    : personalizedExperienceData
+  const experienceData =
+    experienceCards && experienceCards.length > 0
+      ? experienceCards
+      : personalizedExperienceData
 
   return (
     <>
