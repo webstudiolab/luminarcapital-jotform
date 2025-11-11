@@ -8,14 +8,49 @@ import BoardChessOrder from '@/components/BoardChessOrder/BoardChessOrder'
 import { advantageData } from '@/routes/why-luminar/advantageData'
 import CallToAction from '@/ui/components/CTA/CallToAction'
 import { openModal } from '@/store/slices/modalSlice'
+import { IFinancingOptionCard, IBoardChessOrderCard } from '@/types'
+import { getAdvantages, getValues, getPageBySlug } from '@/lib/wordpress'
+import CreditCardIcon from '@/ui/icons/CreditCard'
 
 const BoardOfCards = dynamic(
   () => import('@/components/BoardOfCards/BoardOfCards'),
   { ssr: false },
 )
 
-export default function WhyLuminar() {
+interface WhyLuminarPageData {
+  whyLuminarPageFields?: {
+    heroTitle?: string
+    heroDescription?: string
+    advantagesSectionTitle?: string
+    valuesSectionTitle?: string
+  }
+}
+
+interface WhyLuminarProps {
+  advantages: IBoardChessOrderCard[]
+  values: IFinancingOptionCard[]
+  pageData: WhyLuminarPageData | null
+}
+
+export default function WhyLuminar({
+  advantages,
+  values,
+  pageData,
+}: WhyLuminarProps) {
   const dispatch = useAppDispatch()
+  const pageFields = pageData?.whyLuminarPageFields || {}
+
+  // Map iconName to actual icon component
+  const advantagesCards =
+    advantages && advantages.length === 4 ? advantages : advantageData
+  const valuesCards =
+    values && values.length === 4
+      ? values.map((v) => ({
+          title: v.title,
+          description: v.description,
+          icon: CreditCardIcon,
+        }))
+      : valuesData
 
   return (
     <>
@@ -27,8 +62,11 @@ export default function WhyLuminar() {
         />
       </Head>
       <HeroDefault
-        title="Why Luminar Capital"
-        description="There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals."
+        title={pageFields.heroTitle || 'Why Luminar Capital'}
+        description={
+          pageFields.heroDescription ||
+          'There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals.'
+        }
         banner="/json/why_lum.json"
         actions={
           <>
@@ -50,10 +88,13 @@ export default function WhyLuminar() {
           </>
         }
       />
-      <BoardOfCards title="Our Values" cards={valuesData} />
+      <BoardOfCards
+        title={pageFields.valuesSectionTitle || 'Our Values'}
+        cards={valuesCards}
+      />
       <BoardChessOrder
-        title="The Luminar Advantage"
-        data={advantageData}
+        title={pageFields.advantagesSectionTitle || 'The Luminar Advantage'}
+        data={advantagesCards}
         order="odd"
         className="advantage"
       />
@@ -67,7 +108,24 @@ export default function WhyLuminar() {
 }
 
 export const getStaticProps = async () => {
+  let advantages: IBoardChessOrderCard[] = []
+  let values: IFinancingOptionCard[] = []
+  let pageData: WhyLuminarPageData | null = null
+
+  try {
+    advantages = await getAdvantages()
+    values = await getValues()
+    pageData = (await getPageBySlug('why-luminar')) as WhyLuminarPageData | null
+  } catch (err) {
+    console.warn('WordPress fetch failed, using fallback data')
+  }
+
   return {
-    props: {},
+    props: {
+      advantages,
+      values,
+      pageData,
+    },
+    revalidate: 60,
   }
 }

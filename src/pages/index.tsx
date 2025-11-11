@@ -7,12 +7,35 @@ import { useAppDispatch } from '@/hooks'
 import { openModal } from '@/store/slices/modalSlice'
 import BoardChessOrder from '@/components/BoardChessOrder/BoardChessOrder'
 import { personalizedExperienceData } from '@/routes/home/personalizedExperienceData'
-import { getReviews } from '@/utils/axios/getReviews'
-import { IGoogleReview } from '@/types'
+import { IBoardChessOrderCard } from '@/types'
 import CTAStyles from '@/routes/home/CTA/CallToAction.module.scss'
+import { getExperienceCards, getPageBySlug } from '@/lib/wordpress'
 
-export default function Home() {
+interface HomePageData {
+  homePageFields?: {
+    heroTitle?: string
+    heroSubtitle?: string
+    heroCtaText?: string
+    heroCtaSecondaryText?: string
+    personalizedExperienceSectionTitle?: string
+  }
+}
+
+interface HomeProps {
+  experienceCards: IBoardChessOrderCard[]
+  pageData: HomePageData | null
+}
+
+export default function Home({ experienceCards, pageData }: HomeProps) {
   const dispatch = useAppDispatch()
+  const pageFields = pageData?.homePageFields || {}
+
+  // Use WordPress data if available (3 items), otherwise use hardcoded
+  const experienceData =
+    experienceCards && experienceCards.length === 3
+      ? experienceCards
+      : personalizedExperienceData
+
   return (
     <>
       <Head>
@@ -23,8 +46,14 @@ export default function Home() {
         />
       </Head>
       <HeroHome
-        title="Flexible financing options that fuel the growth of small businesses."
-        description="Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow."
+        title={
+          pageFields.heroTitle ||
+          'Flexible financing options that fuel the growth of small businesses.'
+        }
+        description={
+          pageFields.heroSubtitle ||
+          'Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow.'
+        }
         banner="/json/Main_illust.json"
         actions={
           <>
@@ -34,28 +63,28 @@ export default function Home() {
                 dispatch(openModal({ modal: 'partner', size: 'lg' }))
               }
             >
-              Become a Partner
+              {pageFields.heroCtaSecondaryText || 'Become a Partner'}
             </Button>
             <Button
               onClick={() =>
                 dispatch(openModal({ modal: 'financing', size: 'xl' }))
               }
             >
-              Apply for Financing
+              {pageFields.heroCtaText || 'Apply for Financing'}
             </Button>
           </>
         }
       />
       <FinancingOptions />
       <BoardChessOrder
-        title="A Personalized Experience"
-        data={personalizedExperienceData}
+        title={
+          pageFields.personalizedExperienceSectionTitle ||
+          'A Personalized Experience'
+        }
+        data={experienceData}
         order="even"
         className="personalized-experience"
       />
-      {/* Hide Google Reviews
-      <ClientReviews data={reviews} />
-      */}
       <CallToAction
         title="Ready To Secure Business Financing?"
         description="Contact us and connect with one of our financing professionals that can help you navigate through the steps!"
@@ -67,16 +96,21 @@ export default function Home() {
 }
 
 export const getStaticProps = async () => {
-  let reviews: IGoogleReview[] = []
+  let experienceCards: IBoardChessOrderCard[] = []
+  let pageData: HomePageData | null = null
+
   try {
-    const result = await getReviews()
-    if (result?.data) reviews = result.data
+    experienceCards = await getExperienceCards()
+    pageData = (await getPageBySlug('home')) as HomePageData | null
   } catch (err) {
-    console.warn('Skipping reviews fetch – API URL missing or invalid')
+    console.warn('WordPress fetch failed, using fallback data')
   }
+
   return {
     props: {
-      reviews,
+      experienceCards,
+      pageData,
     },
+    revalidate: 60,
   }
 }

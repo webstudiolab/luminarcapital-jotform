@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
-import axios from 'axios'
+// import axios from 'axios'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Slider from 'react-slick'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,7 +9,7 @@ import TextField from '@/ui/components/TextField/TextField'
 import {
   AMOUNT_OPTIONS,
   EMAIL_SUBJECT,
-  WORDPRESS_API_PATHS,
+  // WORDPRESS_API_PATHS,
 } from '@/config/constants'
 import CheckboxField from '@/ui/components/CheckboxField/CheckboxField'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
@@ -118,46 +118,65 @@ const ApplyForFinancingModalForm = ({
     }))
   }
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!consent) {
+      alert('Please check the consent box to proceed.')
+      return
+    }
+
     setIsSubmitting(true)
-    axios
-      .post(
+    try {
+      // TEMPORARY: WordPress API commented out until backend is ready
+      // Once WordPress is set up, uncomment the code below and remove the direct email approach
+
+      /*
+      const response = await axios.post(
         `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-financial`,
         data,
       )
-      .then(async (response) => {
-        if (response.data.success && response.status === 200) {
-          await browserSendEmail({
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.admin(data),
-          })
-          await browserSendEmail({
-            to: data.email,
-            subject: EMAIL_SUBJECT.FINANCING,
-            htmlMessage: messages.user(),
-          })
 
-          setIsSubmittedSuccess(true)
+      if (response.data.success && response.status === 200) {
+      */
 
-          setTimeout(() => {
-            reset()
-            setIsFocused({
-              name: false,
-              business_name: false,
-              email: false,
-              phone: false,
-            })
-            setConsent(false)
-          }, 1000)
-        }
+      // TEMPORARY: Send emails directly without WordPress API
+      // Send email to admin
+      await browserSendEmail({
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.admin(data),
       })
-      .catch((err) => {
-        setSubmittedError(err.response.data.message)
-        setTimeout(() => setSubmittedError(null), 3000)
+
+      // Send confirmation email to user
+      await browserSendEmail({
+        to: data.email,
+        subject: EMAIL_SUBJECT.FINANCING,
+        htmlMessage: messages.user(),
       })
-      .finally(() => {
-        setIsSubmitting(false)
-      })
+
+      setIsSubmittedSuccess(true)
+
+      setTimeout(() => {
+        reset()
+        setIsFocused({
+          name: false,
+          business_name: false,
+          email: false,
+          phone: false,
+        })
+        setConsent(false)
+      }, 1000)
+
+      /*
+      }
+      */
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setSubmittedError(
+        error.response?.data?.message || 'Submission failed. Please try again.',
+      )
+      setTimeout(() => setSubmittedError(null), 3000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleNext = useCallback(async () => {

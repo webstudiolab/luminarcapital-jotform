@@ -7,14 +7,41 @@ import DefaultForms from '@/components/DefaultForms/DefaultForms'
 import Portfolio from '@/routes/partners/Portfolio/Portfolio'
 import { openModal } from '@/store/slices/modalSlice'
 import { partnershipData } from '@/routes/partners/partnershipData'
+import { IFinancingOptionCard } from '@/types'
+import { getPartnerships, getPageBySlug } from '@/lib/wordpress'
+import CreditCardIcon from '@/ui/icons/CreditCard'
 
 const BoardOfCards = dynamic(
   () => import('@/components/BoardOfCards/BoardOfCards'),
   { ssr: false },
 )
 
-export default function Partners() {
+interface PartnersPageData {
+  partnersPageFields?: {
+    heroTitle?: string
+    heroDescription?: string
+    portfolioSectionTitle?: string
+  }
+}
+
+interface PartnersProps {
+  partnerships: IFinancingOptionCard[]
+  pageData: PartnersPageData | null
+}
+
+export default function Partners({ partnerships, pageData }: PartnersProps) {
   const dispatch = useAppDispatch()
+  const pageFields = pageData?.partnersPageFields || {}
+
+  // Map iconName to actual icon component
+  const partnershipCards =
+    partnerships && partnerships.length === 4
+      ? partnerships.map((p) => ({
+          title: p.title,
+          description: p.description,
+          icon: CreditCardIcon,
+        }))
+      : partnershipData
 
   return (
     <>
@@ -26,8 +53,11 @@ export default function Partners() {
         />
       </Head>
       <HeroDefault
-        title="Partner with Luminar"
-        description="Join us in our mission to empower small businesses with the financing they deserve, backed by a trusted partner."
+        title={pageFields.heroTitle || 'Partner with Luminar'}
+        description={
+          pageFields.heroDescription ||
+          'Join us in our mission to empower small businesses with the financing they deserve, backed by a trusted partner.'
+        }
         banner="/json/partners.json"
         actions={
           <>
@@ -41,7 +71,10 @@ export default function Partners() {
           </>
         }
       />
-      <BoardOfCards title="The Luminar Partnership" cards={partnershipData} />
+      <BoardOfCards
+        title={pageFields.portfolioSectionTitle || 'The Luminar Partnership'}
+        cards={partnershipCards}
+      />
       <Portfolio />
       <DefaultForms />
     </>
@@ -49,7 +82,21 @@ export default function Partners() {
 }
 
 export const getStaticProps = async () => {
+  let partnerships: IFinancingOptionCard[] = []
+  let pageData: PartnersPageData | null = null
+
+  try {
+    partnerships = await getPartnerships()
+    pageData = (await getPageBySlug('partners')) as PartnersPageData | null
+  } catch (err) {
+    console.warn('WordPress fetch failed, using fallback data')
+  }
+
   return {
-    props: {},
+    props: {
+      partnerships,
+      pageData,
+    },
+    revalidate: 60,
   }
 }
