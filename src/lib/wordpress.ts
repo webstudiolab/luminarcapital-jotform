@@ -1,11 +1,14 @@
 import { GraphQLClient } from 'graphql-request'
 
+// Use environment variable with fallback
 const endpoint =
   process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL ||
   'https://admin.luminarcapital.com/graphql'
 
 const client = new GraphQLClient(endpoint, {
-  headers: {},
+  headers: {
+    'Content-Type': 'application/json',
+  },
 })
 
 // GraphQL Queries
@@ -102,6 +105,12 @@ export const GET_BENEFITS = `
         id
         title
         content
+        benefitFields {
+          title
+          description
+          icon
+          order
+        }
       }
     }
   }
@@ -114,6 +123,12 @@ export const GET_PARTNERSHIPS = `
         id
         title
         content
+        partnershipFields {
+          title
+          description
+          icon
+          order
+        }
       }
     }
   }
@@ -126,6 +141,16 @@ export const GET_ADVANTAGES = `
         id
         title
         content
+        advantageFields {
+          title
+          description
+          bannerImage {
+            node {
+              sourceUrl
+            }
+          }
+          order
+        }
       }
     }
   }
@@ -138,6 +163,12 @@ export const GET_VALUES = `
         id
         title
         content
+        valueFields {
+          title
+          description
+          icon
+          order
+        }
       }
     }
   }
@@ -150,6 +181,17 @@ export const GET_EXPERIENCE_CARDS = `
         id
         title
         content
+        experienceCardFields {
+          title
+          label
+          description
+          image {
+            node {
+              sourceUrl
+            }
+          }
+          order
+        }
       }
     }
   }
@@ -229,7 +271,7 @@ export const getPageBySlug = async (slug: string): Promise<unknown> => {
   try {
     const data: unknown = await client.request(GET_PAGE_BY_SLUG, { slug })
     console.log('=== PAGE DATA DEBUG ===')
-    console.log('Full pageData:', JSON.stringify(data, null, 2))
+    console.log('Fetching page:', slug)
     console.log('======================')
     return (data as { page: unknown }).page
   } catch (error) {

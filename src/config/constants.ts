@@ -1,7 +1,8 @@
 import { IOption } from '@/types'
 
+// FIXED: Remove window check that breaks during build/SSR
 export const QUERY_PARAMETERS = {
-  LIMIT: typeof window !== 'undefined' && window.innerWidth > 990 ? 9 : 6,
+  LIMIT: 9, // Use consistent limit for SSR, adjust in component if needed
   LATEST: 6,
 }
 
@@ -33,7 +34,6 @@ export const cardsCarouselSettings = {
   dots: true,
   arrows: false,
   centerMode: false,
-  // centerPadding: '16rem',
   padding: 0,
   slidesToShow: 1,
   slidesToScroll: 1,
