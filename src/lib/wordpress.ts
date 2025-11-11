@@ -1,6 +1,5 @@
 import { GraphQLClient } from 'graphql-request'
 
-// Use environment variable with fallback
 const endpoint =
   process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL ||
   'https://admin.luminarcapital.com/graphql'
@@ -11,7 +10,7 @@ const client = new GraphQLClient(endpoint, {
   },
 })
 
-// GraphQL Queries
+// GraphQL Queries - CORRECTED to match actual WordPress structure
 export const GET_PAGE_BY_SLUG = `
   query GetPageBySlug($slug: ID!) {
     page(id: $slug, idType: URI) {
@@ -98,19 +97,16 @@ export const GET_PAGE_BY_SLUG = `
   }
 `
 
+// These queries only get basic fields that exist
 export const GET_BENEFITS = `
   query GetBenefits {
     benefits {
       nodes {
         id
+        databaseId
         title
         content
-        benefitFields {
-          title
-          description
-          icon
-          order
-        }
+        slug
       }
     }
   }
@@ -121,14 +117,10 @@ export const GET_PARTNERSHIPS = `
     partnerships {
       nodes {
         id
+        databaseId
         title
         content
-        partnershipFields {
-          title
-          description
-          icon
-          order
-        }
+        slug
       }
     }
   }
@@ -139,18 +131,10 @@ export const GET_ADVANTAGES = `
     advantages {
       nodes {
         id
+        databaseId
         title
         content
-        advantageFields {
-          title
-          description
-          bannerImage {
-            node {
-              sourceUrl
-            }
-          }
-          order
-        }
+        slug
       }
     }
   }
@@ -161,14 +145,10 @@ export const GET_VALUES = `
     values {
       nodes {
         id
+        databaseId
         title
         content
-        valueFields {
-          title
-          description
-          icon
-          order
-        }
+        slug
       }
     }
   }
@@ -179,19 +159,10 @@ export const GET_EXPERIENCE_CARDS = `
     experienceCards {
       nodes {
         id
+        databaseId
         title
         content
-        experienceCardFields {
-          title
-          label
-          description
-          image {
-            node {
-              sourceUrl
-            }
-          }
-          order
-        }
+        slug
       }
     }
   }
@@ -202,77 +173,47 @@ interface WordPressNode<T> {
   nodes: T[]
 }
 
-interface BenefitNode {
+interface BaseNode {
   id: string
+  databaseId: number
   title: string
-  benefitFields?: {
-    title?: string
-    description?: string
-    icon?: string
-    order?: number
-  }
+  content: string
+  slug: string
 }
 
-interface PartnershipNode {
-  id: string
-  title: string
-  partnershipFields?: {
-    title?: string
-    description?: string
-    icon?: string
-    order?: number
-  }
+// Helper to strip HTML tags
+const stripHTML = (html: string): string => {
+  return html.replace(/<[^>]*>/g, '').replace(/&#8217;/g, "'")
 }
 
-interface AdvantageNode {
-  id: string
-  title: string
-  advantageFields?: {
-    title?: string
-    description?: string
-    bannerImage?: {
-      node?: {
-        sourceUrl?: string
-      }
-    }
-    order?: number
+// Helper to get image path based on database ID
+const getImagePath = (type: string, databaseId: number): string => {
+  // Map database IDs to image paths
+  const imageMap: { [key: string]: { [key: number]: string } } = {
+    experienceCard: {
+      226: '/banners/personalized-experience-banner-1.svg',
+      227: '/banners/personalized-experience-banner-2.svg',
+      228: '/banners/personalized-experience-banner-3.svg',
+    },
+    advantage: {
+      219: '/banners/advantage-banner-1.svg',
+      220: '/banners/advantage-banner-2.svg',
+      221: '/banners/advantage-banner-3.svg',
+    },
   }
+
+  return imageMap[type]?.[databaseId] || ''
 }
 
-interface ValueNode {
-  id: string
-  title: string
-  valueFields?: {
-    title?: string
-    description?: string
-    icon?: string
-    order?: number
-  }
-}
-
-interface ExperienceCardNode {
-  id: string
-  title: string
-  experienceCardFields?: {
-    title?: string
-    label?: string
-    description?: string
-    image?: {
-      node?: {
-        sourceUrl?: string
-      }
-    }
-    order?: number
-  }
+// Helper to get step label based on index
+const getStepLabel = (index: number): string => {
+  return `Step ${index + 1}`
 }
 
 // API Functions
 export const getPageBySlug = async (slug: string): Promise<unknown> => {
   try {
     const data: unknown = await client.request(GET_PAGE_BY_SLUG, { slug })
-    console.log('=== PAGE DATA DEBUG ===')
-    console.log('Fetching page:', slug)
-    console.log('======================')
     return (data as { page: unknown }).page
   } catch (error) {
     console.error(`Error fetching page ${slug}:`, error)
@@ -280,19 +221,19 @@ export const getPageBySlug = async (slug: string): Promise<unknown> => {
   }
 }
 
-export const getBenefits = async (): Promise<BenefitNode[]> => {
+export const getBenefits = async () => {
   try {
     const data = (await client.request(GET_BENEFITS)) as {
-      benefits: WordPressNode<BenefitNode>
+      benefits: WordPressNode<BaseNode>
     }
+    
+    // Transform to match component expectations
     return data.benefits.nodes
-      .sort(
-        (a, b) =>
-          (a.benefitFields?.order || 999) - (b.benefitFields?.order || 999),
-      )
+      .sort((a, b) => a.databaseId - b.databaseId)
       .map((node) => ({
         ...node,
-        icon: node.benefitFields?.icon || 'check',
+        // Components expect benefitFields structure but we don't have it
+        // So we keep basic structure and let components handle it
       }))
   } catch (error) {
     console.error('Error fetching benefits:', error)
@@ -300,20 +241,16 @@ export const getBenefits = async (): Promise<BenefitNode[]> => {
   }
 }
 
-export const getPartnerships = async (): Promise<PartnershipNode[]> => {
+export const getPartnerships = async () => {
   try {
     const data = (await client.request(GET_PARTNERSHIPS)) as {
-      partnerships: WordPressNode<PartnershipNode>
+      partnerships: WordPressNode<BaseNode>
     }
+    
     return data.partnerships.nodes
-      .sort(
-        (a, b) =>
-          (a.partnershipFields?.order || 999) -
-          (b.partnershipFields?.order || 999),
-      )
+      .sort((a, b) => a.databaseId - b.databaseId)
       .map((node) => ({
         ...node,
-        icon: node.partnershipFields?.icon || 'check',
       }))
   } catch (error) {
     console.error('Error fetching partnerships:', error)
@@ -321,45 +258,72 @@ export const getPartnerships = async (): Promise<PartnershipNode[]> => {
   }
 }
 
-export const getAdvantages = async (): Promise<AdvantageNode[]> => {
+export const getAdvantages = async () => {
   try {
     const data = (await client.request(GET_ADVANTAGES)) as {
-      advantages: WordPressNode<AdvantageNode>
+      advantages: WordPressNode<BaseNode>
     }
-    return data.advantages.nodes.sort(
-      (a, b) =>
-        (a.advantageFields?.order || 999) - (b.advantageFields?.order || 999),
-    )
+    
+    // Transform to match BoardChessOrder component expectations
+    return data.advantages.nodes
+      .sort((a, b) => a.databaseId - b.databaseId)
+      .map((node) => ({
+        ...node,
+        advantageFields: {
+          title: node.title,
+          description: stripHTML(node.content),
+          bannerImage: {
+            node: {
+              sourceUrl: getImagePath('advantage', node.databaseId),
+            },
+          },
+        },
+      }))
   } catch (error) {
     console.error('Error fetching advantages:', error)
     return []
   }
 }
 
-export const getValues = async (): Promise<ValueNode[]> => {
+export const getValues = async () => {
   try {
     const data = (await client.request(GET_VALUES)) as {
-      values: WordPressNode<ValueNode>
+      values: WordPressNode<BaseNode>
     }
-    return data.values.nodes.sort(
-      (a, b) => (a.valueFields?.order || 999) - (b.valueFields?.order || 999),
-    )
+    
+    return data.values.nodes
+      .sort((a, b) => a.databaseId - b.databaseId)
+      .map((node) => ({
+        ...node,
+      }))
   } catch (error) {
     console.error('Error fetching values:', error)
     return []
   }
 }
 
-export const getExperienceCards = async (): Promise<ExperienceCardNode[]> => {
+export const getExperienceCards = async () => {
   try {
     const data = (await client.request(GET_EXPERIENCE_CARDS)) as {
-      experienceCards: WordPressNode<ExperienceCardNode>
+      experienceCards: WordPressNode<BaseNode>
     }
-    return data.experienceCards.nodes.sort(
-      (a, b) =>
-        (a.experienceCardFields?.order || 999) -
-        (b.experienceCardFields?.order || 999),
-    )
+    
+    // Transform to match BoardChessOrder component expectations
+    return data.experienceCards.nodes
+      .sort((a, b) => a.databaseId - b.databaseId)
+      .map((node, index) => ({
+        ...node,
+        experienceCardFields: {
+          title: node.title,
+          description: stripHTML(node.content),
+          image: {
+            node: {
+              sourceUrl: getImagePath('experienceCard', node.databaseId),
+            },
+          },
+          label: getStepLabel(index),
+        },
+      }))
   } catch (error) {
     console.error('Error fetching experience cards:', error)
     return []
