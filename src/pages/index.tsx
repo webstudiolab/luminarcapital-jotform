@@ -7,8 +7,7 @@ import { useAppDispatch } from '@/hooks'
 import { openModal } from '@/store/slices/modalSlice'
 import BoardChessOrder from '@/components/BoardChessOrder/BoardChessOrder'
 import { personalizedExperienceData } from '@/routes/home/personalizedExperienceData'
-import { getReviews } from '@/utils/axios/getReviews'
-import { IGoogleReview } from '@/types'
+import { IBoardChessOrderCard } from '@/types'
 import CTAStyles from '@/routes/home/CTA/CallToAction.module.scss'
 import { getExperienceCards, getPageBySlug } from '@/lib/wordpress'
 
@@ -18,25 +17,46 @@ interface HomePageData {
     heroSubtitle?: string
     heroCtaText?: string
     heroCtaSecondaryText?: string
+    heroBannerImage?: {
+      node?: {
+        sourceUrl?: string
+      }
+    }
+    heroLottieJson?: {
+      node?: {
+        mediaItemUrl?: string
+      }
+    }
+    financingSectionTitle?: string
+    financingSectionDescription?: string
+    reviewsSectionTitle?: string
     personalizedExperienceSectionTitle?: string
   }
 }
 
-export default function Home({
-  experienceCards,
-  homePageData,
-}: {
-  experienceCards: any[]
-  homePageData: HomePageData
-}) {
-  const dispatch = useAppDispatch()
-  const homeFields = homePageData?.homePageFields || {}
+interface HomeProps {
+  experienceCards: IBoardChessOrderCard[]
+  pageData: HomePageData | null
+}
 
-  // Use WordPress data if available, otherwise use hardcoded
+export default function Home({ experienceCards, pageData }: HomeProps) {
+  const dispatch = useAppDispatch()
+  const pageFields = pageData?.homePageFields || {}
+
+  // Use WordPress if we have 3 cards with all fields, otherwise hardcoded
   const experienceData =
-    experienceCards && experienceCards.length > 0
-      ? experienceCards
+    experienceCards && 
+    experienceCards.length >= 3 &&
+    experienceCards[0].image &&
+    experienceCards[0].label
+      ? experienceCards.slice(0, 3)
       : personalizedExperienceData
+
+  // Determine banner - Lottie JSON takes priority, then image, then hardcoded
+  const heroBanner = 
+    pageFields.heroLottieJson?.node?.mediaItemUrl ||
+    pageFields.heroBannerImage?.node?.sourceUrl ||
+    '/json/Main_illust.json'
 
   return (
     <>
@@ -49,14 +69,14 @@ export default function Home({
       </Head>
       <HeroHome
         title={
-          homeFields.heroTitle ||
+          pageFields.heroTitle ||
           'Flexible financing options that fuel the growth of small businesses.'
         }
         description={
-          homeFields.heroSubtitle ||
+          pageFields.heroSubtitle ||
           'Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow.'
         }
-        banner="/json/Main_illust.json"
+        banner={heroBanner}
         actions={
           <>
             <Button
@@ -65,14 +85,14 @@ export default function Home({
                 dispatch(openModal({ modal: 'partner', size: 'lg' }))
               }
             >
-              {homeFields.heroCtaSecondaryText || 'Become a Partner'}
+              {pageFields.heroCtaSecondaryText || 'Become a Partner'}
             </Button>
             <Button
               onClick={() =>
                 dispatch(openModal({ modal: 'financing', size: 'xl' }))
               }
             >
-              {homeFields.heroCtaText || 'Apply for Financing'}
+              {pageFields.heroCtaText || 'Apply for Financing'}
             </Button>
           </>
         }
@@ -80,7 +100,7 @@ export default function Home({
       <FinancingOptions />
       <BoardChessOrder
         title={
-          homeFields.personalizedExperienceSectionTitle ||
+          pageFields.personalizedExperienceSectionTitle ||
           'A Personalized Experience'
         }
         data={experienceData}
@@ -98,29 +118,20 @@ export default function Home({
 }
 
 export const getStaticProps = async () => {
-  let reviews: IGoogleReview[] = []
-  let experienceCards: any[] = []
-  let homePageData: any = null
-
-  try {
-    const result = await getReviews()
-    if (result?.data) reviews = result.data
-  } catch (err) {
-    console.warn('Skipping reviews fetch – API URL missing or invalid')
-  }
+  let experienceCards: IBoardChessOrderCard[] = []
+  let pageData: HomePageData | null = null
 
   try {
     experienceCards = await getExperienceCards()
-    homePageData = await getPageBySlug('home')
+    pageData = (await getPageBySlug('home')) as HomePageData | null
   } catch (err) {
-    console.warn('WordPress data fetch failed, using defaults')
+    console.warn('WordPress fetch failed, using fallback data')
   }
 
   return {
     props: {
-      reviews,
       experienceCards,
-      homePageData,
+      pageData,
     },
     revalidate: 60,
   }

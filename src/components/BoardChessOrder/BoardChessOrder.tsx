@@ -1,95 +1,72 @@
 import classNames from 'classnames'
 import Image from 'next/image'
+import { IBoardChessOrderCard } from '@/types'
 import styles from './BoardChessOrder.module.scss'
-
 interface IBoardChessOrder {
-  data: any[]
-  order: 'even' | 'odd'
+  className?: string
   title: string
-  className?: string
-}
-
-interface BannerCardProps {
-  data: any
+  data: IBoardChessOrderCard[]
   order: 'even' | 'odd'
-  className?: string
 }
-
-const BannerCard = ({ data, order, className }: BannerCardProps) => {
-  const imageUrl =
-    data.advantageFields?.bannerImage?.node?.sourceUrl ||
-    data.experienceCardFields?.image?.node?.sourceUrl ||
-    data.image ||
-    ''
-
-  const title =
-    data.advantageFields?.title ||
-    data.experienceCardFields?.title ||
-    data.title ||
-    ''
-
-  const description =
-    data.advantageFields?.description ||
-    data.experienceCardFields?.description ||
-    data.description ||
-    ''
-
-  return (
-    <div
-      className={classNames(
-        styles['banner-card'],
-        styles[`banner-card--${order}`],
-        className,
-      )}
-    >
-      <div className={styles['banner-card-wrapper']}>
-        <div className={styles['banner-card-img']}>
-          {imageUrl && (
-            <Image src={imageUrl} alt={title} width={600} height={400} />
-          )}
-        </div>
-        <div className={styles['banner-card-content']}>
-          {data.experienceCardFields?.label && (
-            <span className={styles['banner-card-label']}>
-              {data.experienceCardFields.label}
-            </span>
-          )}
-          <h3 className={styles['banner-card-title']}>{title}</h3>
-          <p className={styles['banner-card-description']}>{description}</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 const BoardChessOrder = ({
-  data,
-  order,
-  title,
   className,
+  title,
+  data = [],
+  order = 'odd',
 }: IBoardChessOrder) => {
-  return (
-    <section className={classNames(styles['section'], className)}>
-      <div className="content-block">
-        <div className={styles['section-panel']}>
-          <h2 className="h1">{title}</h2>
+  if (data.length > 0) {
+    return (
+      <section
+        className={classNames(
+          styles['section'],
+          'p-80-0 section-bg',
+          className,
+        )}
+      >
+        <div className="content-block">
+          <div className="section-title text-center">
+            <h2 className="h1">{title}</h2>
+          </div>
+          <div className={classNames(styles['section-list'], styles[order])}>
+            {data.map((item, index) => (
+              <div
+                key={`board-chess-${index}`}
+                className={styles['section-list-item']}
+              >
+                <div className="row">
+                  <div className="col-md-12 col-lg-6 col-gutter-lr">
+                    <div className={styles['section-content']}>
+                      {item.label ? (
+                        <p className={styles['section-content-label']}>
+                          {item.label}
+                        </p>
+                      ) : null}
+                      <p
+                        className={classNames(
+                          styles['section-content-title'],
+                          'h2',
+                        )}
+                      >
+                        {item.title}
+                      </p>
+                      <p className={styles['section-content-description']}>
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col-md-12 col-lg-6 col-gutter-lr">
+                    <div className={styles['section-banner']}>
+                      <Image src={item.image} alt={item.title} fill />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className={styles['section-panel']}>
-          {data.map((item, index) => {
-            const cardOrder =
-              index % 2 === 0 ? order : order === 'even' ? 'odd' : 'even'
-            return (
-              <BannerCard
-                key={`banner-card-${index}`}
-                data={item}
-                order={cardOrder}
-              />
-            )
-          })}
-        </div>
-      </div>
-    </section>
-  )
+      </section>
+    )
+  }
+  return null
 }
-
 export default BoardChessOrder
