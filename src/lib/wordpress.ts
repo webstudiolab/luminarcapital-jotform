@@ -92,6 +92,12 @@ export const GET_PAGE_BY_SLUG = `
         valuesSectionTitle
         valuesSectionDescription
       }
+      contactPageFields {
+        phone
+        email
+        address
+        googleMapsEmbedUrl
+      }
     }
   }
 `
