@@ -2,7 +2,7 @@ import Head from 'next/head'
 import classNames from 'classnames'
 import ProductCard from '@/ui/components/ProductCard/ProductCard'
 import CallToAction from '@/ui/components/CTA/CallToAction'
-import { shopProducts } from './shopData'
+import { shopProducts } from '@/routes/shop/shopData'
 import styles from './Shop.module.scss'
 
 export default function Shop() {
