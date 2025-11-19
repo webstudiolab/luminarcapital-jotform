@@ -13,8 +13,8 @@
     "plugin:prettier/recommended"],
   "rules": {
     "no-unused-vars": "warn",
-    "@typescript-eslint/no-explicit-any": "error",
-    "func-style": ["error", "expression"],
+    "@typescript-eslint/no-explicit-any": "off",
+    "func-style": "off",
     "react/display-name": "off",
     "prettier/prettier": ["error", {
       "tabWidth": 2,

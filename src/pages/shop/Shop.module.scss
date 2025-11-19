@@ -1,0 +1,75 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.hero {
+  padding: 80rem 0 60rem;
+  background: linear-gradient(135deg, var(--color-gray-5) 0%, var(--color-gray-10) 100%);
+  
+  @include maxWidth($md-max) {
+    padding: 60rem 0 40rem;
+  }
+  
+  @include maxWidth($sm-max) {
+    padding: 40rem 0 30rem;
+  }
+  
+  &-content {
+    max-width: 800rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  &-title {
+    margin-bottom: 24rem;
+    font-size: 48rem;
+    font-family: var(--font-primary-medium);
+    line-height: 1.2;
+    color: var(--color-primary-dark-blue);
+    
+    @include maxWidth($md-max) {
+      font-size: 40rem;
+      margin-bottom: 20rem;
+    }
+    
+    @include maxWidth($sm-max) {
+      font-size: 32rem;
+      margin-bottom: 16rem;
+    }
+  }
+  
+  &-description {
+    font-size: 18rem;
+    line-height: 1.6;
+    color: var(--color-gray-70);
+    
+    @include maxWidth($md-max) {
+      font-size: 16rem;
+    }
+    
+    @include maxWidth($sm-max) {
+      font-size: 14rem;
+    }
+  }
+}
+
+.shop {
+  background-color: var(--color-white);
+  
+  &-grid {
+    margin: 0 -12rem;
+    
+    @include maxWidth($md-max) {
+      margin: 0;
+    }
+    
+    .row {
+      > [class*="col-"] {
+        padding: 12rem;
+        
+        @include maxWidth($sm-max) {
+          padding: 8rem 0;
+        }
+      }
+    }
+  }
+}

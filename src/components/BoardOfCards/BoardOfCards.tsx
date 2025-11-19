@@ -5,13 +5,11 @@ import { cardsCarouselSettings } from '@/config/constants'
 import FinancingOptionCard from '@/ui/components/FinancingOptionCard/FinancingOptionCard'
 import { IFinancingOptionCard } from '@/types'
 import styles from './BoardOfCards.module.scss'
-
 interface IBoardOfCards {
   className?: string
   title: string
   cards: IFinancingOptionCard[]
 }
-
 const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
   const [isDesktop, setIsDesktop] = useState<boolean>(true)
   const [maxHeightOfCards, setMaxHeightOfCards] = useState<number | 'auto'>(
@@ -20,16 +18,13 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
   const [trackHeight, setTrackHeight] = useState<number | 'auto'>('auto')
   const maxHeightRef = useRef<number>(0)
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setIsDesktop(window.innerWidth > 600)
     }
   }, [])
-
   useEffect(() => {
     let maxHeight = 0
-
     cardRefs.current.forEach((card) => {
       if (card) {
         const height = card.getBoundingClientRect().height
@@ -38,13 +33,11 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
         }
       }
     })
-
     if (maxHeight !== maxHeightRef.current) {
       maxHeightRef.current = maxHeight
       setMaxHeightOfCards(maxHeightRef.current)
     }
   }, [cards])
-
   if (cards.length > 0) {
     return (
       <section className={classNames(styles['section'], 'p-100-0', className)}>
@@ -114,8 +107,6 @@ const BoardOfCards = ({ className, title, cards = [] }: IBoardOfCards) => {
       </section>
     )
   }
-
   return null
 }
-
 export default BoardOfCards

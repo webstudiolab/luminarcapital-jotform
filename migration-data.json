@@ -1,0 +1,560 @@
+{
+  "benefits": [
+  {
+    "title": "Versatile Applications",
+    "content": "<p>The possibilities are endless on how you can positively utilize our financing. Enhance your marketing, modernizing operations and expanding your footprint are some typical uses that can help increase growth.</p>",
+    "icon_svg_filename": "benefit-1.svg",
+    "order": 1
+  },
+  {
+    "title": "Swift Access to Capital",
+    "content": "<p>Through our simple process, you can easily secure the financing you desire, allowing your business to promptly seize solidified opportunities and meet objectives.</p>",
+    "icon_svg_filename": "benefit-2.svg",
+    "order": 2
+  },
+  {
+    "title": "Collaborative Approach",
+    "content": "<p>Your payments are based on your revenue providing adaptable financial solutions and affordability.</p>",
+    "icon_svg_filename": "benefit-3.svg",
+    "order": 3
+  },
+  {
+    "title": "Performance Based Financing",
+    "content": "<p>Our financing solutions leverage your actual performance, not your assets. With flexible financing that considers future potential and looks beyond credit scores, you gain access to a more affordable solution.</p>",
+    "icon_svg_filename": "benefit-4.svg",
+    "order": 4
+  },
+  {
+    "title": "Industry Leading Repayment Discounts",
+    "content": "<p>We offer amongst the most competitive early repayment discounts, providing a budget friendly approach to financing. This product is typically utilized to manage scheduled obligations as your receivables arrive, allowing you to substantially reduce your financing costs if repaid early.</p>",
+    "icon_svg_filename": "benefit-5.svg",
+    "order": 5
+  },
+  {
+    "title": "Leverage Recurring Financing",
+    "content": "<p>Gain mobility with revolving working capital, where your business gets approved for a set amount that can be taken in increments on a recurring schedule. This allows you to utilize any amount below the limit providing you with continuous and instant access to funds when desired. This can be a great solution for businesses that are expecting incoming receivables in the near term or have inconsistent sales cycles.</p>",
+    "icon_svg_filename": "benefit-6.svg",
+    "order": 6
+  },
+  {
+    "title": "Affordable Financing Solutions",
+    "content": "<p>Revolving working capital allows you to instantly utilize the amount you desire without having to commit to the full approval right away. Cost is only accrued on the amount that you choose to take providing an economical solution for your business. As you make consistent repayments on your financing, your availability to utilize more funds renews providing continuous access for growth.</p>",
+    "icon_svg_filename": "benefit-7.svg",
+    "order": 7
+  }
+],
+  "partnerships": [
+  {
+    "title": "Personalized Financing Options",
+    "content": "<p>We are mindful that every business has their own unique story and scenario which allows us to take a creative approach in providing customized financing solutions. We continuously iterate our knowledge base across all industries which helps us understand potential business bottlenecks and how our financing can be beneficial over the long term.</p>",
+    "icon_name": "Money",
+    "order": 1
+  },
+  {
+    "title": "Attractive Referral Fees",
+    "content": "<p>We provide our referral partners the highest compensation the market has to offer and even have a special program for our strongest relationships. We recognize the effort that is applied to secure financing for your customers, at Luminar we ensure that our referral partners are compensated appropriately.</p>",
+    "icon_name": "Discount",
+    "order": 2
+  },
+  {
+    "title": "Efficient Process",
+    "content": "<p>Time is everyone's most valuable asset. That is why we simplified our process by ensuring we deliver swift and firm approvals that are seamlessly completed without any hassle.</p>",
+    "icon_name": "Like",
+    "order": 3
+  },
+  {
+    "title": "Dedicated Customer Service",
+    "content": "<p>Experience customer service like never before with our thoughtful and skilled team. We prioritize personalized support and clear communication every step of the way to our clients and referral partner relationships.</p>",
+    "icon_name": "CreditCard",
+    "order": 4
+  }
+],
+  "advantages": [
+  {
+    "title": "Established Footprint",
+    "content": "<p>Our brand is well known within the market and our organizational values is something that we address with significance. We are recognized as a consistent, creative and sharp financing partner. Our methodology has permitted us to be a trusted partner within the revenue based financing space where customers can quickly access the working capital they desire.</p>",
+    "banner_image_filename": "advantage-banner-1.svg",
+    "order": 1
+  },
+  {
+    "title": "Customer Focused Financing",
+    "content": "<p>Our view is different from traditional providers. Your financing is dependent on revenue and cash flow metrics not just your credit. This maximizes accessibility and provides a multifaceted approach in delivering personalized financing.</p>",
+    "banner_image_filename": "advantage-banner-2.svg",
+    "order": 2
+  },
+  {
+    "title": "Growth Oriented",
+    "content": "<p>Numerous small business clients have been able to leverage and utilize our financing to benefit their business. We ensure that our financing will put you in a position of strength to help you expand.</p>",
+    "banner_image_filename": "advantage-banner-3.svg",
+    "order": 3
+  },
+  {
+    "title": "Punctual Financing",
+    "content": "<p>We know that time is money and that the opportunity is now. Financing is delivered swiftly within 24 hours from your initial application, skipping any delays you may encounter with traditional providers.</p>",
+    "banner_image_filename": "advantage-banner-4.svg",
+    "order": 4
+  }
+],
+  "values": [
+  {
+    "title": "Unmatched Flexibility",
+    "content": "<p>Every business is different and so is every one of our offerings. Instead of following a standardized approach, we prefer to work with each customer delivering the financing they need to grow.</p>",
+    "order": 1
+  },
+  {
+    "title": "Exceptional Speed",
+    "content": "<p>Business opportunities emerge and disappear in an instant. Our objective is to deliver financing within 24 hours once you apply to ensure you can take advantage of growth prospects.</p>",
+    "order": 2
+  },
+  {
+    "title": "Unparalleled Support",
+    "content": "<p>Our experienced team will be there to assist you from the beginning to the end of the financing process. We value knowing your niche, strengths and potential to make sure we can provide the best support possible.</p>",
+    "order": 3
+  },
+  {
+    "title": "Incomparable Trust",
+    "content": "<p>We believe in providing complete visibility in our business practices as honesty is the key to any successful relationship.</p>",
+    "order": 4
+  }
+],
+  "experienceCards": [
+  {
+    "title": "Share Your Business Journey",
+    "content": "<p>Transparency is key to any successful relationship. We take the time to learn how your business functions, recognize your strengths, and understand your challenges. Finalize your application in no time and leave the rest to us!</p>",
+    "banner_image_filename": "personalized-experience-banner-1.svg",
+    "label": "Step 1",
+    "order": 1
+  },
+  {
+    "title": "Review Unique Financing Options",
+    "content": "<p>As you transmit your application, our dedicated team will swiftly discover the best financing solutions personalized to your business. A detailed analysis is conducted to ensure we cater to your financial objectives.</p>",
+    "banner_image_filename": "personalized-experience-banner-2.svg",
+    "label": "Step 2",
+    "order": 2
+  },
+  {
+    "title": "Secure Financing and Kickstart Your Growth",
+    "content": "<p>Once your financing is finalized, the funds will be delivered supporting your expansion and business objectives. Our financing goes above and beyond simply maintaining your business, it's crafted to propel it forward.</p>",
+    "banner_image_filename": "personalized-experience-banner-3.svg",
+    "label": "Step 3",
+    "order": 3
+  }
+],
+  "pages": {
+    "home": {
+  "hero_title": "Flexible financing options that fuel the growth of small businesses.",
+  "hero_subtitle": "Do you find yourself seeking capital to expand your small business? We believe every business should have the opportunity to access the financing they need to grow.",
+  "hero_cta_text": "Apply for Financing",
+  "hero_cta_secondary_text": "Become a Partner",
+  "hero_banner_image": "",
+  "hero_lottie_json": "Main_illust.json",
+  "financing_section_title": "Financing Options",
+  "reviews_section_title": "Client Reviews",
+  "personalized_experience_title": "A Personalized Experience",
+  "cta_title": "Ready To Secure Business Financing?",
+  "cta_description": "Contact us and connect with one of our financing professionals that can help you navigate through the steps!",
+  "cta_button_text": "Get in Touch",
+  "cta_button_link": "/contact"
+},
+    "financingOptions": {
+  "hero_title": "Financing Options",
+  "hero_description": "Looking for financing catered to your business needs? Our personalized solutions factor incoming revenue and cash flow, not just your credit which provides a different approach compared to conventional products.",
+  "hero_banner_image": "",
+  "hero_lottie_json": "financing.json",
+  "hero_cta_text": "Apply for Financing",
+  "benefits_section_title": "Benefits",
+  "cta_title": "Want to learn more about our financing options?",
+  "cta_description": "Contact us and connect with one of our financing professionals that can help you navigate through the steps!",
+  "cta_button_text": "Get in Touch",
+  "cta_button_link": "/contact?origin=1"
+},
+    "partners": {
+  "hero_title": "Partner with Luminar",
+  "hero_description": "Join us in our mission to empower small businesses with the financing they deserve, backed by a trusted partner.",
+  "hero_banner_image": "",
+  "hero_lottie_json": "partners.json",
+  "hero_cta_text": "Become a Partner",
+  "portfolio_section_title": "The Luminar Partnership",
+  "portfolio_banner_image": ""
+},
+    "whyLuminar": {
+  "hero_title": "Why Luminar Capital",
+  "hero_description": "There are many options when it comes to financing for your business, customers choose us as we seek long term partners, helping you to surpass your goals.",
+  "hero_banner_image": "",
+  "hero_lottie_json": "why_lum.json",
+  "hero_cta_text": "Apply for Financing",
+  "hero_cta_secondary_text": "Become a Partner",
+  "advantages_section_title": "The Luminar Advantage",
+  "values_section_title": "Our Values",
+  "values_section_description": "",
+  "cta_title": "Ready To Secure Business Financing?",
+  "cta_description": "Contact us and connect with one of our financing professionals that can help you navigate through the steps!",
+  "cta_button_text": "Get in Touch",
+  "cta_button_link": "/contact"
+},
+    "contact": {
+  "hero_title": "Get In Touch",
+  "hero_description": "Ready to explore your financing options? Interested in becoming a partner? Need assistance with an existing account? Have a question you'd like answered? Reach out, we're here to help!",
+  "phone": "(305) 307-0190",
+  "email": "support@luminarcapital.com",
+  "address": "25 SE 2nd Ave Ste 550-789 Miami, FL 33131",
+  "google_maps_embed_url": "https://maps.app.goo.gl/XDnwr6xX7NtxSoUn6"
+}
+  },
+  "privacyPolicy": {
+  "title": "Privacy Policy",
+  "content": "<p>This Privacy Policy discloses the privacy practices for www.luminarcapital.com and applies solely to information collected through this website (Site).<br/>
+We reserve the right to change this Privacy Policy from time to time. The Privacy Policy is subject to and incorporates by reference our Terms of Service, including its limitation on liability.<br/>
+Your use of our Site and provision of Personal Information online constitutes acceptance and understanding of this Policy as in effect at the time of your submission.</p>
+<h4>Types Of Personal Information We Collect</h4>
+<p>We do not collect personal information from visitors to our Site unless you voluntarily decide to transmit it to us through one of the Site features, provided e-mail addresses or as part of an application. Certain features of our Site may require you to create an account. When you create an account with us, we may collect your name, email address, contact information, a username and password that you will use to access your account and other information. In addition, to submit a question, comment, or post to a blog, you may be required to submit your name and email address, and we may also ask you for other optional information, such as your business’s website address.</p>
+<p>We also collect the following types of information (personal or otherwise) through the Site:</p>
+<ul>
+	<li>Information provided on an application;</li>
+	<li>Information to verify an individual’s identity (e.g., social security number, an unexpired government identification with a photo, user name and password, etc.);</li>
+	<li>Information about your visits to and use of this Site or the websites of third-party servicers to help us maintain the appropriate features, functionality, and user experience;</li>
+	<li>Individual and business financial or credit bureau information;</li>
+	<li>Personal Information contained in government filings or legal agreements (e.g., corporate formation agreements, business licenses, lease or loan agreements, and business tax returns);</li>
+	<li>Any other personal information you submit or upload through our Site or to one of our email addresses, including information you post to our Site in a comment, blog or testimonial;</li>
+	<li>The website from which you came to our Site and your IP address, browser type and other information related to the device from which you accessed the Site;</li>
+	<li>Your or your business’s geolocation, through various GPS or other geolocator tools that use the IP address of your device to detect a user’s location; </li>
+	<li>Information collected through our Site data or through an ISO (independent sales organization), or other data that we receive from other sources, such as public records, and other background information supplied by information services or third parties.</li>
+</ul>
+<h4>What We Do With The Personal Information Collected</h4>
+<p>No mobile information will be shared with third parties/affiliates for marketing/promotional purposes. All the stated categories in this privacy policy exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties. End users can opt out of receiving further messages by replying STOP or ask for more information by replying HELP. Message frequency may vary. Message and data rates may apply</p>
+<p>We may disclose personal information to third parties for the following purposes:</p>
+<ul>
+	<li>In response to a subpoena or other legal process by a governmental entity or third party, or if otherwise required by law;</li>
+	<li>To protect or enforce our rights or property;</li>
+	<li>In the event of the sale or dissolution (bankruptcy) of all of our assets, in which case, you will be notified thereafter by a prominent notice on our Web site of any change in ownership or uses of your personal information, as well as any choices you may have regarding your personal information;</li>
+	<li>To third parties involved in the process of providing services to us or you or performing functions on our behalf, such as contractors, customer service providers, credit bureaus, and collection agencies. Those contractors and service providers are permitted to use your personal information only for the purpose for which it has been provided and may not disclose it to any other third party except at our express direction and in accordance with this Privacy Policy;</li>
+	<li>To our affiliates and subsidiaries for marketing, advertising, research, or other business purposes;</li>
+	<li>To the ISO that referred you to us—for example, in connection with reporting on your progress in the application process or in connection with calculating or reporting on the commission due to the referral source or otherwise;</li>
+	<li>To provide information or promotional material that may be of interest to you;</li>
+	<li>To our investors, partners, or auditors in the course of their review or auditing us;</li>
+	<li>To provide you with products or services requested, either from us or from Luminar’s network of external funding partners;</li>
+	<li>To our vendors, who may use the information to further improve their database services to us.</li>
+</ul>
+<p>If, at any time, you would like to stop receiving these promotional e-mails, you may follow the opt-out instructions contained in any such e-mail. Please note that it may take up to 10 business days for us to process opt-out requests. If you opt-out of receiving emails or promotions from us, we still may send you e-mails about your account, your application or any products or services you have requested or received from us, or for other customer service purposes.</p>
+<h4>Text / SMS Marketing</h4>
+<p>If you choose to opt-in to SMS communications from Luminar Capital, you will receive text messages at the mobile number you provide. These messages might be automated and might include promotional offers, coupons, and/or information related to Luminar Capital or our affiliated restaurants, as well as information related to your orders and account.</p>
+<h5>Consent to Receive Automated Messages</h5>
+<p>You understand that consent to receive automated messages is not a condition of purchase or use of Luminar Capital services. Messages may include but are not limited to, order confirmations, updates, and special offers.</p>
+<h5>Confidentiality</h5>
+<p>We will maintain the confidentiality of your mobile number. Your mobile number will not be shared with third parties for their own marketing purposes. However, for operational purposes, your name and mobile number may be shared with our service providers who assist in the delivery of our SMS communications. These providers use your personal information solely to carry out the services they provide to Luminar Capital.</p>
+<h5>Frequency of Messages</h5>
+<p>Message frequency may vary based on your orders, account activity, and ongoing promotions. You will receive messages relevant to your transactions and occasional promotional updates.</p>
+<h5>Opt-Out and Support Options</h5>
+<p>You may opt out of receiving text messages at any time by texting "STOP". Upon receipt of your opt-out request, you will be unsubscribed and will no longer receive text messages from us. A confirmation message will be sent to confirm your that you have unsubscribed. Should you wish to re-subscribe, you may text "START' to receive SMS messages again.</p>
+<p>For assistance with the messaging service, text "HELP" or contact <a href="mailto:support@luminarcapital.com">support@luminarcapital.com</a>.</p>
+<p>Wireless Carrier Rates and Services</p>
+<p>Wireless carrier message and data rates may apply. Wireless carriers are not liable for delayed or undelivered messages.</p>
+<h4>Cookies And Third-Party Analytics</h4>
+<p>A cookie is a text file stored on a site visitor’s hard drive to help us improve your access to our Site and identify repeat visitors to our Site. Usage of a cookie is in no way linked to any personally identifiable information, though we can associate a cookie with any identifying information that is or has been provided to us while visiting our Site. We or our third-party service providers use cookies that remain on your computer for a specified period of time or until they are deleted (persistent cookies). These cookies record clickstream information (data reporting the URLs, or names of the pages, on our Site that have been visited). We may also use cookies that exist only temporarily during an online session (session cookies). These cookies allow us to identify you temporarily as you move through the Site. We also use cookies in the restricted client and sales representative limited-access portions of our Site. Most browsers allow users to refuse cookies, but doing so may impede the functionality of some portions of our Site.</p>
+<h4>Social Media Widgets</h4>
+<p>Our Site includes social media features, such as the Facebook like button and widgets, such as the “Share This” button or interactive mini-programs that run on our Site. These features may collect your IP address, which page you are visiting on our site, and may set a cookie to enable the feature to function properly. Social media features and widgets are either hosted by a third party or hosted directly on our Site. Your interactions with these features are governed by the privacy policy of the company providing it.</p>
+<h4>Third Parties</h4>
+<p>We may also engage third parties, including without limitation, Google Analytics and webtrends to track and analyze Site activity on our behalf. We use the data collected by such third parties to help us administer and improve the quality of the Site, analyze usage of the Site, and provide a more enhanced user experience on the Site, such as personalizing and delivering relevant offers and content based on user activity on the Site. The use of cookies by our third party partners is not covered by our Privacy Policy, as we do not have access or control over these cookies. We and some of our third party vendors and partners use technologies such as: cookies, beacons, tags and scripts in analyzing trends, administering our site, tracking users’ movements around the site and to gather demographic information about our user base as a whole. We may receive reports based on the use of these technologies by these companies on an individual as well as aggregated basis. If you wish not to be tracked, turn off javascript in your browser. However please note that without javascript turned on, our funding applications may not function as designed.</p>
+<h4>Security</h4>
+<p>Luminar takes reasonable steps to safeguard your personal information through physical, electronic, and operational policies and practices. Data can only be read or written through defined service access points, the use of which is password-protected. The physical security of the data is achieved through a combination of network firewalls (there is no direct communication allowed between the database server and the Internet) and servers with operating systems, all housed in a secure facility.</p>
+<p>Access to the system is controlled. Employees are granted access to personal information on a need-to-know basis in order to perform a specific job (for example, billing or customer service). We use encryption to protect your personal information transmitted online, as well as offline. When we contact you about your account or to confirm a funds transfer, we only reference the last four digits of your social security number. The computers/servers in which we store personally identifiable information are kept in a secure environment.
+We will also ensure the proper disposal of your personal information—regardless of the source.</p>
+<h4>User Access</h4>
+<p>If your personal information changes, or if you no longer want updates or to be contacted for new products, you may correct, update, amend, delete/remove or deactivate your contact information by emailing our customer support at <a href="mailto:support@luminarcapital.com">support@luminarcapital.com</a> or by contacting us by telephone or postal mail at the contact information listed below. We will update your file within 30 calendar days.</p>
+<h4>Data Retention</h4>
+<p>We will retain your information for as long as your account is active and thereafter as long as reasonably useful for internal purposes to improve our services and also to provide you with information in the future regarding our and our partners’ products and services. We may be required to retain your information to comply with our legal obligations, resolve disputes, and ensure the enforcement of agreements.</p>
+<h4>Information Posted To Our Site</h4>
+<p>We may, from time to time, allow users to post information to our Site, such as comments or testimonials. Any information that you post to our Site becomes public information and may be viewable by other users, as well as visitors to our Site (this is not true of uploaded documents as part of the funding process). In addition, your name, as well as other optional information you choose to submit along with the information you post, will be publicly displayed. We are not responsible for the privacy of any information that you choose to post to our Site, or for the accuracy of any information contained in those postings. We cannot prevent such information from being used by others in a manner that may violate this Privacy Policy, the law, or your personal privacy. Your posting of any content to any of the Site is subject to our Terms of Service.</p>
+<h4>Third-Party Links</h4>
+<p>At times, our Site may contain links to other, third-party websites. Any access to and use of such linked websites is not governed by this Privacy Policy but, instead, is governed by the privacy policies of those third-party websites. We are not responsible for the information practices of such third-party websites.</p>
+<h4>International Users</h4>
+<p>The Site is hosted in the United States. If you are accessing the Site from outside the United States, by providing your information to the Site, you are consenting to and authorizing the transfer of your information to the United States for storage, use, processing, maintenance, and onward transfer of such information to other entities regardless of their location in accordance with this Privacy Policy and our Terms of Service. You are also consenting to the application of United States law in all matters concerning the Site.</p>
+<h4>Session Time Outs</h4>
+<p>We also employ session time-outs to protect your account. You will be logged out of the Site automatically after a specified period of inactivity. This time-out feature reduces the risk of others being able to access your account if you leave your computer unattended.</p>
+<h4>What You Can Do To Protect Your Personal Information</h4>
+<p>In addition to our own efforts, you can take several precautions to protect the security of your computer and personal information. For instance, you should create and use a complex password, using numbers, a combination of small and large capital letters, and special characters. You should avoid using any information that others can easily learn about you, such as your mother’s maiden name, a family member’s name or birthday. We also recommend that you change your password frequently. You should never share your password with anyone, or leave it written down in an unsecure area.</p>
+
+<p>You can also install and regularly update antivirus and firewall software to protect your computer or device from external attacks by malicious users. If you use a computer that can be accessed in a public area (e.g., library, coffee shop, etc.), we recommend that you take special precautions to protect the security of your account and personal information. When you are finished visiting our Site, you should log out completely, close the browser window and clear the browser’s cache files.</p>
+
+<p>You should also be aware of fraudulent attempts to gain access to your account information known as “phishing.” Phishing is a tactic used by scammers to lure people to a phony website through the use of a genuine-looking email purporting to be from a legitimate company. Either in the email itself or on this fake website site, scammers will ask for login information to gain access to people’s accounts and withdraw their money. Luminar will never ask you for your login information in the context of any email. In general, you can protect yourself against phishing by never providing login or personal information via an email.</p>
+<h4>Privacy Policy For California Residents</h4>
+<p>The below information applies solely to California residents, including business owners, who have visited our website, inquired or submitted an application for business financing to Luminar Capital  and its subsidiaries (“Luminar Capital ”) or have been referred to Luminar Capital  by a third party and whose interactions with Luminar Capital  are subject to the California Consumer Protection Act (“CCPA”) and California Privacy Rights Act (“CPRA”).</p>
+<h4>I. Why Do We Collect Your Personal Information?</h4>
+<p>Luminar Capital  provides business financing to small businesses. In order to provide small business financing, we must collect information regarding the business as well as personal information from the business owner(s). Without obtaining this information, Luminar Capital  would be unable to provide financing as it would not have the information necessary to underwrite a request for financing. Furthermore, Luminar Capital  collects information regarding the business and personal information about the business owner(s) in order to improve the customer experience on our website, customer journey and client portal. Luminar Capital  also collects this data in order to assist the business in obtaining business financing from Luminar Capital . The information collected is kept indefinitely, unless we receive a request to delete from the client.</p>
+<h4>II. What Personal Information Do We Collect?</h4>
+<p>Luminar Capital  collects and maintains all information that the business owner(s) submits to Luminar Capital . This may include sensitive personal information about the business (e.g. business name, business address, business telephone number, business bank statements, credit card processing statements, federal tax identification number, financial statements, tax returns, email addresses, etc.) as well as sensitive personal information submitted by the business owner(s) to Luminar Capital (e.g. name, address, date of birth, driver’s license information, social security number, credit report information, telephone number, email addresses, etc.).</p>
+<p>Luminar Capital  may also collect sensitive personal information about the business applicant and owner(s) which Luminar Capital receives from third parties. This information may be obtained by Luminar Capital from a third party that refers the business and business owner(s) to Luminar Capital and such information may include everything listed above that Luminar Capital  collects itself from businesses and their owners. This information may also be obtained by Luminar Capital from other third parties such as tax reporting services, bank account verification services, bank activity information providers, credit reporting services, landlords and neighbors, telephone number verification services, email verification services, IP address verification services, business status services, and credit card processing companies. Luminar Capital may disclose the aforementioned categories of personal information to third parties in order for third parties to provide business financing to the business or in order for third parties to assist Luminar Capital in its servicing or collection of past due accounts.</p>
+<p>Luminar Capital also collects and maintains personal information that is indirectly provided to us by visiting our website(s) or any other online pages that we may maintain (whether accessed by computer or mobile phone). Specifically, Luminar Capital collects categories of information including: (i) information that is integral to maintaining the operation of our systems, which, for instance, helps us track which webpage you are viewing; (ii) marketing related scripts and cookies, such as how you got to our website; and (iii) user interaction scripts and cookies, which help us gather information on how you interact with our website. Furthermore, this includes information such as IP addresses, browser information, any other information collected via cookies, and geolocation. We collect this information on visitors in order to improve the client experience and ensure that the client is able to pick up where they left off during a visit to our website.</p>
+<h4>III. Do We Sell Personal Information?</h4>
+<p>Luminar Capital  does not sell any personal information to third parties. Luminar Capital  may share personal information to its service providers who have a need to know the information to assist Luminar Capital  and to third parties who will assist a small business applicant in obtaining financing for the business and will do so only with the business’s express written or verbal authorization.</p>
+<p>Luminar Capital only provides business financing to businesses whose owners are eighteen (18) years or older and therefore does not collect nor sell the personal information of minors.</p>
+<h4>IV. Right To Know And Right To Access</h4>
+<p>Under the CCPA, a business owner residing in California has the right to request that Luminar Capital disclose what personal information it has collected, used, or disclosed about the business owner over the past 12 months. A business owner may submit a request to know up to twice a year, free of charge. A business owner that submits personal information to Luminar Capital can either personally or through an authorized agent, request the disclosure of the personal information that Luminar Capital collected and maintained within the previous twelve (12) months.</p>
+<p>A business owner, or their authorized agent, that submits personal information to Luminar Capital may request the disclosure of personal information by submitting a verifiable request for information to: support@luminarcapital.com, or by calling our toll-free phone number at: (305) 307-0190. In order to be a verifiable request for information, the email or phone call must provide the following information: business name; business’s owner’s name; business address, business owner’s home address; business email, business owner’s email; business telephone number, and business owner’s telephone number.</p>
+<p>Within ten (10) days after receipt of the verifiable information request, Luminar Capital will confirm that it is in receipt of the request and will utilize the information provided to lookup the relevant information in its internal systems so that it may determine what personal information of the business owner(s) Luminar Capital collected and maintains. Luminar Capital will respond to the request within forty-five (45) days after receipt of the request; however, if necessary, Luminar Capital may utilize an additional forty-five (45) days to respond to the request and will provide you with notice of the additional time.</p>
+<h4>V. Right To Request Deletion Of Personal Information</h4>
+<p>Under the CCPA, a business owner residing in California, or their authorized agent, has the right to request that Luminar Capital delete the personal information it has collected and maintains about the business owner(s). A business owner, or their authorized agent, may request the deletion of the personal information that Luminar Capital collected and maintains within the preceding twelve (12) months.</p>
+<p>A business owner, or their authorized agent, may request the deletion of personal information, by submitting a verifiable request for deletion to: support@luminarcapital.com or by calling our toll-free phone number at: (305) 307-0190.</p>
+<p>In order to be a verifiable request for deletion, the email must include the following: business name; business’s owner’s name; business address, business owner’s home address; business email, business owner’s email; business telephone number, and business owner’s telephone number.</p>
+<p>Within ten (10) days after receipt of the verifiable deletion request received from the individual either by telephone or by email, Luminar Capital will confirm that it is in receipt of the request and will utilize the information provided to lookup the business owner’s information in its internal systems so that it may determine what personal information of the business Luminar Capital collected and maintains. Luminar Capital will respond to the request within forty-five (45) days after receipt of the request; however, if necessary, Luminar Capital and its subsidiaries may utilize an additional forty-five (45) days to respond to the request and will provide you with notice of the additional time.</p>
+<p>Luminar Capital will not delete the business owner’s personal information to the extent the information is used: (1) to render a decision related to a financing request; (2) to service an outstanding financing product; (3) to prevent fraudulent or illegal activity; (4) for Luminar Capital’s internal use related to your relationship with Luminar Capital as well as Luminar Capital’s development of underwriting models, risk models, marketing models, and collection models; (5) for accounting or tax purposes and to comply with a legal obligation; or (6) for Luminar Capital’s internal use in a lawful manner that is compatible with the context in which the business owner(s) provided the personal information.</p>
+<h4>VI. Right To Opt-Out Of Sale Of Personal Information</h4>
+<p>Under the CCPA, a business owner residing in California, or their authorized agent, has the right to direct Luminar Capital to not to sell your personal information (the “right to opt-out”). Luminar Capital does not and will not sell personal information of business owners or their authorized agents.</p>
+<h>VII. Right Of Non-Discrimination</h>
+<p>Luminar Capital does not discriminate against any small business or small business owner(s) that exercises their right under the CCPA. Any small business or small business owner(s) that exercises their rights under the CCPA shall be treated the same as a small business or small business owner(s) that did not exercise its rights under the CCPA.</p>
+<p>If you have any questions or concerns regarding Luminar Capital’s business practices and Privacy Policy for California Residents, please contact us at: support@luminarcapital.com, or you can call our toll-free phone number at: (305) 307-0190.</p>
+<h4>Changes To This Policy</h4>
+<p>We may update this Privacy Policy to reflect changes to our information practices. If we make any material changes we will post a revised policy on this Site prior to the change becoming effective. Your continued use of the Site shall constitute your acceptance of such updated Privacy Policy. We encourage you to periodically review this page for the latest information on our privacy practices.</p>
+<p>By using our services, you acknowledge that you have read and understood the provisions of this privacy policy, including the CPRA compliance statement.</p>"
+},
+"termsOfService": {
+  "title": "Terms of Service", 
+  "content": "<p>Please read the following terms of service agreement carefully before using this website (“website”) located at luminarcapital.com.</p>
+<p>The following are terms of a legal agreement (“agreement”) between you and Luminar Capital, LLC. (“Luminar Capital “or “company”) as the owners and operators of this website. If you do not agree to any of these terms, please leave the website immediately as you are not authorized to use it. By accessing, browsing, and/ or using this website or any portions of this website you acknowledge that you have read, understood these terms of service and, agree to be bound and abide by them.</p>
+<h4>Modification To This Agreement</h4>
+<p>These terms of service may be revised at the company’s sole discretion at any time, without prior notice. You are responsible for reviewing the terms of service periodically. Your continued access and/or use of the website following any change constitutes your agreement to any such revised terms of service.</p>
+<h4>Intended Audience</h4>
+<p>The services on this website are only intended for users located in the United States. Those who choose to access this website from other locations assume the responsibility of complying with applicable local laws. By using this website, you warrant that you are 18 years of age or older.</p>
+<h4>Acceptable Use</h4>
+<p>You may not access or use the website for any other purpose other than that for which the company makes it available. You may use the website only for lawful purposes and you agree that you shall at all times comply with all applicable local, state, provincial, national, and international laws, statutes, rules, regulations, ordinances, and the like applicable to your use of the website. You also agree that you will not do any of the following under any circumstances:</p>
+<p>Submit to or on the website, anything that is or may be: (a) harmful, threatening, abusive, harassing, degrading, hateful, or intimidating; (b) defamatory, libelous, or disparaging of any person or entity; (c) false, fraudulent, or tortious; (d) obscene, indecent, pornographic, vulgar, profane, or sexually explicit; (e) intended to promote (or have the effect of promoting) violence, racial hatred, terrorism or illegal acts; (f) infringing, or in violation or misappropriation of, any patent, trademark, trade identity right, trade secret, publicity right, privacy right, copyright, or any other intellectual property right or any other rights of any third party; (g) in violation of any other rights of any person or entity; (h) in violation of any law or regulation; or (i) otherwise objectionable.</p>
+<p>Impersonate any person or entity; falsely state or otherwise misrepresent your affiliation with any person or entity, including us; forge headers or otherwise manipulate identifiers in order to disguise the origin of any submissions to or through the website; or expressly state or imply that we endorse any statement you make.</p>
+<p>Violate or attempt to violate the security of any portion of the website, including but not limited to: (a) access content not intended for you; (b) log into a server or account which you are not authorized to access; (c) attempt to probe, scan, or test the vulnerability of a system or network or to breach security or authentication measures without proper authorization; (d) attempt to interfere with or disrupt the website or the servers or networks that provide the website, including without limitation, via means of submitting a virus to the website, overloading, “flooding”, “mailbombing” or “crashing” the website; or (e) restrict or inhibit any other user from accessing or using the website, including, without limitation, by means of hacking or defacing any portion of the website.</p>
+<p>Modify, adapt, translate, reverse engineer, decompile, or disassemble any portion of the website.</p>
+<p>Except as may be the result of a standard search engine or internet browser usage, using or launching, developing or distributing any automated system, including, without limitation, any spider, robot (or “bot”), cheat utility, scraper, or offline reader that accesses the websites, or using or launching any unauthorized script or other software.</p>
+<h4>Communication</h4>
+<p>You hereby expressly consent to receiving calls and messages, including auto-dialed and pre-recorded message calls and SMS messages (including text messages) from Luminar Capital, its affiliates, marketing partners, agents and others calling at Luminar Capital’s request or on its behalf, at any telephone numbers that you have provided or may provide in the future (Including any cellular or mobile telephone numbers). Your cellular or mobile telephone provider will charge you according to the type of plan you carry. You may opt out of receiving calls and marketing from Luminar Capital and its affiliates, marketing partners, agents and others as provided in the Privacy Policy or by contacting us directly.</p>
+<h4>Term And Termination</h4>
+<p>Without limiting its other remedies, company may immediately discontinue, suspend, terminate, or block your and any user’s access to this website and the related services or any portion thereof at any time in company’s sole discretion and without notice.</p>
+<h4>Modification To This Website</h4>
+<p>Luminar Capital shall reserve the right at any time it may deem fit, to modify, alter, add to, terminate, and/or suspend any part or all of the website at its own sole discretion at any time, without prior notice.</p>
+<h4>Website Contents And Ownership</h4>
+<p>Luminar Capital owns the intellectual property rights of all information on this website including but not limited to the company name, logo, graphics, videos, audios, images, designs, photographs, writings, graphs, data, and other materials. Company’s ownership rights are protected by copyrights, trademarks, trade secrets, or other proprietary rights. You shall comply with all copyright laws worldwide in your use of this website and prevent unauthorized copying. You may not copy, display, distribute, modify, reproduce, or transmit this website or portions thereof without prior written consent from company. Except as provided in this agreement, company does not grant you any express or implied right in or under any patents, trademarks, copyrights, or trade secret information.</p>
+<h4>Third Parties</h4>
+<p>The website may include links to other websites or applications operated by third parties. Luminar Capital has no control over such websites and resources or their terms of service. Such hyperlinks are provided for your reference only and their inclusion does not imply any sponsorship, affiliation, or endorsement of the material on such websites or with their operators. Material contained in linked websites does not necessarily reflect the views of Luminar Capital and we provide no warranty or representation in relation to the accuracy or completeness of such material. Your use of third-party websites is at your own risk.</p>
+<h4>Consent To Electronic Transactions And Disclosures</h4>
+<p>As Luminar Capital operates online, it is necessary for you to consent to transact business with us online and electronically. As part of doing business with us, therefore, we also need you to consent to us giving you certain disclosures electronically, either via our website, a third-party website or platform, or to the verified email address you provided during registration. By entering into this agreement, you consent to receive electronically all documents, communications, notices, contracts, and agreements arising from or relating in any way to your or our rights, obligations or services under this agreement (each, a “disclosure”). This document informs you of your rights concerning disclosures.</p>
+<p>Electronic Communications. Any disclosures will be provided to you electronically, either on our website, a third-party website or platform, or via electronic mail to the verified email address you provided during registration. Your consent to electronic delivery will apply to all future communications unless consent is withdrawn by you. If you require paper copies of such disclosures, you may write to us at the mailing address provided below and a paper copy will be sent to you.</p>
+<p>Scope of Consent. Your consent to receive disclosures and transact business electronically, and our agreement to do so, applies to any transactions to which such disclosures relate.</p>
+<p>Consenting to Do Business Electronically. Before you decide to do business electronically with us, you should consider whether you have the required hardware and software capabilities described below.</p>
+<p>Hardware and software requirements. In order to access and retain disclosures electronically, you must satisfy the following computer hardware and software requirements: access to the internet; an email account and related software capable of receiving email through the internet; a web browser that is SSL-compliant and supports secure sessions, and hardware capable of running this software.</p>
+<p>For more information regarding Electronic Disclosures, please contact us.</p>
+<p>You are responsible for keeping us informed of any change in your email or home mailing address so that you can continue to receive all disclosures in a timely fashion. You also agree to update your registered residence address, and telephone number on the website if they change.</p>
+<p>You agree to print a copy of this agreement for your records. You agree and acknowledge that you can access, receive, and retain all disclosures electronically sent via email or posted on the website.</p>
+<h4>Liability Disclaimer</h4>
+<p>Luminar Capital makes no representations about the suitability, reliability, availability, timeliness, and accuracy of the information, software, products, services, and related graphics contained on the website for any purpose. To the maximum extent permitted by applicable law, all such information, software, products, services, and related graphics are provided “as is” without warranty or condition of any kind. Luminar Capital and/or its suppliers hereby disclaim all warranties and conditions with regard to this information, software, products, services, and related graphics, including all implied warranties or conditions of merchantability, fitness for a particular purpose, title, and non- infringement. To the maximum extent permitted by applicable law, in no event shall Luminar Capital and/or its suppliers be liable for any direct, indirect, punitive, incidental, special, consequential damages or any damages whatsoever including, without limitation, damages for loss of use, data or profits, arising out of or in any way connected with the use or performance of the website, with the delay or inability to use the website or related services, the provision of or failure to provide services, or for any information, software, products, services, and related graphics obtained through the website, or otherwise arising out of the use of the website, whether based on contract, tort, negligence, strict liability or otherwise, even if the company has been advised of the possibility of damages. Because some states/jurisdictions do not allow the exclusion or limitation of liability for consequential or incidental damages, the above limitation may not apply to you. If you are dissatisfied with any portion of the website, or with any of these terms of use, your sole and exclusive remedy is to discontinue using the website.</p>
+<h4>Assumption Of Risk</h4>
+<p>You expressly agree that the use of this website is done at your own risk. The information published on this website is for informational purposes only. Any reliance you place on such, you do at your own risk. You understand that while great care is taken to provide you with the best information possible, company makes no representations or warranties of any kind, express or implied, about the reliability, accuracy, completeness, security, or currency of the information provided.</p>
+<h4>Indemnification</h4>
+<p>You agree to indemnify, defend, and hold harmless Luminar Capital, LLC, its affiliates, agents, employees, and licensors from and against any and all claims and expenses, including reasonable attorney fees, arising out of or related in any way to your use of the website, violation of this agreement, violation of any law or regulation, or violation of any proprietary or privacy right.</p>
+<h4>Dispute Resolution</h4>
+<p>This agreement is governed by and shall be construed in accordance with the laws of Delaware, U.S.A. without reference to its conflict-of-law provisions. You agree to submit to the personal and exclusive jurisdiction in Delaware, U.S.A. for any disputes with company arising out of your use of this website. You agree that if a dispute arises, parties will attempt to resolve the dispute with mediation in Delaware, U.S.A., or an online mediation service that is mutually agreed upon by all parties. The parties agree that their good faith participation in mediation is a condition precedent to pursuing other legal remedies. The successful party to any dispute resolution will be entitled to reasonable costs and fees incurred in resolving or settling the dispute, in addition to any other relief to which the party may be entitled.</p>
+<h4>Entire Agreement</h4>
+<p>This agreement constitutes the entire agreement between Luminar Capital and you with respect to this website. This agreement supersedes and cancels all prior or contemporaneous discussions, writings, negotiations, and agreements whether electronic, oral, or written between you and company with respect to this website. A printed version of this agreement and of any notice given in electronic form shall be admissible in judicial or administrative proceedings based on or relating to this agreement to the same extent and subject to the same conditions as other business documents and records originally generated and maintained in printed form.</p>
+<h4>Severability</h4>
+<p>If any term in this agreement is found to be void or voidable, the remaining terms of the agreement are unaffected and deemed to remain in full force and effect, including those terms that are similar.</p>
+<h4>No Waiver</h4>
+<p>Company’s failure to enforce its rights under this agreement or take action against any party for breach of this agreement does not constitute a waiver of such rights, or of future subsequent enforcement of such rights.</p>
+<h4>Notification of Infringement</h4>
+<p>If you are a copyright owner or an agent thereof and believe in good faith that any content on this website infringed your copyrights, you should send us an infringement notice pursuant to the Digital Millennium Copyright Act (“DMCA”). To file a notice with this website, send a written communication to Luminar Capital copyrights agent and provide the following information in writing:</p>
+<ul>
+	<li>Identification of the copyrighted work that you claim has been infringed.</li>
+	<li>Identification of the specific material that is claimed as infringing and information sufficient to permit the website to locate that material on our website or within the communication service.</li>
+	<li>A statement that you believe, in good faith, that the use of the material in the manner complained of is not authorized by the copyright owner, its agent, or by law.</li>
+	<li>If you are not the copyright owner, a description of your relationship to the copyright owner.</li>
+	<li>Your contact information, including your address, telephone number and email address.</li>
+	<li>A physical or electronic signature of a person authorized to act on behalf of the copyright owner.</li>
+</ul>
+<h4>Privacy</h4>
+<p>For information about how the company collects, uses, and shares your information, please review our Privacy Policy. You agree that by using the services you consent to the collection, use, and sharing (as set forth in the privacy policy) of such information.</p>"
+},
+  "footerNav": [
+  {
+    "column_title": "Financing Options",
+    "links": [
+      {
+        "label": "Revenue Based Financing",
+        "url": "/financing-options?origin=0&scroll=true"
+      },
+      {
+        "label": "Early Repayment Discounts",
+        "url": "/financing-options?origin=1&scroll=true"
+      },
+      {
+        "label": "Revolving Working Capital",
+        "url": "/financing-options?origin=2&scroll=true"
+      }
+    ]
+  },
+  {
+    "column_title": "Discover",
+    "links": [
+      {
+        "label": "Learning Center",
+        "url": "/learning-center"
+      },
+      {
+        "label": "Partners",
+        "url": "/partners"
+      },
+      {
+        "label": "Why Luminar",
+        "url": "/why-luminar"
+      }
+    ]
+  },
+  {
+    "column_title": "Resources",
+    "links": [
+      {
+        "label": "Contact Us",
+        "url": "/contact"
+      },
+      {
+        "label": "Become a Partner",
+        "url": "#partner-modal"
+      },
+      {
+        "label": "Apply for Financing",
+        "url": "#financing-modal"
+      }
+    ]
+  }
+],
+"siteOptions": {
+  "footer_description": "When you succeed, we succeed. At Luminar Capital, we are focused on delivering custom financing solutions with exceptional customer service. Our relationships with our customers are intimate, not robotic. We view you as a partner and not a transaction.",
+  "copyright_text": "Luminar Capital LLC. All rights reserved.",
+  "social_links": {
+    "google": "/",
+    "linkedin": "https://www.linkedin.com/company/luminar-capital/",
+    "trustpilot": "https://www.trustpilot.com/review/luminarcapital.com",
+    "facebook": "https://www.facebook.com/share/1K71fM8RP1/?mibextid=wwXIfr",
+    "instagram": "https://www.instagram.com/luminarcapital/",
+    "twitter": "https://x.com/luminarcapital"
+  }
+},
+  "mediaFiles": [
+  {
+    "category": "benefits",
+    "files": [
+      "benefit-1.svg",
+      "benefit-2.svg",
+      "benefit-3.svg",
+      "benefit-4.svg",
+      "benefit-5.svg",
+      "benefit-6.svg",
+      "benefit-7.svg"
+    ],
+    "source_path": "./public/banners/benefits/"
+  },
+  {
+    "category": "advantages",
+    "files": [
+      "advantage-banner-1.svg",
+      "advantage-banner-2.svg",
+      "advantage-banner-3.svg",
+      "advantage-banner-4.svg"
+    ],
+    "source_path": "./public/banners/"
+  },
+  {
+    "category": "experience_cards",
+    "files": [
+      "personalized-experience-banner-1.svg",
+      "personalized-experience-banner-2.svg",
+      "personalized-experience-banner-3.svg"
+    ],
+    "source_path": "./public/banners/"
+  },
+  {
+    "category": "hero_banners",
+    "files": [
+      "hero-home-banner.svg",
+      "hero-financing-options-banner.svg",
+      "hero-partners-banner.svg",
+      "hero-why-luminar-banner.svg"
+    ],
+    "source_path": "./public/banners/"
+  },
+  {
+    "category": "lottie_animations",
+    "files": [
+      "Main_illust.json",
+      "financing.json",
+      "partners.json",
+      "why_lum.json",
+      "main-anim.json"
+    ],
+    "source_path": "./public/json/"
+  },
+  {
+    "category": "general_banners",
+    "files": [
+      "cta-solid-banner.svg",
+      "financing-options-banner.svg",
+      "portfolio-banner.svg",
+      "success-financing.svg",
+      "success-partner.svg"
+    ],
+    "source_path": "./public/banners/"
+  },
+  {
+    "category": "logos",
+    "files": [
+      "color_logo.svg",
+      "white_logo.svg",
+      "logo_icon.svg",
+      "logo_icon.png"
+    ],
+    "source_path": "./public/"
+  },
+  {
+    "category": "abstract_backgrounds",
+    "files": [
+      "footer-abstract-mobile.svg",
+      "hero-abstract-desktop.svg",
+      "form-abstract-desktop.svg",
+      "inform-abstract-desktop.svg",
+      "modal-abstract-mobile.svg",
+      "hero-abstract-mobile.svg",
+      "modal-abstract-desktop.svg",
+      "footer-abstract-desktop-full.svg",
+      "footer-abstract-desktop.svg",
+      "CTA-abstract-mobile.svg",
+      "inform-abstract-mobile.svg",
+      "hero-abstract-desktop-full.svg",
+      "CTA-abstract-desktop.svg"
+    ],
+    "source_path": "./public/abstract/"
+  },
+  {
+    "category": "icons",
+    "files": [
+      "checkmark.svg",
+      "carousel-arrow.svg",
+      "animated-spinner.svg"
+    ],
+    "source_path": "./public/icons/"
+  },
+  {
+    "category": "favicon",
+    "files": [
+      "favicon-16x16.png",
+      "android-chrome-192x192.png",
+      "apple-touch-icon.png",
+      "android-chrome-512x512.png",
+      "mstile-150x150.png",
+      "favicon-32x32.png",
+      "safari-pinned-tab.svg"
+    ],
+    "source_path": "./public/favicon/"
+  },
+  {
+    "category": "og_image",
+    "files": [
+      "og.jpg"
+    ],
+    "source_path": "./public/"
+  }
+]
+}

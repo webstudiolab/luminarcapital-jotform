@@ -2,14 +2,12 @@ import classNames from 'classnames'
 import Image from 'next/image'
 import { IBoardChessOrderCard } from '@/types'
 import styles from './BoardChessOrder.module.scss'
-
 interface IBoardChessOrder {
   className?: string
   title: string
   data: IBoardChessOrderCard[]
   order: 'even' | 'odd'
 }
-
 const BoardChessOrder = ({
   className,
   title,
@@ -32,7 +30,7 @@ const BoardChessOrder = ({
           <div className={classNames(styles['section-list'], styles[order])}>
             {data.map((item, index) => (
               <div
-                key={`personalized-experience-${index}`}
+                key={`board-chess-${index}`}
                 className={styles['section-list-item']}
               >
                 <div className="row">
@@ -69,8 +67,6 @@ const BoardChessOrder = ({
       </section>
     )
   }
-
   return null
 }
-
 export default BoardChessOrder

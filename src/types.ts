@@ -205,3 +205,10 @@ export interface IFetchPosts {
   order_by?: string | null
   order?: string | null
 }
+
+export interface IProduct {
+  title: string
+  description: string
+  price: string
+  image: string
+}
