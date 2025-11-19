@@ -1,13 +1,18 @@
+// Add this at the TOP of the file
+declare global {
+  interface Window {
+    grecaptcha: any
+  }
+}
+
 import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
-// import axios from 'axios'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Slider from 'react-slick'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextField from '@/ui/components/TextField/TextField'
 import { EMAIL_SUBJECT } from '@/config/constants'
-// import { WORDPRESS_API_PATHS } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import { schema } from '../BecomeAPartnerDefault/schema'
 import Button from '@/ui/components/Button/Button'
@@ -62,6 +67,10 @@ const BecomeAPartnerModalForm = ({
 
   // Consent checkbox state
   const [consent, setConsent] = useState(false)
+
+  // SPAM PROTECTION - Add these new state variables
+  const [honeypot, setHoneypot] = useState('')
+  const formStartTime = useRef<number>(Date.now())
 
   const settings = {
     accessibility: false,
@@ -119,23 +128,19 @@ const BecomeAPartnerModalForm = ({
 
     setIsSubmitting(true)
     try {
-      // TEMPORARY: WordPress API commented out until backend is ready
-      // Once WordPress is set up, uncomment the code below and remove the direct email approach
-
-      /*
-      const response = await axios.post(
-        `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
-        data,
+      // Get reCAPTCHA token
+      const token = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+        { action: 'partner_form' },
       )
 
-      if (response.data.success && response.status === 200) {
-      */
-
-      // TEMPORARY: Send emails directly without WordPress API
       // Send email to admin
       await browserSendEmail({
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.admin(data),
+        recaptchaToken: token,
+        honeypot: honeypot,
+        timestamp: formStartTime.current,
       })
 
       // Send confirmation email to user
@@ -143,6 +148,9 @@ const BecomeAPartnerModalForm = ({
         to: data.email,
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.user(),
+        recaptchaToken: token,
+        honeypot: honeypot,
+        timestamp: formStartTime.current,
       })
 
       setIsSubmittedSuccess(true)
@@ -156,11 +164,8 @@ const BecomeAPartnerModalForm = ({
           email: false,
         })
         setConsent(false)
+        formStartTime.current = Date.now()
       }, 1000)
-
-      /*
-      }
-      */
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } }
       setSubmittedError(
@@ -195,6 +200,21 @@ const BecomeAPartnerModalForm = ({
         onSubmit={handleSubmit(onSubmit)}
         className={classNames(styles['form'], className)}
       >
+        {/* HONEYPOT - Hidden spam trap */}
+        <div
+          style={{ position: 'absolute', left: '-9999px' }}
+          aria-hidden="true"
+        >
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
+
         <Slider
           ref={(slider) => {
             sliderRef.current = slider

@@ -1,12 +1,17 @@
-import { ChangeEvent, useCallback, useState } from 'react'
+// Add this at the TOP of the file
+declare global {
+  interface Window {
+    grecaptcha: any
+  }
+}
+
+import { ChangeEvent, useCallback, useState, useRef } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import TextField from '@/ui/components/TextField/TextField'
 import Button from '@/ui/components/Button/Button'
 import { yupResolver } from '@hookform/resolvers/yup'
-// import axios from 'axios'
-// import { EMAIL_SUBJECT, WORDPRESS_API_PATHS } from '@/config/constants'
 import { EMAIL_SUBJECT } from '@/config/constants'
 import SuccessMessage from '@/ui/components/SuccessMesasge/SuccessMessage'
 import { schema } from './schema'
@@ -53,6 +58,10 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
 
   const [consent, setConsent] = useState(false)
 
+  // SPAM PROTECTION - Add these new state variables
+  const [honeypot, setHoneypot] = useState('')
+  const formStartTime = useRef<number>(Date.now())
+
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
     setIsFocused((prev) => ({
@@ -78,21 +87,19 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
 
     setIsSubmitting(true)
     try {
-      // TEMPORARY: WordPress API commented out until backend is ready
-      // Once WordPress is set up, uncomment the code below and remove the direct email approach
-      /*
-      const response = await axios.post(
-        `${process.env.WORDPRESS_API_URL!}/${WORDPRESS_API_PATHS.save}/save-partner`,
-        data,
+      // Get reCAPTCHA token
+      const token = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+        { action: 'partner_form' },
       )
 
-      if (response.data.success && response.status === 200) {
-      */
-      // TEMPORARY: Send emails directly without WordPress API
       // Send email to admin
       await browserSendEmail({
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.admin(data),
+        recaptchaToken: token,
+        honeypot: honeypot,
+        timestamp: formStartTime.current,
       })
 
       // Send confirmation email to user
@@ -100,6 +107,9 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
         to: data.email,
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.user(),
+        recaptchaToken: token,
+        honeypot: honeypot,
+        timestamp: formStartTime.current,
       })
 
       setIsSubmittedSuccess(true)
@@ -113,10 +123,8 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
           phone: false,
         })
         setConsent(false)
+        formStartTime.current = Date.now()
       }, 1000)
-      /*
-      }
-      */
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } }
       setSubmittedError(error.response?.data?.message || 'Submission failed')
@@ -158,6 +166,21 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
     <>
       <div className={classNames(styles['form'], className)}>
         <form onSubmit={handleSubmit(onSubmit)} className={styles['form-body']}>
+          {/* HONEYPOT - Hidden spam trap */}
+          <div
+            style={{ position: 'absolute', left: '-9999px' }}
+            aria-hidden="true"
+          >
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </div>
+
           {fields.map((field) => (
             <TextField
               key={field.name}
@@ -205,6 +228,31 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
             )}
             Submit
           </Button>
+
+          <p
+            style={{
+              fontSize: '0.875rem',
+              color: '#666',
+              marginTop: '1rem',
+              textAlign: 'center',
+            }}
+          >
+            This site is protected by reCAPTCHA and the Google{' '}
+            <a
+              href="https://policies.google.com/privacy"
+              style={{ color: '#1a73e8', textDecoration: 'none' }}
+            >
+              Privacy Policy
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://policies.google.com/terms"
+              style={{ color: '#1a73e8', textDecoration: 'none' }}
+            >
+              Terms of Service
+            </a>{' '}
+            apply.
+          </p>
 
           {submittedError && (
             <p className={styles['form-error']}>{submittedError}</p>

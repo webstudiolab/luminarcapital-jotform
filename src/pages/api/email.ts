@@ -1,33 +1,37 @@
-/*
 import { NextApiResponse, NextApiRequest } from 'next'
 import { sendEmail } from '@/utils/email'
+import { validateSpam } from '@/lib/spamProtection'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const { to, subject, htmlMessage } = req.body
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
 
-    const response = await sendEmail({
+  try {
+    const {
       to,
       subject,
       htmlMessage,
-    })
-    res.status(200).json({ success: true, response, error: null })
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, response: null, error: error as Error })
-  }
-}
+      recaptchaToken,
+      honeypot,
+      timestamp,
+    } = req.body
 
-export default handler
-*/
+    // SPAM VALIDATION - Only if spam protection data is provided
+    if (recaptchaToken && timestamp !== undefined) {
+      const spamCheck = await validateSpam(
+        recaptchaToken,
+        honeypot,
+        timestamp,
+        'contact_form',
+      )
 
-import { NextApiResponse, NextApiRequest } from 'next'
-import { sendEmail } from '@/utils/email'
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const { to, subject, htmlMessage } = req.body
+      if (!spamCheck.isValid) {
+        console.warn('Spam detected:', spamCheck.reason)
+        // Return success to bot (don't let them know we caught them)
+        return res.status(200).json({ success: true, response: null, error: null })
+      }
+    }
 
     // Route to different emails based on form type
     let recipientEmail = to
@@ -48,6 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('=== EMAIL DEBUG ===')
     console.log('To:', recipientEmail)
     console.log('Subject:', subject)
+    console.log('Spam Protection:', recaptchaToken ? 'ENABLED' : 'DISABLED')
 
     const response = await sendEmail({
       to: recipientEmail,
@@ -61,7 +66,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.error('=== EMAIL ERROR ===')
     console.error('Full error:', error)
     console.error('Error message:', (error as Error).message)
-
     res.status(500).json({
       success: false,
       response: null,

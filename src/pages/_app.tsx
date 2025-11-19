@@ -1,6 +1,7 @@
 import '@/styles/index.scss'
 import 'slick-carousel/slick/slick.css'
 import 'react-loading-skeleton/dist/skeleton.css'
+import Script from 'next/script'
 import type { AppProps } from 'next/app'
 import { Provider } from 'react-redux'
 import { store } from '@/store'
@@ -8,10 +9,18 @@ import DefaultLayout from '@/layouts/DefaultLayout/DefaultLayout'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Provider store={store}>
-      <DefaultLayout>
-        <Component {...pageProps} />
-      </DefaultLayout>
-    </Provider>
+    <>
+      {/* reCAPTCHA v3 Script - SPAM PROTECTION */}
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        strategy="afterInteractive"
+      />
+
+      <Provider store={store}>
+        <DefaultLayout>
+          <Component {...pageProps} />
+        </DefaultLayout>
+      </Provider>
+    </>
   )
 }
