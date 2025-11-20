@@ -1,10 +1,3 @@
-// Add this at the TOP of the file
-declare global {
-  interface Window {
-    grecaptcha: any
-  }
-}
-
 import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
@@ -65,7 +58,6 @@ const ApplyForFinancingModalForm = ({
   const [submittedError, setSubmittedError] = useState<string | null>(null)
   const [currentSlide, setCurrentSlide] = useState<number>(0)
 
-  // State to track focus status for each field. Initially, all fields are not focused.
   const [isFocused, setIsFocused] = useState({
     name: false,
     business_name: false,
@@ -73,10 +65,9 @@ const ApplyForFinancingModalForm = ({
     phone: false,
   })
 
-  // Consent checkbox state
   const [consent, setConsent] = useState(false)
 
-  // SPAM PROTECTION - Add these new state variables
+  // SPAM PROTECTION
   const [honeypot, setHoneypot] = useState('')
   const formStartTime = useRef<number>(Date.now())
 
@@ -118,7 +109,6 @@ const ApplyForFinancingModalForm = ({
     [],
   )
 
-  // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
     setIsFocused((prev) => ({
@@ -135,17 +125,10 @@ const ApplyForFinancingModalForm = ({
 
     setIsSubmitting(true)
     try {
-      // Get reCAPTCHA token
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: 'financing_form' },
-      )
-
       // Send email to admin
       await browserSendEmail({
         subject: EMAIL_SUBJECT.FINANCING,
         htmlMessage: messages.admin(data),
-        recaptchaToken: token,
         honeypot: honeypot,
         timestamp: formStartTime.current,
       })
@@ -155,7 +138,6 @@ const ApplyForFinancingModalForm = ({
         to: data.email,
         subject: EMAIL_SUBJECT.FINANCING,
         htmlMessage: messages.user(),
-        recaptchaToken: token,
         honeypot: honeypot,
         timestamp: formStartTime.current,
       })
