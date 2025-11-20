@@ -28,7 +28,7 @@ export async function validateRecaptcha(
     // 0.0 = very likely a bot, 1.0 = very likely a human
     const isValid =
       data.success === true &&
-      data.score >= 0.5 && // Threshold - adjust if needed (0.3 = lenient, 0.7 = strict)
+      data.score >= 0.3 && // Threshold - adjust if needed (0.3 = lenient, 0.7 = strict)
       data.action === expectedAction
 
     if (!isValid) {
