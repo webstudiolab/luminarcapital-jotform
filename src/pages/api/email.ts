@@ -1,6 +1,5 @@
 import { NextApiResponse, NextApiRequest } from 'next'
 import { sendEmail } from '@/utils/email'
-import { validateSpam } from '@/lib/spamProtection'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -8,42 +7,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const {
-      to,
-      subject,
-      htmlMessage,
-      recaptchaToken,
-      honeypot,
-      timestamp,
-    } = req.body
+    const { to, subject, htmlMessage, honeypot, timestamp } = req.body
 
-    // SPAM VALIDATION - Only if spam protection data is provided
-    if (recaptchaToken && timestamp !== undefined) {
-      const spamCheck = await validateSpam(
-        recaptchaToken,
-        honeypot,
-        timestamp,
-        'contact_form',
-      )
+    // SIMPLE SPAM PROTECTION - Honeypot only
+    if (honeypot && honeypot.trim() !== '') {
+      console.warn('Spam detected: Honeypot filled')
+      return res.status(200).json({ success: true, response: null, error: null })
+    }
 
-      if (!spamCheck.isValid) {
-        console.warn('Spam detected:', spamCheck.reason)
-        // Return success to bot (don't let them know we caught them)
+    // SIMPLE SPAM PROTECTION - Timing check
+    if (timestamp) {
+      const elapsed = Date.now() - timestamp
+      if (elapsed < 3000 || elapsed > 1800000) {
+        console.warn('Spam detected: Suspicious timing')
         return res.status(200).json({ success: true, response: null, error: null })
       }
     }
 
-    // Route to different emails based on form type
+    // Route emails based on subject
     let recipientEmail = to
-
-    // If no 'to' is specified, route based on subject
     if (!to) {
       if (subject && subject.includes('Partner')) {
-        recipientEmail =
-          process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
+        recipientEmail = process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
       } else if (subject && subject.includes('Financing')) {
-        recipientEmail =
-          process.env.FINANCING_EMAIL || 'clientsuccess@luminarcapital.com'
+        recipientEmail = process.env.FINANCING_EMAIL || 'clientsuccess@luminarcapital.com'
       } else {
         recipientEmail = process.env.RECIPIENT_EMAIL
       }
@@ -52,7 +39,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('=== EMAIL DEBUG ===')
     console.log('To:', recipientEmail)
     console.log('Subject:', subject)
-    console.log('Spam Protection:', recaptchaToken ? 'ENABLED' : 'DISABLED')
 
     const response = await sendEmail({
       to: recipientEmail,

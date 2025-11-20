@@ -1,10 +1,3 @@
-// Add this at the TOP of the file
-declare global {
-  interface Window {
-    grecaptcha: any
-  }
-}
-
 import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
@@ -57,7 +50,6 @@ const BecomeAPartnerModalForm = ({
   const [submittedError, setSubmittedError] = useState<string | null>(null)
   const [currentSlide, setCurrentSlide] = useState<number>(0)
 
-  // State to track focus status for each field. Initially, all fields are not focused.
   const [isFocused, setIsFocused] = useState({
     company_name: false,
     name: false,
@@ -65,10 +57,9 @@ const BecomeAPartnerModalForm = ({
     email: false,
   })
 
-  // Consent checkbox state
   const [consent, setConsent] = useState(false)
 
-  // SPAM PROTECTION - Add these new state variables
+  // SPAM PROTECTION
   const [honeypot, setHoneypot] = useState('')
   const formStartTime = useRef<number>(Date.now())
 
@@ -111,7 +102,6 @@ const BecomeAPartnerModalForm = ({
     [],
   )
 
-  // Function that triggers on blur (losing focus). It updates the focus state based on whether the field has a value.
   const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
     setIsFocused((prev) => ({
@@ -128,17 +118,10 @@ const BecomeAPartnerModalForm = ({
 
     setIsSubmitting(true)
     try {
-      // Get reCAPTCHA token
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: 'partner_form' },
-      )
-
       // Send email to admin
       await browserSendEmail({
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.admin(data),
-        recaptchaToken: token,
         honeypot: honeypot,
         timestamp: formStartTime.current,
       })
@@ -148,7 +131,6 @@ const BecomeAPartnerModalForm = ({
         to: data.email,
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.user(),
-        recaptchaToken: token,
         honeypot: honeypot,
         timestamp: formStartTime.current,
       })

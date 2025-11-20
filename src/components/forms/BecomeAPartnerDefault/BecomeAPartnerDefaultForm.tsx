@@ -1,10 +1,3 @@
-// Add this at the TOP of the file
-declare global {
-  interface Window {
-    grecaptcha: any
-  }
-}
-
 import { ChangeEvent, useCallback, useState, useRef } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
@@ -58,7 +51,7 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
 
   const [consent, setConsent] = useState(false)
 
-  // SPAM PROTECTION - Add these new state variables
+  // SPAM PROTECTION
   const [honeypot, setHoneypot] = useState('')
   const formStartTime = useRef<number>(Date.now())
 
@@ -87,17 +80,10 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
 
     setIsSubmitting(true)
     try {
-      // Get reCAPTCHA token
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: 'partner_form' },
-      )
-
       // Send email to admin
       await browserSendEmail({
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.admin(data),
-        recaptchaToken: token,
         honeypot: honeypot,
         timestamp: formStartTime.current,
       })
@@ -107,7 +93,6 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
         to: data.email,
         subject: EMAIL_SUBJECT.PARTNER,
         htmlMessage: messages.user(),
-        recaptchaToken: token,
         honeypot: honeypot,
         timestamp: formStartTime.current,
       })
@@ -228,31 +213,6 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
             )}
             Submit
           </Button>
-
-          <p
-            style={{
-              fontSize: '0.875rem',
-              color: '#666',
-              marginTop: '1rem',
-              textAlign: 'center',
-            }}
-          >
-            This site is protected by reCAPTCHA and the Google{' '}
-            <a
-              href="https://policies.google.com/privacy"
-              style={{ color: '#1a73e8', textDecoration: 'none' }}
-            >
-              Privacy Policy
-            </a>{' '}
-            and{' '}
-            <a
-              href="https://policies.google.com/terms"
-              style={{ color: '#1a73e8', textDecoration: 'none' }}
-            >
-              Terms of Service
-            </a>{' '}
-            apply.
-          </p>
 
           {submittedError && (
             <p className={styles['form-error']}>{submittedError}</p>
