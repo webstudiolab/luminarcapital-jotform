@@ -112,10 +112,6 @@ const BecomeAPartnerModalForm = ({
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     // REMOVED CONSENT VALIDATION - checkbox is now optional
-    // if (!consent) {
-    //   alert('Please check the consent box to proceed.')
-    //   return
-    // }
 
     setIsSubmitting(true)
     try {
@@ -306,7 +302,6 @@ const BecomeAPartnerModalForm = ({
           >
             Next
           </Button>
-          {/* REMOVED !consent FROM disabled CONDITION */}
           <Button
             className={classNames(
               styles['form-action'],
