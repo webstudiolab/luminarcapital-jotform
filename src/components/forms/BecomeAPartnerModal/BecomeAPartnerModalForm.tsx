@@ -111,10 +111,11 @@ const BecomeAPartnerModalForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (!consent) {
-      alert('Please check the consent box to proceed.')
-      return
-    }
+    // REMOVED CONSENT VALIDATION - checkbox is now optional
+    // if (!consent) {
+    //   alert('Please check the consent box to proceed.')
+    //   return
+    // }
 
     setIsSubmitting(true)
     try {
@@ -261,12 +262,12 @@ const BecomeAPartnerModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
+              {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
               <div className={styles['consent-container']}>
                 <input
                   type="checkbox"
                   checked={consent}
                   onChange={handleCheckboxChange}
-                  required
                   id="consent"
                 />
                 <label htmlFor="consent">
@@ -305,13 +306,14 @@ const BecomeAPartnerModalForm = ({
           >
             Next
           </Button>
+          {/* REMOVED !consent FROM disabled CONDITION */}
           <Button
             className={classNames(
               styles['form-action'],
               currentSlide !== 2 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting || !consent}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
