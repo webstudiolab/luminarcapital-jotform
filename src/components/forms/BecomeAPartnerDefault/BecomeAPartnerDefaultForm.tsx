@@ -73,10 +73,11 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
   )
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (!consent) {
-      alert('Please check the consent box to proceed.')
-      return
-    }
+    // REMOVED CONSENT VALIDATION - checkbox is now optional
+    // if (!consent) {
+    //   alert('Please check the consent box to proceed.')
+    //   return
+    // }
 
     setIsSubmitting(true)
     try {
@@ -180,6 +181,7 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
           ))}
 
           <div className={styles['form-body-grid-item']}>
+            {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
             <label
               style={{
                 display: 'flex',
@@ -192,7 +194,6 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
                 type="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                required
                 style={{ marginTop: '4px' }}
               />
               <span style={{ lineHeight: 1.4 }}>
