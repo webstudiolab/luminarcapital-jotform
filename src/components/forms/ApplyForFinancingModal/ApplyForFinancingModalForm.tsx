@@ -118,10 +118,11 @@ const ApplyForFinancingModalForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (!consent) {
-      alert('Please check the consent box to proceed.')
-      return
-    }
+    // REMOVED CONSENT VALIDATION - checkbox is now optional
+    // if (!consent) {
+    //   alert('Please check the consent box to proceed.')
+    //   return
+    // }
 
     setIsSubmitting(true)
     try {
@@ -309,12 +310,12 @@ const ApplyForFinancingModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
+              {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
               <label className={styles['consent-container']}>
                 <input
                   type="checkbox"
                   checked={consent}
                   onChange={handleCheckboxChange}
-                  required
                 />{' '}
                 <PPMessage />
               </label>
@@ -350,13 +351,14 @@ const ApplyForFinancingModalForm = ({
           >
             Next
           </Button>
+          {/* REMOVED !consent FROM disabled CONDITION */}
           <Button
             className={classNames(
               styles['form-action'],
               currentSlide !== 3 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting || !consent}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
