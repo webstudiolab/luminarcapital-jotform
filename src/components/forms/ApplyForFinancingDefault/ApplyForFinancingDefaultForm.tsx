@@ -83,11 +83,7 @@ const ApplyForFinancingDefaultForm = ({
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     // REMOVED CONSENT VALIDATION - checkbox is now optional
-    // if (!consent) {
-    //   alert('Please check the consent box to proceed.')
-    //   return
-    // }
-
+    
     setIsSubmitting(true)
     try {
       // Send email to admin
