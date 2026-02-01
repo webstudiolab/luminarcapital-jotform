@@ -117,7 +117,7 @@ const BecomeAPartnerModalForm = ({
     try {
       // Send email to admin
       await browserSendEmail({
-        subject: EMAIL_SUBJECT.PARTNER,
+        subject: `${EMAIL_SUBJECT.PARTNER} - ${data.company_name}`,
         htmlMessage: messages.admin(data),
         honeypot: honeypot,
         timestamp: formStartTime.current,
