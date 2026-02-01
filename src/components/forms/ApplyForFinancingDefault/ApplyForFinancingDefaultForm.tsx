@@ -88,7 +88,7 @@ const ApplyForFinancingDefaultForm = ({
     try {
       // Send email to admin
       await browserSendEmail({
-        subject: EMAIL_SUBJECT.FINANCING,
+        subject: `${EMAIL_SUBJECT.FINANCING} - ${data.business_name}`,
         htmlMessage: messages.admin(data),
         honeypot: honeypot,
         timestamp: formStartTime.current,
