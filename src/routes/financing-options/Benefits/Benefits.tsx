@@ -18,7 +18,7 @@ interface IBenefits {
 const tabs: ITab[] = [
   { title: 'Revenue Based Financing', value: 0 },
   { title: 'Early Repayment Discounts', value: 1 },
-  { title: 'Revolving Working Capital', value: 2 },
+  { title: 'Line of Credit', value: 2 },
 ]
 
 const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
