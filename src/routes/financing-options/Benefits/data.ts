@@ -39,13 +39,13 @@ export const data: { [key: string]: IBenefit[] } = {
     {
       title: 'Leverage Recurring Financing',
       description:
-        'Gain mobility with a line of credit, where your business gets approved for a set amount that can be taken in increments on a recurring schedule. This allows you to utilize any amount below the limit providing you with continuous and instant access to funds when desired. This can be a great solution for businesses that are expecting incoming receivables in the near term or have inconsistent sales cycles.',
+        'Gain mobility with revolving working capital, where your business gets approved for a set amount that can be taken in increments on a recurring schedule. This allows you to utilize any amount below the limit providing you with continuous and instant access to funds when desired. This can be a great solution for businesses that are expecting incoming receivables in the near term or have inconsistent sales cycles.',
       banner: '/banners/benefits/benefit-6.svg',
     },
     {
       title: 'Affordable Financing Solutions',
       description:
-        'A line of credit allows you to instantly utilize the amount you desire without having to commit to the full approval right away. Cost is only accrued on the amount that you choose to take providing an economical solution for your business. As you make consistent repayments on your financing, your availability to utilize more funds renews providing continuous access for growth.',
+        'Revolving working capital allows you to instantly utilize the amount you desire without having to commit to the full approval right away. Cost is only accrued on the amount that you choose to take providing an economical solution for your business. As you make consistent repayments on your financing, your availability to utilize more funds renews providing continuous access for growth.',
       banner: '/banners/benefits/benefit-7.svg',
     },
   ],
