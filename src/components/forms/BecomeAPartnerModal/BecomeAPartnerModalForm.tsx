@@ -111,11 +111,6 @@ const BecomeAPartnerModalForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (!consent) {
-      alert('Please check the consent box to proceed.')
-      return
-    }
-
     setIsSubmitting(true)
     try {
       // Send email to admin
@@ -266,7 +261,6 @@ const BecomeAPartnerModalForm = ({
                   type="checkbox"
                   checked={consent}
                   onChange={handleCheckboxChange}
-                  required
                   id="consent"
                 />
                 <label htmlFor="consent">
@@ -311,7 +305,7 @@ const BecomeAPartnerModalForm = ({
               currentSlide !== 2 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting || !consent}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>

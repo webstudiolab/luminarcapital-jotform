@@ -114,7 +114,7 @@ export default function WhyLuminar({
             </Button>
             <Button
               onClick={() =>
-                dispatch(openModal({ modal: 'financing', size: 'xl' }))
+                dispatch(openModal({ modal: 'jotform', size: 'xl' }))
               }
             >
               Apply for Financing

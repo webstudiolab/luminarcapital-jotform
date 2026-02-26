@@ -41,7 +41,7 @@ const CTASolid = ({ className }: ICTASolid) => {
                   color="white"
                   className={styles['section-action']}
                   onClick={() =>
-                    dispatch(openModal({ modal: 'financing', size: 'xl' }))
+                    dispatch(openModal({ modal: 'jotform', size: 'xl' }))
                   }
                 >
                   Apply for Financing

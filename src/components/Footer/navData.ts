@@ -66,7 +66,7 @@ export const navData: INavData = {
           href: '/financing-options?origin=1&scroll=true',
         },
         {
-          label: 'Revolving Working Capital',
+          label: 'Multi-Draw Financing',
           href: '/financing-options?origin=2&scroll=true',
         },
       ],
@@ -101,7 +101,7 @@ export const navData: INavData = {
         },
         {
           label: 'Apply for Financing',
-          modal: { modal: 'financing', size: 'xl' },
+          modal: { modal: 'jotform', size: 'xl' },
         },
       ],
     },

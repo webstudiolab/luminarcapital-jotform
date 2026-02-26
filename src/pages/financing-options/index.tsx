@@ -45,7 +45,7 @@ export default function FinancingOptions({
           <>
             <Button
               onClick={() =>
-                dispatch(openModal({ modal: 'financing', size: 'xl' }))
+                dispatch(openModal({ modal: 'jotform', size: 'xl' }))
               }
             >
               Apply for Financing

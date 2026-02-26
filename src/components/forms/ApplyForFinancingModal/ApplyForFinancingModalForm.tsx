@@ -118,11 +118,6 @@ const ApplyForFinancingModalForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (!consent) {
-      alert('Please check the consent box to proceed.')
-      return
-    }
-
     setIsSubmitting(true)
     try {
       // Send email to admin
@@ -314,7 +309,6 @@ const ApplyForFinancingModalForm = ({
                   type="checkbox"
                   checked={consent}
                   onChange={handleCheckboxChange}
-                  required
                 />{' '}
                 <PPMessage />
               </label>
@@ -356,7 +350,7 @@ const ApplyForFinancingModalForm = ({
               currentSlide !== 3 ? styles['hidden'] : '',
             )}
             type="submit"
-            disabled={isSubmitting || !consent}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
