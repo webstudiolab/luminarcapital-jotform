@@ -166,12 +166,12 @@ export interface IOption {
 
 export interface IModalState {
   isOpen: boolean
-  modal: 'partner' | 'financing' | null
+  modal: 'partner' | 'financing' | 'jotform' | 'jotform' | null
   size: 'xl' | 'lg' | 'md'
 }
 
 export interface IModalPayload {
-  modal: 'partner' | 'financing'
+  modal: 'partner' | 'financing' | 'jotform'
   size: 'xl' | 'lg' | 'md'
 }
 
