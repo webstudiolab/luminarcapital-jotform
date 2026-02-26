@@ -33,12 +33,15 @@
 			background-size: cover;
 			border: 1rem var(--color-primary-dark-blue) solid;
 			border-radius: 40px;
+			overflow-y: auto;
+			max-height: calc(100vh - 72rem);
 			
 				@include maxWidth($sm-max){
 					padding: 80rem 0 60rem;
 					background-image: url('/abstract/modal-abstract-mobile.svg');
 					background-size: 100% 100%;
 					border-radius: 24px;
+					max-height: calc(100vh - 132rem);
 				}
 			
 				// Modal box sizes
