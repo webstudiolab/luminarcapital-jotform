@@ -166,7 +166,7 @@ export interface IOption {
 
 export interface IModalState {
   isOpen: boolean
-  modal: 'partner' | 'financing' | 'jotform' | 'jotform' | null
+  modal: 'partner' | 'financing' | 'jotform' | null
   size: 'xl' | 'lg' | 'md'
 }
 
