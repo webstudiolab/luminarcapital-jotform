@@ -1,0 +1,13 @@
+@import "@/styles/global/mixins";
+@import "@/styles/library/grid/variables/grid-variables";
+
+.jotform {
+  width: 100%;
+
+  &-iframe {
+    width: 100%;
+    min-height: 539px;
+    display: block;
+    border: none;
+  }
+}

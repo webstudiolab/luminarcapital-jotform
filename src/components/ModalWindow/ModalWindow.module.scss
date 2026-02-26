@@ -10,7 +10,7 @@
 	inset: 0;
 	
 		@include maxWidth($sm-max){
-			padding: 66rem 16rem;
+			padding: 66rem 0;
 		}
 	
 		&-background{
@@ -35,9 +35,10 @@
 			border-radius: 40px;
 			
 				@include maxWidth($sm-max){
-					padding: 80rem 24rem 60rem;
+					padding: 80rem 0 60rem;
 					background-image: url('/abstract/modal-abstract-mobile.svg');
 					background-size: 100% 100%;
+					border-radius: 24px;
 				}
 			
 				// Modal box sizes

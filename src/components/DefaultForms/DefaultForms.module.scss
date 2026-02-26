@@ -1,57 +1,71 @@
 @import "@/styles/global/mixins";
 @import "@/styles/library/grid/variables/grid-variables";
 
-.section{
-	position: relative;
-	padding-bottom: 60rem;
-	
-		&-box{
-			position: relative;
-			padding: 60rem 40rem;
-			background-color: var(--color-white);
-			background-image: url('/abstract/form-abstract-desktop.svg');
-			background-repeat: no-repeat;
-			background-position: center;
-			background-size: cover;
-			border: 1rem var(--color-primary-dark-blue) solid;
-			border-radius: 40px;
-			
-				@include maxWidth($sm-max){
-					padding: 60rem 24rem;
-					background-image: url('/abstract/CTA-abstract-mobile.svg');
-					background-position: -48rem 0;
-					background-size: 83% auto;
-				}
-			
-				&-header{
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					padding-bottom: 28rem;
-					row-gap: 16rem;
-				}
-			
-				&-icon{
-					position: relative;
-					width: 90rem;
-					height: 90rem;
-					margin-bottom: 12rem;
-				}
-			
-				&-title{
-				
-				}
-			
-				&-description{
-					text-align: center;
-					
-						@include maxWidth($sm-max){
-              font: var(--font-body-lg);
-            }
-				}
-			
-				&-form{
-					padding-top: 40rem;
-				}
-		}
+.section {
+  position: relative;
+  padding-bottom: 60rem;
+
+  &-box {
+    position: relative;
+    padding: 60rem 40rem;
+    background-color: var(--color-white);
+    background-image: url('/abstract/form-abstract-desktop.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    border: 1rem var(--color-primary-dark-blue) solid;
+    border-radius: 40px;
+
+    @include maxWidth($sm-max) {
+      padding: 60rem 24rem;
+      background-image: url('/abstract/CTA-abstract-mobile.svg');
+      background-position: -48rem 0;
+      background-size: 83% auto;
+    }
+
+    &-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 28rem;
+      row-gap: 16rem;
+    }
+
+    &-icon {
+      position: relative;
+      width: 90rem;
+      height: 90rem;
+      margin-bottom: 12rem;
+    }
+
+    &-title {
+    }
+
+    &-description {
+      text-align: center;
+
+      @include maxWidth($sm-max) {
+        font: var(--font-body-lg);
+      }
+    }
+
+    &-form {
+      padding-top: 40rem;
+    }
+
+    &-jotform {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 60rem 24rem;
+      row-gap: 28rem;
+
+      &-text {
+        font: var(--font-body-lg);
+        color: var(--color-gray-70);
+        max-width: 480rem;
+      }
+    }
+  }
 }

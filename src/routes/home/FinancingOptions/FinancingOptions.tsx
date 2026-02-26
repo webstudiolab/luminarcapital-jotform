@@ -30,9 +30,9 @@ const cards = [
     icon: DiscountIcon,
   },
   {
-    title: 'Revolving Working Capital',
+    title: 'Multi-Draw Financing',
     description:
-      'We believe in offering financing that is flexible and tailored to your needs. Revolving working capital enables you to quickly access the capital required, instead of committing to a large sum immediately. This cost friendly solution can be utilized on multiple occasions and integrates into your cash flow.',
+      'We believe in offering financing that is flexible and tailored to your needs. Multi-draw financing enables you to quickly access the capital required, instead of committing to a large sum immediately. This cost friendly solution can be utilized on multiple occasions and integrates into your cash flow.',
     href: '/financing-options?origin=2&scroll=true',
     icon: CreditCardIcon,
   },

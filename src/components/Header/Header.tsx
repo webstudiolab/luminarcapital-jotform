@@ -156,7 +156,7 @@ const Header = ({ className }: IHeader) => {
               <Button
                 className={styles['header-actions-item']}
                 onClick={() =>
-                  handleModalTrigger({ modal: 'financing', size: 'xl' })
+                  handleModalTrigger({ modal: 'jotform', size: 'xl' })
                 }
               >
                 Apply for Financing

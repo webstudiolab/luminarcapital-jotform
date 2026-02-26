@@ -82,11 +82,6 @@ const ApplyForFinancingDefaultForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (!consent) {
-      alert('Please check the consent box to proceed.')
-      return
-    }
-
     setIsSubmitting(true)
     try {
       // Send email to admin
@@ -275,7 +270,6 @@ const ApplyForFinancingDefaultForm = ({
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
-              required
               style={{ marginTop: '4px' }}
             />
             <span style={{ lineHeight: 1.4 }}>

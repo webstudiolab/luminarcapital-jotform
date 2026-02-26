@@ -2,10 +2,12 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import Image from 'next/image'
+import { useAppDispatch } from '@/hooks'
+import { openModal } from '@/store/slices/modalSlice'
 import BecomeAPartnerDefaultForm from '@/components/forms/BecomeAPartnerDefault/BecomeAPartnerDefaultForm'
-import ApplyForFinancingDefaultForm from '@/components/forms/ApplyForFinancingDefault/ApplyForFinancingDefaultForm'
 import { ITab } from '@/types'
 import Tabs from '@/ui/components/Tabs/Tabs'
+import Button from '@/ui/components/Button/Button'
 import styles from './DefaultForms.module.scss'
 
 interface IDefaultForms {
@@ -17,13 +19,9 @@ const tabs: ITab[] = [
   { title: 'Apply for Financing', value: 1 },
 ]
 
-const forms = {
-  0: <BecomeAPartnerDefaultForm />,
-  1: <ApplyForFinancingDefaultForm />,
-}
-
 const DefaultForms = ({ className }: IDefaultForms) => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const {
     query: { origin = '0' },
   } = router
@@ -72,7 +70,21 @@ const DefaultForms = ({ className }: IDefaultForms) => {
             activeTab={origin as string}
           />
           <div className={styles['section-box-form']}>
-            {forms[activeIndex as keyof typeof forms]}
+            {activeIndex === 0 && <BecomeAPartnerDefaultForm />}
+            {activeIndex === 1 && (
+              <div className={styles['section-box-jotform']}>
+                <p className={styles['section-box-jotform-text']}>
+                  Ready to apply? Our multi-step application takes just a few minutes to complete.
+                </p>
+                <Button
+                  onClick={() =>
+                    dispatch(openModal({ modal: 'jotform', size: 'xl' }))
+                  }
+                >
+                  Start Your Application
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
