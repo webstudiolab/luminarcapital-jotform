@@ -1,19 +1,35 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useAppDispatch } from '@/hooks'
+import { closeModal } from '@/store/slices/modalSlice'
 import styles from './JotformModal.module.scss'
 
 const JotformModal = () => {
+  const dispatch = useAppDispatch()
+
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'
     script.async = true
     document.body.appendChild(script)
 
+    const handleMessage = (event: MessageEvent) => {
+      if (
+        typeof event.data === 'string' &&
+        event.data.includes('thankYou')
+      ) {
+        dispatch(closeModal())
+      }
+    }
+
+    window.addEventListener('message', handleMessage)
+
     return () => {
       document.body.removeChild(script)
+      window.removeEventListener('message', handleMessage)
     }
-  }, [])
+  }, [dispatch])
 
   return (
     <div className={styles['jotform']}>
