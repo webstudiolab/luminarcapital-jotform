@@ -15,9 +15,16 @@ const JotformModal = () => {
     document.body.appendChild(script)
 
     const handleMessage = (event: MessageEvent) => {
+      if (!event.data) return
+
+      const data = event.data
+
+      // JotForm sends colon-separated strings e.g. "submission-completed:260432292234046"
+      // Also handle JSON object format as fallback
       if (
-        typeof event.data === 'string' &&
-        event.data.includes('thankYou')
+        (typeof data === 'string' && data.startsWith('submission-completed')) ||
+        (typeof data === 'object' && data.action === 'submission-completed') ||
+        (typeof data === 'object' && data.action === 'thankYou')
       ) {
         dispatch(closeModal())
       }
