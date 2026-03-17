@@ -73,11 +73,12 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
   )
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    // REMOVED CONSENT VALIDATION - checkbox is now optional
     setIsSubmitting(true)
     try {
       // Send email to admin
       await browserSendEmail({
-        subject: EMAIL_SUBJECT.PARTNER,
+        subject: `${EMAIL_SUBJECT.PARTNER} - ${data.company_name}`,
         htmlMessage: messages.admin(data),
         honeypot: honeypot,
         timestamp: formStartTime.current,
@@ -175,6 +176,7 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
           ))}
 
           <div className={styles['form-body-grid-item']}>
+            {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
             <label
               style={{
                 display: 'flex',

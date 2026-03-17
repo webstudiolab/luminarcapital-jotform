@@ -82,11 +82,12 @@ const ApplyForFinancingDefaultForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+      // REMOVED CONSENT VALIDATION - checkbox is now optional
     setIsSubmitting(true)
     try {
       // Send email to admin
       await browserSendEmail({
-        subject: EMAIL_SUBJECT.FINANCING,
+        subject: `${EMAIL_SUBJECT.FINANCING} - ${data.business_name}`,
         htmlMessage: messages.admin(data),
         honeypot: honeypot,
         timestamp: formStartTime.current,
@@ -258,6 +259,7 @@ const ApplyForFinancingDefaultForm = ({
             onBlur={handleBlur}
           />
 
+          {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
           <label
             style={{
               display: 'flex',

@@ -111,11 +111,12 @@ const BecomeAPartnerModalForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    // REMOVED CONSENT VALIDATION - checkbox is now optional
     setIsSubmitting(true)
     try {
       // Send email to admin
       await browserSendEmail({
-        subject: EMAIL_SUBJECT.PARTNER,
+        subject: `${EMAIL_SUBJECT.PARTNER} - ${data.company_name}`,
         htmlMessage: messages.admin(data),
         honeypot: honeypot,
         timestamp: formStartTime.current,
@@ -256,6 +257,7 @@ const BecomeAPartnerModalForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
               />
+              {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
               <div className={styles['consent-container']}>
                 <input
                   type="checkbox"
