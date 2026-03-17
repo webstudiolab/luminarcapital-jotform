@@ -66,7 +66,7 @@ export const navData: INavData = {
           href: '/financing-options?origin=1&scroll=true',
         },
         {
-          label: 'Multi-Draw Financing',
+          label: 'Flex Line Financing',
           href: '/financing-options?origin=2&scroll=true',
         },
       ],
@@ -101,7 +101,7 @@ export const navData: INavData = {
         },
         {
           label: 'Apply for Financing',
-          modal: { modal: 'jotform', size: 'xl' },
+          modal: { modal: 'financing', size: 'xl' },
         },
       ],
     },
