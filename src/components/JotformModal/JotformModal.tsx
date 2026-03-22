@@ -12,6 +12,16 @@ const JotformModal = () => {
     const script = document.createElement('script')
     script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'
     script.async = true
+
+    script.onload = () => {
+      if (typeof (window as any).jotformEmbedHandler === 'function') {
+        ;(window as any).jotformEmbedHandler(
+          "iframe[id='JotFormIFrame-260432292234046']",
+          'https://form.jotform.com/'
+        )
+      }
+    }
+
     document.body.appendChild(script)
 
     const handleMessage = (event: MessageEvent) => {
@@ -19,8 +29,6 @@ const JotformModal = () => {
 
       const data = event.data
 
-      // JotForm sends colon-separated strings e.g. "submission-completed:260432292234046"
-      // Also handle JSON object format as fallback
       if (
         (typeof data === 'string' && data.startsWith('submission-completed')) ||
         (typeof data === 'object' && data.action === 'submission-completed') ||
