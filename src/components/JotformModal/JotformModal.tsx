@@ -1,64 +1,57 @@
-'use client'
-
-import { useEffect } from 'react'
-import { useAppDispatch } from '@/hooks'
-import { closeModal } from '@/store/slices/modalSlice'
+import { useEffect, useState } from 'react'
 import styles from './JotformModal.module.scss'
 
+const JOTFORM_SRC = 'https://form.jotform.com/260432292234046'
+
 const JotformModal = () => {
-  const dispatch = useAppDispatch()
+  const [src, setSrc] = useState('')
+  const [loaded, setLoaded] = useState(false)
 
+  // Defer iframe src injection by 300ms so the modal open animation
+  // completes first, giving the user instant visual feedback while
+  // Jotform boots in the background.
   useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'
-    script.async = true
-
-    script.onload = () => {
-      if (typeof (window as any).jotformEmbedHandler === 'function') {
-        ;(window as any).jotformEmbedHandler(
-          "iframe[id='JotFormIFrame-260432292234046']",
-          'https://form.jotform.com/'
-        )
-      }
-    }
-
-    document.body.appendChild(script)
-
-    const handleMessage = (event: MessageEvent) => {
-      if (!event.data) return
-
-      const data = event.data
-
-      if (
-        (typeof data === 'string' && data.startsWith('submission-completed')) ||
-        (typeof data === 'object' && data.action === 'submission-completed') ||
-        (typeof data === 'object' && data.action === 'thankYou')
-      ) {
-        dispatch(closeModal())
-      }
-    }
-
-    window.addEventListener('message', handleMessage)
-
-    return () => {
-      document.body.removeChild(script)
-      window.removeEventListener('message', handleMessage)
-    }
-  }, [dispatch])
+    const timer = setTimeout(() => {
+      setSrc(JOTFORM_SRC)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className={styles['jotform']}>
+      {/* Skeleton shown until iframe fires onLoad */}
+      {!loaded && (
+        <div className={styles['jotform-skeleton']}>
+          <div className={styles['jotform-skeleton__logo']} />
+          <div className={styles['jotform-skeleton__bar']} style={{ width: '60%' }} />
+          <div className={styles['jotform-skeleton__bar']} style={{ width: '40%' }} />
+          <div className={styles['jotform-skeleton__field']} />
+          <div className={styles['jotform-skeleton__field']} />
+          <div className={styles['jotform-skeleton__btn']} />
+          <p className={styles['jotform-skeleton__text']}>Loading your application…</p>
+        </div>
+      )}
+
       <iframe
         id="JotFormIFrame-260432292234046"
         title="Luminar Capital - Business Financing Application"
-        onLoad={() => window.parent.scrollTo(0, 0)}
         allowTransparency={true}
         allow="geolocation; microphone; camera; fullscreen; payment"
-        src="https://form.jotform.com/260432292234046"
+        src={src}
         frameBorder={0}
-        style={{ minWidth: '100%', maxWidth: '100%', border: 'none' }}
-        scrolling="yes"
+        style={{
+          minWidth: '100%',
+          maxWidth: '100%',
+          border: 'none',
+          // Hide iframe until loaded to prevent white flash
+          opacity: loaded ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          // Must keep height even when hidden so Jotform's resize script works
+          minHeight: loaded ? 0 : '600px',
+        }}
+        scrolling="no"
         className={styles['jotform-iframe']}
+        onLoad={() => setLoaded(true)}
       />
     </div>
   )
