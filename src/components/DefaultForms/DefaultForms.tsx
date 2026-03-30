@@ -78,7 +78,7 @@ const DefaultForms = ({ className }: IDefaultForms) => {
                 </p>
                 <Button
                   onClick={() =>
-                    dispatch(openModal({ modal: 'jotform', size: 'xl' }))
+                    dispatch(openModal({ modal: 'financing', size: 'xl' }))
                   }
                 >
                   Start Your Application

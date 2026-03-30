@@ -89,7 +89,7 @@ export default function Home({ experienceCards, pageData }: HomeProps) {
             </Button>
             <Button
               onClick={() =>
-                dispatch(openModal({ modal: 'jotform', size: 'xl' }))
+                dispatch(openModal({ modal: 'financing', size: 'xl' }))
               }
             >
               {pageFields.heroCtaText || 'Apply for Financing'}

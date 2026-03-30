@@ -13,7 +13,7 @@ const FinancingOptionCAT = () => {
         <h3>Luminar Capital is here to help.</h3>
         <Button
           onClick={() =>
-            dispatch(openModal({ modal: 'jotform', size: 'xl' }))
+            dispatch(openModal({ modal: 'financing', size: 'xl' }))
           }
         >
           Apply for Financing
