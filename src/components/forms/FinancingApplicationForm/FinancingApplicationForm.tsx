@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, FC } from 'react'
 import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
 import { closeModal } from '@/store/slices/modalSlice'
-import { browserSendEmail } from '@/utils/email'
+import { browserSendEmail } from '@/utils/email/bowserSendEmail'
 import styles from './FinancingApplicationForm.module.scss'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
