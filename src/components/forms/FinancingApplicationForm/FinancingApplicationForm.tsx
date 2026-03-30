@@ -720,7 +720,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
       await browserSendEmail({
         subject: `Financing Application — ${formData.legalBusinessName} — ${formData.owner1.firstName} ${formData.owner1.lastName}`,
         htmlMessage: buildEmailHtml(formData),
-        recaptchaToken,
         honeypot,
         timestamp: formStartTime.current,
       })
@@ -743,7 +742,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     <p>The Luminar Capital Team</p>
   </div>
 </div>`,
-        recaptchaToken,
         honeypot: '',
         timestamp: formStartTime.current,
       })
