@@ -8,8 +8,7 @@ import CloseIcon from '@/ui/icons/Close'
 import { closeModal, selectModal } from '@/store/slices/modalSlice'
 import { IModalState } from '@/types'
 import BecomeAPartnerModalForm from '@/components/forms/BecomeAPartnerModal/BecomeAPartnerModalForm'
-import ApplyForFinancingModalForm from '@/components/forms/ApplyForFinancingModal/ApplyForFinancingModalForm'
-import JotformModal from '@/components/JotformModal/JotformModal'
+import FinancingApplicationForm from '@/components/forms/FinancingApplicationForm/FinancingApplicationForm'
 import styles from './ModalWindow.module.scss'
 
 const ModalWindow = () => {
@@ -24,8 +23,8 @@ const ModalWindow = () => {
 
   const forms = {
     partner: <BecomeAPartnerModalForm />,
-    financing: <ApplyForFinancingModalForm />,
-    jotform: <JotformModal />,
+    financing: <FinancingApplicationForm />,
+    jotform: <FinancingApplicationForm />,
   }
 
   return (
