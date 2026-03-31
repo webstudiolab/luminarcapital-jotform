@@ -159,13 +159,13 @@ const STEP_TITLES = [
 
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
-const getMaxDOB = () => {
+const getMaxDOB = (): string => {
   const d = new Date()
   d.setFullYear(d.getFullYear() - 18)
   return d.toISOString().split('T')[0]
 }
 
-const getMinDOB = () => {
+const getMinDOB = (): string => {
   const d = new Date()
   d.setFullYear(d.getFullYear() - 100)
   return d.toISOString().split('T')[0]
@@ -209,13 +209,11 @@ const buildAdminEmail = (data: FormData): string => {
     <p style="color:rgba(255,255,255,0.7);margin:8px 0 0;font-size:14px;">Submitted via Luminar Capital website · ${new Date().toLocaleString('en-US')}</p>
   </div>
   <div style="border:1px solid #e0e4ef;border-top:none;border-radius:0 0 12px 12px;padding:32px 40px;background:#ffffff;">
-
     <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
       <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Funding Details</td></tr>
       <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Desired Funding Amount</td><td style="padding:10px 0;font-weight:600;font-size:14px;">$${Number(data.desiredFunding).toLocaleString('en-US')}</td></tr>
       <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Use of Funds</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.useOfFunds || '—'}</td></tr>
     </table>
-
     <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
       <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Business Information</td></tr>
       <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Legal Business Name</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.legalBusinessName}</td></tr>
@@ -229,7 +227,6 @@ const buildAdminEmail = (data: FormData): string => {
       <tr><td style="padding:10px 0;color:#666;font-size:14px;">Existing Loan Amount</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.existingLoanAmount ? '$' + Number(data.existingLoanAmount).toLocaleString('en-US') : 'None'}</td></tr>
       <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Federal Tax ID</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.federalTaxId}</td></tr>
     </table>
-
     <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
       <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Primary Owner</td></tr>
       <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Name</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o1.firstName} ${o1.lastName}</td></tr>
@@ -241,10 +238,7 @@ const buildAdminEmail = (data: FormData): string => {
       <tr><td style="padding:10px 0;color:#666;font-size:14px;">SSN</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${ssnMask(o1.ssn)}</td></tr>
       <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Ownership %</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o1.ownershipPct}%</td></tr>
     </table>
-
-    ${
-      data.hasSecondOwner
-        ? `
+    ${data.hasSecondOwner ? `
     <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
       <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Second Owner</td></tr>
       <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Name</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o2.firstName} ${o2.lastName}</td></tr>
@@ -255,15 +249,11 @@ const buildAdminEmail = (data: FormData): string => {
       <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Credit Score</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o2.creditScore}</td></tr>
       <tr><td style="padding:10px 0;color:#666;font-size:14px;">SSN</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${ssnMask(o2.ssn)}</td></tr>
       <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Ownership %</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o2.ownershipPct}%</td></tr>
-    </table>`
-        : ''
-    }
-
+    </table>` : ''}
     <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
       <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Bank Statements</td></tr>
       <tr><td style="padding:10px 0;color:#666;font-size:14px;">Files Uploaded</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.bankStatements.length > 0 ? `${data.bankStatements.length} file(s)` : 'None'}</td></tr>
     </table>
-
   </div>
 </div>`
 }
@@ -295,7 +285,7 @@ const buildUserEmail = (data: FormData): string => `
   </div>
 </div>`
 
-// ─── Google Places Autocomplete hook ─────────────────────────────────────────
+// ─── Google Places ────────────────────────────────────────────────────────────
 
 declare global {
   interface Window {
@@ -327,15 +317,29 @@ const usePlacesAutocomplete = (
   onSelect: (address: string) => void,
 ) => {
   useEffect(() => {
-    if (!inputRef.current || !window.google?.maps?.places) return
-    const autocomplete = new window.google.maps.places.Autocomplete(
-      inputRef.current,
-      { types: ['address'], componentRestrictions: { country: 'us' } },
-    )
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace()
-      if (place.formatted_address) onSelect(place.formatted_address)
-    })
+    const initAutocomplete = () => {
+      if (!inputRef.current || !window.google?.maps?.places) return
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        inputRef.current,
+        { types: ['address'], componentRestrictions: { country: 'us' } },
+      )
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace()
+        if (place.formatted_address) onSelect(place.formatted_address)
+      })
+    }
+
+    if (window.google?.maps?.places) {
+      initAutocomplete()
+    } else {
+      const interval = setInterval(() => {
+        if (window.google?.maps?.places) {
+          clearInterval(interval)
+          initAutocomplete()
+        }
+      }, 200)
+      return () => clearInterval(interval)
+    }
   }, [inputRef, onSelect])
 }
 
@@ -362,11 +366,7 @@ const TextInput: FC<
   React.InputHTMLAttributes<HTMLInputElement> & { error?: string }
 > = ({ error, className, ...props }) => (
   <input
-    className={classNames(
-      styles.input,
-      error && styles.inputError,
-      className,
-    )}
+    className={classNames(styles.input, error && styles.inputError, className)}
     {...props}
   />
 )
@@ -407,7 +407,7 @@ const ButtonGroup: FC<{
   value: string
   onChange: (v: string) => void
   error?: string
-}> = ({ options, value, onChange, error }) => (
+}> = ({ options, value, onChange }) => (
   <div className={styles.buttonGroup}>
     {options.map((opt) => (
       <button
@@ -422,11 +422,6 @@ const ButtonGroup: FC<{
         {opt}
       </button>
     ))}
-    {error && (
-      <span className={classNames(styles.fieldError, styles.fieldErrorFull)}>
-        {error}
-      </span>
-    )}
   </div>
 )
 
@@ -546,11 +541,7 @@ const OwnerBlock: FC<{
 }> = ({ data, onChange, errors, prefix }) => (
   <div className={styles.ownerBlock}>
     <div className={styles.row2}>
-      <Field
-        label="First Name"
-        required
-        error={errors[`${prefix}.firstName`]}
-      >
+      <Field label="First Name" required error={errors[`${prefix}.firstName`]}>
         <TextInput
           value={data.firstName}
           onChange={(e) => onChange('firstName', e.target.value)}
@@ -587,11 +578,7 @@ const OwnerBlock: FC<{
         />
       </Field>
     </div>
-    <Field
-      label="Home Address"
-      required
-      error={errors[`${prefix}.homeAddress`]}
-    >
+    <Field label="Home Address" required error={errors[`${prefix}.homeAddress`]}>
       <AddressInput
         value={data.homeAddress}
         onChange={(v) => onChange('homeAddress', v)}
@@ -609,11 +596,7 @@ const OwnerBlock: FC<{
           error={errors[`${prefix}.dob`]}
         />
       </Field>
-      <Field
-        label="Credit Score"
-        required
-        error={errors[`${prefix}.creditScore`]}
-      >
+      <Field label="Credit Score" required error={errors[`${prefix}.creditScore`]}>
         <TextInput
           value={data.creditScore}
           onChange={(e) => {
@@ -625,11 +608,7 @@ const OwnerBlock: FC<{
           error={errors[`${prefix}.creditScore`]}
         />
       </Field>
-      <Field
-        label="Ownership %"
-        required
-        error={errors[`${prefix}.ownershipPct`]}
-      >
+      <Field label="Ownership %" required error={errors[`${prefix}.ownershipPct`]}>
         <div className={styles.suffixWrapper}>
           <TextInput
             value={data.ownershipPct}
@@ -647,11 +626,7 @@ const OwnerBlock: FC<{
         </div>
       </Field>
     </div>
-    <Field
-      label="Social Security Number"
-      required
-      error={errors[`${prefix}.ssn`]}
-    >
+    <Field label="Social Security Number" required error={errors[`${prefix}.ssn`]}>
       <TextInput
         value={data.ssn}
         onChange={(e) => onChange('ssn', formatSSN(e.target.value))}
@@ -667,6 +642,9 @@ const OwnerBlock: FC<{
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
+const NAME_REGEX = /^[a-zA-Z\s'-]+$/
+const BUSINESS_NAME_REGEX = /^[a-zA-Z0-9\s'&.,()/-]+$/
+
 const validateStep = (step: number, data: FormData): FieldError => {
   const errors: FieldError = {}
   const req = (key: string, val: string, label: string) => {
@@ -680,6 +658,11 @@ const validateStep = (step: number, data: FormData): FieldError => {
 
   if (step === 2) {
     req('legalBusinessName', data.legalBusinessName, 'Legal business name')
+    if (
+      data.legalBusinessName &&
+      !BUSINESS_NAME_REGEX.test(data.legalBusinessName)
+    )
+      errors['legalBusinessName'] = 'Invalid characters in business name'
     req('businessAddress', data.businessAddress, 'Business address')
     req('businessPhone', data.businessPhone, 'Business phone')
     req('entityType', data.entityType, 'Entity type')
@@ -696,7 +679,13 @@ const validateStep = (step: number, data: FormData): FieldError => {
   if (step === 3) {
     const validateOwner = (o: Owner, prefix: string) => {
       req(`${prefix}.firstName`, o.firstName, 'First name')
+      if (o.firstName && !NAME_REGEX.test(o.firstName))
+        errors[`${prefix}.firstName`] =
+          "Only letters, spaces, hyphens and apostrophes allowed"
       req(`${prefix}.lastName`, o.lastName, 'Last name')
+      if (o.lastName && !NAME_REGEX.test(o.lastName))
+        errors[`${prefix}.lastName`] =
+          "Only letters, spaces, hyphens and apostrophes allowed"
       req(`${prefix}.phone`, o.phone, 'Phone')
       req(`${prefix}.email`, o.email, 'Email')
       if (o.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.email))
@@ -704,10 +693,9 @@ const validateStep = (step: number, data: FormData): FieldError => {
       req(`${prefix}.homeAddress`, o.homeAddress, 'Home address')
       req(`${prefix}.dob`, o.dob, 'Date of birth')
       if (o.dob) {
-        const dobDate = new Date(o.dob)
-        if (dobDate > new Date(getMaxDOB()))
+        if (o.dob > getMaxDOB())
           errors[`${prefix}.dob`] = 'Must be at least 18 years old'
-        if (dobDate < new Date(getMinDOB()))
+        if (o.dob < getMinDOB())
           errors[`${prefix}.dob`] = 'Invalid date of birth'
       }
       req(`${prefix}.creditScore`, o.creditScore, 'Credit score')
@@ -730,7 +718,11 @@ const validateStep = (step: number, data: FormData): FieldError => {
       validateOwner(data.owner2, 'owner2')
       const total =
         Number(data.owner1.ownershipPct) + Number(data.owner2.ownershipPct)
-      if (data.owner1.ownershipPct && data.owner2.ownershipPct && total > 100) {
+      if (
+        data.owner1.ownershipPct &&
+        data.owner2.ownershipPct &&
+        total > 100
+      ) {
         errors['owner1.ownershipPct'] =
           `Combined ownership cannot exceed 100% (currently ${total}%)`
         errors['owner2.ownershipPct'] =
@@ -769,9 +761,12 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
   const formStartTime = useRef<number>(Date.now())
   const [honeypot, setHoneypot] = useState('')
 
-  const set = useCallback(<K extends keyof FormData>(key: K, value: FormData[K]) => {
-    setFormData((prev) => ({ ...prev, [key]: value }))
-  }, [])
+  const set = useCallback(
+    <K extends keyof FormData>(key: K, value: FormData[K]) => {
+      setFormData((prev) => ({ ...prev, [key]: value }))
+    },
+    [],
+  )
 
   const setOwner1 = useCallback((field: keyof Owner, value: string) => {
     setFormData((prev) => ({
@@ -922,7 +917,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
       </div>
 
       <div className={styles.body}>
-
         {/* STEP 1 */}
         {step === 1 && (
           <div className={styles.step}>
@@ -936,7 +930,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 value={formData.desiredFunding}
                 onChange={(v) => set('desiredFunding', v)}
                 placeholder="100,000"
-                max={9999999}
+                max={99999999}
                 error={errors.desiredFunding}
               />
             </Field>
@@ -949,7 +943,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 options={USE_OF_FUNDS_OPTIONS}
                 value={formData.useOfFunds}
                 onChange={(v) => set('useOfFunds', v)}
-                error={errors.useOfFunds}
               />
             </Field>
           </div>
@@ -1035,7 +1028,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 options={ENTITY_TYPES}
                 value={formData.entityType}
                 onChange={(v) => set('entityType', v)}
-                error={errors.entityType}
               />
             </Field>
             <div className={styles.row2}>
@@ -1241,12 +1233,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 </strong>
               </div>
             </div>
-
-            <Field
-              label="Owner Signature"
-              required
-              error={errors.signature}
-            >
+            <Field label="Owner Signature" required error={errors.signature}>
               <p className={styles.signatureHint}>
                 Draw your signature below using mouse or touch.
               </p>
@@ -1256,7 +1243,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 error={errors.signature}
               />
             </Field>
-
             <div className={styles.legalText}>
               <p>
                 All consumer information is kept strictly confidential. By
@@ -1270,7 +1256,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 all lawful purposes.
               </p>
             </div>
-
             <label className={styles.consentRow}>
               <input
                 type="checkbox"
@@ -1286,11 +1271,9 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
             {errors.consent && (
               <span className={styles.fieldError}>{errors.consent}</span>
             )}
-
             {submitError && (
               <div className={styles.submitError}>{submitError}</div>
             )}
-
             <p className={styles.recaptchaNote}>
               This site is protected by reCAPTCHA. The Google{' '}
               <a
