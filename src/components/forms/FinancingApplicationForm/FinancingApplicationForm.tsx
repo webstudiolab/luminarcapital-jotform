@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, FC } from 'react'
+import { useState, useRef, useCallback, useEffect, FC } from 'react'
 import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
 import { closeModal } from '@/store/slices/modalSlice'
@@ -20,11 +20,8 @@ interface Owner {
 }
 
 interface FormData {
-  // Step 1
   desiredFunding: string
-  useOfFunds: string[]
-  desiredTerm: string
-  // Step 2
+  useOfFunds: string
   legalBusinessName: string
   dba: string
   businessAddress: string
@@ -35,13 +32,10 @@ interface FormData {
   avgMonthlyRevenue: string
   existingLoanAmount: string
   federalTaxId: string
-  // Step 3
   owner1: Owner
   hasSecondOwner: boolean
   owner2: Owner
-  // Step 4
   bankStatements: File[]
-  // Step 5
   signatureDataUrl: string
   consentAgreed: boolean
 }
@@ -71,17 +65,6 @@ const ENTITY_TYPES = [
   'S Corp',
   'C Corp',
   'Other',
-]
-
-const TERM_OPTIONS = [
-  '3 months',
-  '6 months',
-  '12 months',
-  '18 months',
-  '24 months',
-  '36 months',
-  '48 months',
-  '60 months',
 ]
 
 const INDUSTRIES = [
@@ -147,8 +130,7 @@ const EMPTY_OWNER: Owner = {
 
 const INITIAL_FORM: FormData = {
   desiredFunding: '',
-  useOfFunds: [],
-  desiredTerm: '',
+  useOfFunds: '',
   legalBusinessName: '',
   dba: '',
   businessAddress: '',
@@ -175,7 +157,21 @@ const STEP_TITLES = [
   'Review & Sign',
 ]
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Date helpers ─────────────────────────────────────────────────────────────
+
+const getMaxDOB = () => {
+  const d = new Date()
+  d.setFullYear(d.getFullYear() - 18)
+  return d.toISOString().split('T')[0]
+}
+
+const getMinDOB = () => {
+  const d = new Date()
+  d.setFullYear(d.getFullYear() - 100)
+  return d.toISOString().split('T')[0]
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const formatCurrency = (val: string): string => {
   const num = val.replace(/[^0-9]/g, '')
@@ -199,70 +195,148 @@ const formatPhone = (val: string): string => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
 }
 
-const buildEmailHtml = (data: FormData): string => {
+// ─── Email templates ──────────────────────────────────────────────────────────
+
+const buildAdminEmail = (data: FormData): string => {
   const o1 = data.owner1
   const o2 = data.owner2
-  const ssnMask = (s: string) => s ? `***-**-${s.slice(-4)}` : '—'
+  const ssnMask = (s: string) => (s ? `***-**-${s.slice(-4)}` : '—')
 
   return `
 <div style="font-family:Inter,Arial,sans-serif;max-width:700px;margin:0 auto;color:#1a1f36;">
-  <h2 style="background:#1B2B5E;color:#fff;padding:20px 24px;margin:0;border-radius:8px 8px 0 0;">
-    New Financing Application
-  </h2>
-  <div style="border:1px solid #e0e4ef;border-top:none;border-radius:0 0 8px 8px;padding:24px;">
+  <div style="background:#1B2B5E;padding:32px 40px;border-radius:12px 12px 0 0;">
+    <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">New Financing Application</h1>
+    <p style="color:rgba(255,255,255,0.7);margin:8px 0 0;font-size:14px;">Submitted via Luminar Capital website · ${new Date().toLocaleString('en-US')}</p>
+  </div>
+  <div style="border:1px solid #e0e4ef;border-top:none;border-radius:0 0 12px 12px;padding:32px 40px;background:#ffffff;">
 
-    <h3 style="color:#1B2B5E;border-bottom:2px solid #e0e4ef;padding-bottom:8px;">Funding Details</h3>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr><td style="padding:6px 0;width:40%;color:#666;">Desired Funding Amount</td><td style="padding:6px 0;font-weight:600;">$${Number(data.desiredFunding).toLocaleString('en-US')}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Use of Funds</td><td style="padding:6px 0;font-weight:600;">${data.useOfFunds.join(', ') || '—'}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Desired Term</td><td style="padding:6px 0;font-weight:600;">${data.desiredTerm || '—'}</td></tr>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Funding Details</td></tr>
+      <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Desired Funding Amount</td><td style="padding:10px 0;font-weight:600;font-size:14px;">$${Number(data.desiredFunding).toLocaleString('en-US')}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Use of Funds</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.useOfFunds || '—'}</td></tr>
     </table>
 
-    <h3 style="color:#1B2B5E;border-bottom:2px solid #e0e4ef;padding-bottom:8px;margin-top:24px;">Business Information</h3>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr><td style="padding:6px 0;width:40%;color:#666;">Legal Business Name</td><td style="padding:6px 0;font-weight:600;">${data.legalBusinessName}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">DBA</td><td style="padding:6px 0;font-weight:600;">${data.dba || '—'}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Business Address</td><td style="padding:6px 0;font-weight:600;">${data.businessAddress}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Business Phone</td><td style="padding:6px 0;font-weight:600;">${data.businessPhone}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Entity Type</td><td style="padding:6px 0;font-weight:600;">${data.entityType}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Business Start Date</td><td style="padding:6px 0;font-weight:600;">${data.businessStartDate}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Industry</td><td style="padding:6px 0;font-weight:600;">${data.industry}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Avg. Monthly Revenue</td><td style="padding:6px 0;font-weight:600;">$${Number(data.avgMonthlyRevenue).toLocaleString('en-US')}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Existing Loan Amount</td><td style="padding:6px 0;font-weight:600;">${data.existingLoanAmount ? '$' + Number(data.existingLoanAmount).toLocaleString('en-US') : 'None'}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Federal Tax ID</td><td style="padding:6px 0;font-weight:600;">${data.federalTaxId}</td></tr>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Business Information</td></tr>
+      <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Legal Business Name</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.legalBusinessName}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">DBA</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.dba || '—'}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Business Address</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.businessAddress}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Business Phone</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.businessPhone}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Entity Type</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.entityType}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Business Start Date</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.businessStartDate}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Industry</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.industry}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Avg. Monthly Revenue</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">$${Number(data.avgMonthlyRevenue).toLocaleString('en-US')}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Existing Loan Amount</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.existingLoanAmount ? '$' + Number(data.existingLoanAmount).toLocaleString('en-US') : 'None'}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Federal Tax ID</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${data.federalTaxId}</td></tr>
     </table>
 
-    <h3 style="color:#1B2B5E;border-bottom:2px solid #e0e4ef;padding-bottom:8px;margin-top:24px;">Primary Owner</h3>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr><td style="padding:6px 0;width:40%;color:#666;">Name</td><td style="padding:6px 0;font-weight:600;">${o1.firstName} ${o1.lastName}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Phone</td><td style="padding:6px 0;font-weight:600;">${o1.phone}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;font-weight:600;">${o1.email}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Home Address</td><td style="padding:6px 0;font-weight:600;">${o1.homeAddress}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Date of Birth</td><td style="padding:6px 0;font-weight:600;">${o1.dob}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Credit Score</td><td style="padding:6px 0;font-weight:600;">${o1.creditScore}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">SSN</td><td style="padding:6px 0;font-weight:600;">${ssnMask(o1.ssn)}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Ownership %</td><td style="padding:6px 0;font-weight:600;">${o1.ownershipPct}%</td></tr>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Primary Owner</td></tr>
+      <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Name</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o1.firstName} ${o1.lastName}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Phone</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o1.phone}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Email</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o1.email}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Home Address</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o1.homeAddress}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Date of Birth</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o1.dob}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Credit Score</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o1.creditScore}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">SSN</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${ssnMask(o1.ssn)}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Ownership %</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o1.ownershipPct}%</td></tr>
     </table>
 
-    ${data.hasSecondOwner ? `
-    <h3 style="color:#1B2B5E;border-bottom:2px solid #e0e4ef;padding-bottom:8px;margin-top:24px;">Second Owner</h3>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr><td style="padding:6px 0;width:40%;color:#666;">Name</td><td style="padding:6px 0;font-weight:600;">${o2.firstName} ${o2.lastName}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Phone</td><td style="padding:6px 0;font-weight:600;">${o2.phone}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;font-weight:600;">${o2.email}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Home Address</td><td style="padding:6px 0;font-weight:600;">${o2.homeAddress}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Date of Birth</td><td style="padding:6px 0;font-weight:600;">${o2.dob}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Credit Score</td><td style="padding:6px 0;font-weight:600;">${o2.creditScore}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">SSN</td><td style="padding:6px 0;font-weight:600;">${ssnMask(o2.ssn)}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Ownership %</td><td style="padding:6px 0;font-weight:600;">${o2.ownershipPct}%</td></tr>
-    </table>` : ''}
+    ${
+      data.hasSecondOwner
+        ? `
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Second Owner</td></tr>
+      <tr><td style="padding:10px 0;width:45%;color:#666;font-size:14px;">Name</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o2.firstName} ${o2.lastName}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Phone</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o2.phone}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Email</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o2.email}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Home Address</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o2.homeAddress}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Date of Birth</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${o2.dob}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Credit Score</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o2.creditScore}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">SSN</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${ssnMask(o2.ssn)}</td></tr>
+      <tr style="background:#f7f8fb;"><td style="padding:10px 8px;color:#666;font-size:14px;">Ownership %</td><td style="padding:10px 8px;font-weight:600;font-size:14px;">${o2.ownershipPct}%</td></tr>
+    </table>`
+        : ''
+    }
 
-    <h3 style="color:#1B2B5E;border-bottom:2px solid #e0e4ef;padding-bottom:8px;margin-top:24px;">Bank Statements</h3>
-    <p style="margin:4px 0;">${data.bankStatements.length > 0 ? `${data.bankStatements.length} file(s) attached` : 'None uploaded'}</p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Bank Statements</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Files Uploaded</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.bankStatements.length > 0 ? `${data.bankStatements.length} file(s)` : 'None'}</td></tr>
+    </table>
 
-    <p style="margin-top:24px;font-size:12px;color:#999;">Submitted via Luminar Capital website · ${new Date().toLocaleString('en-US')}</p>
   </div>
 </div>`
+}
+
+const buildUserEmail = (data: FormData): string => `
+<div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1f36;">
+  <div style="background:#1B2B5E;padding:32px 40px;border-radius:12px 12px 0 0;">
+    <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">Application Received</h1>
+    <p style="color:rgba(255,255,255,0.7);margin:8px 0 0;font-size:14px;">Luminar Capital</p>
+  </div>
+  <div style="border:1px solid #e0e4ef;border-top:none;border-radius:0 0 12px 12px;padding:32px 40px;background:#ffffff;">
+    <p style="font-size:16px;margin:0 0 16px;">Hi ${data.owner1.firstName},</p>
+    <p style="font-size:14px;line-height:1.7;color:#444;margin:0 0 24px;">
+      Thank you for submitting your financing application to Luminar Capital. We have received your information
+      and a funding specialist will be in touch with you within <strong>1 business day</strong>.
+    </p>
+    <div style="background:#f7f8fb;border-radius:10px;padding:20px 24px;margin-bottom:24px;">
+      <p style="margin:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;">Application Summary</p>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="padding:6px 0;color:#666;font-size:13px;width:50%;">Business</td><td style="padding:6px 0;font-weight:600;font-size:13px;">${data.legalBusinessName}</td></tr>
+        <tr><td style="padding:6px 0;color:#666;font-size:13px;">Funding Requested</td><td style="padding:6px 0;font-weight:600;font-size:13px;">$${Number(data.desiredFunding).toLocaleString('en-US')}</td></tr>
+        <tr><td style="padding:6px 0;color:#666;font-size:13px;">Use of Funds</td><td style="padding:6px 0;font-weight:600;font-size:13px;">${data.useOfFunds}</td></tr>
+        <tr><td style="padding:6px 0;color:#666;font-size:13px;">Submitted</td><td style="padding:6px 0;font-weight:600;font-size:13px;">${new Date().toLocaleString('en-US')}</td></tr>
+      </table>
+    </div>
+    <p style="font-size:14px;color:#444;margin:0 0 8px;">If you have any questions, please contact us at:</p>
+    <p style="font-size:14px;margin:0 0 24px;"><a href="mailto:clientsuccess@luminarcapital.com" style="color:#1B2B5E;font-weight:600;">clientsuccess@luminarcapital.com</a></p>
+    <p style="font-size:14px;color:#444;margin:0;">The Luminar Capital Team</p>
+  </div>
+</div>`
+
+// ─── Google Places Autocomplete hook ─────────────────────────────────────────
+
+declare global {
+  interface Window {
+    google: {
+      maps: {
+        places: {
+          Autocomplete: new (
+            input: HTMLInputElement,
+            opts?: object,
+          ) => {
+            addListener: (event: string, cb: () => void) => void
+            getPlace: () => { formatted_address?: string }
+          }
+        }
+      }
+    }
+    grecaptcha: {
+      execute: (
+        siteKey: string,
+        options: { action: string },
+      ) => Promise<string>
+      ready: (callback: () => void) => void
+    }
+  }
+}
+
+const usePlacesAutocomplete = (
+  inputRef: React.RefObject<HTMLInputElement>,
+  onSelect: (address: string) => void,
+) => {
+  useEffect(() => {
+    if (!inputRef.current || !window.google?.maps?.places) return
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      { types: ['address'], componentRestrictions: { country: 'us' } },
+    )
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace()
+      if (place.formatted_address) onSelect(place.formatted_address)
+    })
+  }, [inputRef, onSelect])
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -284,11 +358,15 @@ const Field: FC<{
   </div>
 )
 
-const TextInput: FC<React.InputHTMLAttributes<HTMLInputElement> & { error?: string }> = ({
-  error, className, ...props
-}) => (
+const TextInput: FC<
+  React.InputHTMLAttributes<HTMLInputElement> & { error?: string }
+> = ({ error, className, ...props }) => (
   <input
-    className={classNames(styles.input, error && styles.inputError, className)}
+    className={classNames(
+      styles.input,
+      error && styles.inputError,
+      className,
+    )}
     {...props}
   />
 )
@@ -314,7 +392,11 @@ const CurrencyInput: FC<{
         value={value ? formatCurrency(value) : ''}
         onChange={handleChange}
         placeholder={placeholder || '0'}
-        className={classNames(styles.input, styles.inputCurrency, error && styles.inputError)}
+        className={classNames(
+          styles.input,
+          styles.inputCurrency,
+          error && styles.inputError,
+        )}
       />
     </div>
   )
@@ -332,42 +414,42 @@ const ButtonGroup: FC<{
         key={opt}
         type="button"
         onClick={() => onChange(opt)}
-        className={classNames(styles.buttonGroupItem, value === opt && styles.buttonGroupItemActive)}
+        className={classNames(
+          styles.buttonGroupItem,
+          value === opt && styles.buttonGroupItemActive,
+        )}
       >
         {opt}
       </button>
     ))}
-    {error && <span className={classNames(styles.fieldError, styles.fieldErrorFull)}>{error}</span>}
+    {error && (
+      <span className={classNames(styles.fieldError, styles.fieldErrorFull)}>
+        {error}
+      </span>
+    )}
   </div>
 )
 
-const MultiButtonGroup: FC<{
-  options: string[]
-  value: string[]
-  onChange: (v: string[]) => void
+const AddressInput: FC<{
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
   error?: string
-}> = ({ options, value, onChange, error }) => {
-  const toggle = (opt: string) => {
-    onChange(value.includes(opt) ? value.filter((v) => v !== opt) : [...value, opt])
-  }
+}> = ({ value, onChange, placeholder, error }) => {
+  const ref = useRef<HTMLInputElement>(null)
+  usePlacesAutocomplete(ref, onChange)
   return (
-    <div className={styles.buttonGroup}>
-      {options.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          onClick={() => toggle(opt)}
-          className={classNames(styles.buttonGroupItem, value.includes(opt) && styles.buttonGroupItemActive)}
-        >
-          {opt}
-        </button>
-      ))}
-      {error && <span className={classNames(styles.fieldError, styles.fieldErrorFull)}>{error}</span>}
-    </div>
+    <input
+      ref={ref}
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder || 'Start typing address...'}
+      autoComplete="off"
+      className={classNames(styles.input, error && styles.inputError)}
+    />
   )
 }
-
-// ─── Signature Canvas ─────────────────────────────────────────────────────────
 
 const SignatureCanvas: FC<{
   value: string
@@ -381,13 +463,18 @@ const SignatureCanvas: FC<{
   const getPos = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current!
     const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
     if ('touches' in e) {
       return {
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top,
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY,
       }
     }
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top }
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    }
   }
 
   const startDraw = (e: React.MouseEvent | React.TouchEvent) => {
@@ -397,6 +484,7 @@ const SignatureCanvas: FC<{
 
   const draw = (e: React.MouseEvent | React.TouchEvent) => {
     if (!drawing.current) return
+    e.preventDefault()
     const canvas = canvasRef.current!
     const ctx = canvas.getContext('2d')!
     const pos = getPos(e)
@@ -411,7 +499,9 @@ const SignatureCanvas: FC<{
     onChange(canvas.toDataURL())
   }
 
-  const stopDraw = () => { drawing.current = false }
+  const stopDraw = () => {
+    drawing.current = false
+  }
 
   const clear = () => {
     const canvas = canvasRef.current!
@@ -424,9 +514,12 @@ const SignatureCanvas: FC<{
     <div className={styles.signatureWrap}>
       <canvas
         ref={canvasRef}
-        width={560}
-        height={140}
-        className={classNames(styles.signatureCanvas, error && styles.inputError)}
+        width={600}
+        height={150}
+        className={classNames(
+          styles.signatureCanvas,
+          error && styles.inputError,
+        )}
         onMouseDown={startDraw}
         onMouseMove={draw}
         onMouseUp={stopDraw}
@@ -453,7 +546,11 @@ const OwnerBlock: FC<{
 }> = ({ data, onChange, errors, prefix }) => (
   <div className={styles.ownerBlock}>
     <div className={styles.row2}>
-      <Field label="First Name" required error={errors[`${prefix}.firstName`]}>
+      <Field
+        label="First Name"
+        required
+        error={errors[`${prefix}.firstName`]}
+      >
         <TextInput
           value={data.firstName}
           onChange={(e) => onChange('firstName', e.target.value)}
@@ -476,8 +573,8 @@ const OwnerBlock: FC<{
           value={data.phone}
           onChange={(e) => onChange('phone', formatPhone(e.target.value))}
           placeholder="(555) 000-0000"
-          error={errors[`${prefix}.phone`]}
           inputMode="tel"
+          error={errors[`${prefix}.phone`]}
         />
       </Field>
       <Field label="Email Address" required error={errors[`${prefix}.email`]}>
@@ -490,11 +587,14 @@ const OwnerBlock: FC<{
         />
       </Field>
     </div>
-    <Field label="Home Address" required error={errors[`${prefix}.homeAddress`]}>
-      <TextInput
+    <Field
+      label="Home Address"
+      required
+      error={errors[`${prefix}.homeAddress`]}
+    >
+      <AddressInput
         value={data.homeAddress}
-        onChange={(e) => onChange('homeAddress', e.target.value)}
-        placeholder="123 Main St, City, State, ZIP"
+        onChange={(v) => onChange('homeAddress', v)}
         error={errors[`${prefix}.homeAddress`]}
       />
     </Field>
@@ -504,10 +604,16 @@ const OwnerBlock: FC<{
           value={data.dob}
           onChange={(e) => onChange('dob', e.target.value)}
           type="date"
+          max={getMaxDOB()}
+          min={getMinDOB()}
           error={errors[`${prefix}.dob`]}
         />
       </Field>
-      <Field label="Credit Score" required error={errors[`${prefix}.creditScore`]}>
+      <Field
+        label="Credit Score"
+        required
+        error={errors[`${prefix}.creditScore`]}
+      >
         <TextInput
           value={data.creditScore}
           onChange={(e) => {
@@ -519,7 +625,11 @@ const OwnerBlock: FC<{
           error={errors[`${prefix}.creditScore`]}
         />
       </Field>
-      <Field label="Ownership %" required error={errors[`${prefix}.ownershipPct`]}>
+      <Field
+        label="Ownership %"
+        required
+        error={errors[`${prefix}.ownershipPct`]}
+      >
         <div className={styles.suffixWrapper}>
           <TextInput
             value={data.ownershipPct}
@@ -537,13 +647,17 @@ const OwnerBlock: FC<{
         </div>
       </Field>
     </div>
-    <Field label="Social Security Number" required error={errors[`${prefix}.ssn`]}>
+    <Field
+      label="Social Security Number"
+      required
+      error={errors[`${prefix}.ssn`]}
+    >
       <TextInput
         value={data.ssn}
         onChange={(e) => onChange('ssn', formatSSN(e.target.value))}
         placeholder="123-45-6789"
         inputMode="numeric"
-        type="password"
+        type="text"
         autoComplete="off"
         error={errors[`${prefix}.ssn`]}
       />
@@ -561,8 +675,7 @@ const validateStep = (step: number, data: FormData): FieldError => {
 
   if (step === 1) {
     req('desiredFunding', data.desiredFunding, 'Desired funding amount')
-    if (!data.useOfFunds.length) errors['useOfFunds'] = 'Select at least one use of funds'
-    req('desiredTerm', data.desiredTerm, 'Desired term')
+    if (!data.useOfFunds) errors['useOfFunds'] = 'Please select a use of funds'
   }
 
   if (step === 2) {
@@ -590,21 +703,47 @@ const validateStep = (step: number, data: FormData): FieldError => {
         errors[`${prefix}.email`] = 'Enter a valid email address'
       req(`${prefix}.homeAddress`, o.homeAddress, 'Home address')
       req(`${prefix}.dob`, o.dob, 'Date of birth')
+      if (o.dob) {
+        const dobDate = new Date(o.dob)
+        if (dobDate > new Date(getMaxDOB()))
+          errors[`${prefix}.dob`] = 'Must be at least 18 years old'
+        if (dobDate < new Date(getMinDOB()))
+          errors[`${prefix}.dob`] = 'Invalid date of birth'
+      }
       req(`${prefix}.creditScore`, o.creditScore, 'Credit score')
-      if (o.creditScore && (Number(o.creditScore) < 300 || Number(o.creditScore) > 850))
+      if (
+        o.creditScore &&
+        (Number(o.creditScore) < 300 || Number(o.creditScore) > 850)
+      )
         errors[`${prefix}.creditScore`] = 'Must be between 300 and 850'
       req(`${prefix}.ssn`, o.ssn, 'SSN')
       if (o.ssn && !/^\d{3}-\d{2}-\d{4}$/.test(o.ssn))
         errors[`${prefix}.ssn`] = 'Format: 123-45-6789'
       req(`${prefix}.ownershipPct`, o.ownershipPct, 'Ownership %')
+      if (o.ownershipPct && Number(o.ownershipPct) > 100)
+        errors[`${prefix}.ownershipPct`] = 'Cannot exceed 100%'
     }
+
     validateOwner(data.owner1, 'owner1')
-    if (data.hasSecondOwner) validateOwner(data.owner2, 'owner2')
+
+    if (data.hasSecondOwner) {
+      validateOwner(data.owner2, 'owner2')
+      const total =
+        Number(data.owner1.ownershipPct) + Number(data.owner2.ownershipPct)
+      if (data.owner1.ownershipPct && data.owner2.ownershipPct && total > 100) {
+        errors['owner1.ownershipPct'] =
+          `Combined ownership cannot exceed 100% (currently ${total}%)`
+        errors['owner2.ownershipPct'] =
+          `Combined ownership cannot exceed 100% (currently ${total}%)`
+      }
+    }
   }
 
   if (step === 5) {
-    if (!data.signatureDataUrl) errors['signature'] = 'Please provide your signature'
-    if (!data.consentAgreed) errors['consent'] = 'You must agree to the terms to submit'
+    if (!data.signatureDataUrl)
+      errors['signature'] = 'Please provide your signature'
+    if (!data.consentAgreed)
+      errors['consent'] = 'You must agree to the terms to submit'
   }
 
   return errors
@@ -612,20 +751,13 @@ const validateStep = (step: number, data: FormData): FieldError => {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-declare global {
-  interface Window {
-    grecaptcha: {
-      execute: (siteKey: string, options: { action: string }) => Promise<string>
-      ready: (callback: () => void) => void
-    }
-  }
-}
-
 interface FinancingApplicationFormProps {
   className?: string
 }
 
-const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className }) => {
+const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
+  className,
+}) => {
   const dispatch = useDispatch()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM)
@@ -637,21 +769,23 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
   const formStartTime = useRef<number>(Date.now())
   const [honeypot, setHoneypot] = useState('')
 
-  // ── field helpers ──────────────────────────────────────────────────────────
-
   const set = useCallback(<K extends keyof FormData>(key: K, value: FormData[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
   }, [])
 
   const setOwner1 = useCallback((field: keyof Owner, value: string) => {
-    setFormData((prev) => ({ ...prev, owner1: { ...prev.owner1, [field]: value } }))
+    setFormData((prev) => ({
+      ...prev,
+      owner1: { ...prev.owner1, [field]: value },
+    }))
   }, [])
 
   const setOwner2 = useCallback((field: keyof Owner, value: string) => {
-    setFormData((prev) => ({ ...prev, owner2: { ...prev.owner2, [field]: value } }))
+    setFormData((prev) => ({
+      ...prev,
+      owner2: { ...prev.owner2, [field]: value },
+    }))
   }, [])
-
-  // ── navigation ─────────────────────────────────────────────────────────────
 
   const goNext = () => {
     const errs = validateStep(step, formData)
@@ -670,8 +804,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     window.scrollTo(0, 0)
   }
 
-  // ── file upload ────────────────────────────────────────────────────────────
-
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
     const newFiles = Array.from(e.target.files)
@@ -688,17 +820,13 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     }))
   }
 
-  // ── submit ─────────────────────────────────────────────────────────────────
-
   const handleSubmit = async () => {
     const errs = validateStep(5, formData)
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
     }
-
-    if (honeypot) return // spam trap
-
+    if (honeypot) return
     const elapsed = Date.now() - formStartTime.current
     if (elapsed < 4000) {
       setSubmitError('Please review the form before submitting.')
@@ -709,52 +837,30 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     setSubmitError(null)
 
     try {
-      let recaptchaToken = ''
-      if (window.grecaptcha) {
-        recaptchaToken = await window.grecaptcha.execute(
-          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string,
-          { action: 'financing_application' },
-        )
-      }
-
       await browserSendEmail({
         subject: `Financing Application — ${formData.legalBusinessName} — ${formData.owner1.firstName} ${formData.owner1.lastName}`,
-        htmlMessage: buildEmailHtml(formData),
+        htmlMessage: buildAdminEmail(formData),
         honeypot,
         timestamp: formStartTime.current,
       })
 
-      // Confirmation to applicant
       await browserSendEmail({
         to: formData.owner1.email,
         subject: 'Your Luminar Capital Application Has Been Received',
-        htmlMessage: `
-<div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1f36;">
-  <h2 style="background:#1B2B5E;color:#fff;padding:20px 24px;margin:0;border-radius:8px 8px 0 0;">Application Received</h2>
-  <div style="border:1px solid #e0e4ef;border-top:none;border-radius:0 0 8px 8px;padding:24px;">
-    <p>Hi ${formData.owner1.firstName},</p>
-    <p>Thank you for submitting your financing application to Luminar Capital. We've received your information and a funding specialist will be in touch with you within <strong>1 business day</strong>.</p>
-    <p><strong>Application Summary</strong><br/>
-    Business: ${formData.legalBusinessName}<br/>
-    Funding Requested: $${Number(formData.desiredFunding).toLocaleString('en-US')}<br/>
-    Submitted: ${new Date().toLocaleString('en-US')}</p>
-    <p>If you have any questions, please contact us at <a href="mailto:clientsuccess@luminarcapital.com">clientsuccess@luminarcapital.com</a>.</p>
-    <p>The Luminar Capital Team</p>
-  </div>
-</div>`,
+        htmlMessage: buildUserEmail(formData),
         honeypot: '',
         timestamp: formStartTime.current,
       })
 
       setIsSuccess(true)
     } catch {
-      setSubmitError('Submission failed. Please try again or contact us directly.')
+      setSubmitError(
+        'Submission failed. Please try again or contact us directly.',
+      )
     } finally {
       setIsSubmitting(false)
     }
   }
-
-  // ── success screen ─────────────────────────────────────────────────────────
 
   if (isSuccess) {
     return (
@@ -763,7 +869,8 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
           <div className={styles.successIcon}>✓</div>
           <h2 className={styles.successTitle}>Application Submitted!</h2>
           <p className={styles.successText}>
-            Thank you, {formData.owner1.firstName}. A funding specialist will be in touch within 1 business day.
+            Thank you, {formData.owner1.firstName}. A funding specialist will
+            be in touch within 1 business day.
           </p>
           <button
             type="button"
@@ -777,11 +884,8 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     )
   }
 
-  // ── render ─────────────────────────────────────────────────────────────────
-
   return (
     <div className={classNames(styles.form, className)}>
-      {/* Honeypot */}
       <input
         type="text"
         name="website"
@@ -811,19 +915,23 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
         ))}
         <div
           className={styles.progressBar}
-          style={{ width: `${((step - 1) / (STEP_TITLES.length - 1)) * 100}%` }}
+          style={{
+            width: `${((step - 1) / (STEP_TITLES.length - 1)) * 100}%`,
+          }}
         />
       </div>
 
-      {/* Step content */}
       <div className={styles.body}>
 
-        {/* ── STEP 1: Funding Details ───────────────────────────────────── */}
+        {/* STEP 1 */}
         {step === 1 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Funding Details</h3>
-
-            <Field label="Desired Funding Amount" required error={errors.desiredFunding}>
+            <Field
+              label="Desired Funding Amount"
+              required
+              error={errors.desiredFunding}
+            >
               <CurrencyInput
                 value={formData.desiredFunding}
                 onChange={(v) => set('desiredFunding', v)}
@@ -832,34 +940,31 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 error={errors.desiredFunding}
               />
             </Field>
-
-            <Field label="Intended Use of Funds" required error={errors.useOfFunds}>
-              <MultiButtonGroup
+            <Field
+              label="Intended Use of Funds"
+              required
+              error={errors.useOfFunds}
+            >
+              <ButtonGroup
                 options={USE_OF_FUNDS_OPTIONS}
                 value={formData.useOfFunds}
                 onChange={(v) => set('useOfFunds', v)}
                 error={errors.useOfFunds}
               />
             </Field>
-
-            <Field label="Desired Term Length" required error={errors.desiredTerm}>
-              <ButtonGroup
-                options={TERM_OPTIONS}
-                value={formData.desiredTerm}
-                onChange={(v) => set('desiredTerm', v)}
-                error={errors.desiredTerm}
-              />
-            </Field>
           </div>
         )}
 
-        {/* ── STEP 2: Business Information ─────────────────────────────── */}
+        {/* STEP 2 */}
         {step === 2 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Business Information</h3>
-
             <div className={styles.row2}>
-              <Field label="Legal Business Name" required error={errors.legalBusinessName}>
+              <Field
+                label="Legal Business Name"
+                required
+                error={errors.legalBusinessName}
+              >
                 <TextInput
                   value={formData.legalBusinessName}
                   onChange={(e) => set('legalBusinessName', e.target.value)}
@@ -867,7 +972,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                   error={errors.legalBusinessName}
                 />
               </Field>
-              <Field label="DBA (if applicable)" error={errors.dba}>
+              <Field label="DBA (if applicable)">
                 <TextInput
                   value={formData.dba}
                   onChange={(e) => set('dba', e.target.value)}
@@ -875,34 +980,48 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 />
               </Field>
             </div>
-
-            <Field label="Business Address" required error={errors.businessAddress}>
-              <TextInput
+            <Field
+              label="Business Address"
+              required
+              error={errors.businessAddress}
+            >
+              <AddressInput
                 value={formData.businessAddress}
-                onChange={(e) => set('businessAddress', e.target.value)}
-                placeholder="123 Main St, City, State, ZIP"
+                onChange={(v) => set('businessAddress', v)}
                 error={errors.businessAddress}
               />
             </Field>
-
             <div className={styles.row2}>
-              <Field label="Business Phone" required error={errors.businessPhone}>
+              <Field
+                label="Business Phone"
+                required
+                error={errors.businessPhone}
+              >
                 <TextInput
                   value={formData.businessPhone}
-                  onChange={(e) => set('businessPhone', formatPhone(e.target.value))}
+                  onChange={(e) =>
+                    set('businessPhone', formatPhone(e.target.value))
+                  }
                   placeholder="(555) 000-0000"
                   inputMode="tel"
                   error={errors.businessPhone}
                 />
               </Field>
-              <Field label="Federal Tax ID (EIN)" required error={errors.federalTaxId}>
+              <Field
+                label="Federal Tax ID (EIN)"
+                required
+                error={errors.federalTaxId}
+              >
                 <TextInput
                   value={formData.federalTaxId}
                   onChange={(e) => {
-                    const digits = e.target.value.replace(/\D/g, '').slice(0, 9)
-                    const formatted = digits.length > 2
-                      ? `${digits.slice(0, 2)}-${digits.slice(2)}`
-                      : digits
+                    const digits = e.target.value
+                      .replace(/\D/g, '')
+                      .slice(0, 9)
+                    const formatted =
+                      digits.length > 2
+                        ? `${digits.slice(0, 2)}-${digits.slice(2)}`
+                        : digits
                     set('federalTaxId', formatted)
                   }}
                   placeholder="12-3456789"
@@ -911,7 +1030,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 />
               </Field>
             </div>
-
             <Field label="Entity Type" required error={errors.entityType}>
               <ButtonGroup
                 options={ENTITY_TYPES}
@@ -920,9 +1038,12 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 error={errors.entityType}
               />
             </Field>
-
             <div className={styles.row2}>
-              <Field label="Business Start Date" required error={errors.businessStartDate}>
+              <Field
+                label="Business Start Date"
+                required
+                error={errors.businessStartDate}
+              >
                 <TextInput
                   value={formData.businessStartDate}
                   onChange={(e) => set('businessStartDate', e.target.value)}
@@ -935,19 +1056,29 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 <select
                   value={formData.industry}
                   onChange={(e) => set('industry', e.target.value)}
-                  className={classNames(styles.select, errors.industry && styles.inputError)}
+                  className={classNames(
+                    styles.select,
+                    errors.industry && styles.inputError,
+                  )}
                 >
                   <option value="">Select industry...</option>
                   {INDUSTRIES.map((ind) => (
-                    <option key={ind} value={ind}>{ind}</option>
+                    <option key={ind} value={ind}>
+                      {ind}
+                    </option>
                   ))}
                 </select>
-                {errors.industry && <span className={styles.fieldError}>{errors.industry}</span>}
+                {errors.industry && (
+                  <span className={styles.fieldError}>{errors.industry}</span>
+                )}
               </Field>
             </div>
-
             <div className={styles.row2}>
-              <Field label="Avg. Monthly Revenue" required error={errors.avgMonthlyRevenue}>
+              <Field
+                label="Avg. Monthly Revenue"
+                required
+                error={errors.avgMonthlyRevenue}
+              >
                 <CurrencyInput
                   value={formData.avgMonthlyRevenue}
                   onChange={(v) => set('avgMonthlyRevenue', v)}
@@ -956,7 +1087,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                   error={errors.avgMonthlyRevenue}
                 />
               </Field>
-              <Field label="Existing Loan Amount" error={errors.existingLoanAmount}>
+              <Field
+                label="Existing Loan Amount"
+                error={errors.existingLoanAmount}
+              >
                 <CurrencyInput
                   value={formData.existingLoanAmount}
                   onChange={(v) => set('existingLoanAmount', v)}
@@ -969,31 +1103,32 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
           </div>
         )}
 
-        {/* ── STEP 3: Owner Information ─────────────────────────────────── */}
+        {/* STEP 3 */}
         {step === 3 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Owner Information</h3>
-
             <OwnerBlock
               data={formData.owner1}
               onChange={setOwner1}
               errors={errors}
               prefix="owner1"
             />
-
             <div className={styles.secondOwnerToggle}>
               <button
                 type="button"
-                onClick={() => set('hasSecondOwner', !formData.hasSecondOwner)}
+                onClick={() =>
+                  set('hasSecondOwner', !formData.hasSecondOwner)
+                }
                 className={classNames(
                   styles.toggleBtn,
                   formData.hasSecondOwner && styles.toggleBtnActive,
                 )}
               >
-                {formData.hasSecondOwner ? '− Remove 2nd Owner' : '+ Add 2nd Owner'}
+                {formData.hasSecondOwner
+                  ? '− Remove 2nd Owner'
+                  : '+ Add 2nd Owner'}
               </button>
             </div>
-
             {formData.hasSecondOwner && (
               <>
                 <h4 className={styles.ownerSectionTitle}>Second Owner</h4>
@@ -1008,16 +1143,18 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
           </div>
         )}
 
-        {/* ── STEP 4: Bank Statements ───────────────────────────────────── */}
+        {/* STEP 4 */}
         {step === 4 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Bank Statements</h3>
             <p className={styles.stepSubtitle}>
-              Upload the last 4 months of your business bank account statements.
+              Upload the last 4 months of your business bank account
+              statements.
               <br />
-              <em>Optional to get started; required to get certified offers.</em>
+              <em>
+                Optional to get started; required to get certified offers.
+              </em>
             </p>
-
             <div
               className={styles.dropzone}
               onClick={() => fileInputRef.current?.click()}
@@ -1027,7 +1164,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 const files = Array.from(e.dataTransfer.files)
                 setFormData((prev) => ({
                   ...prev,
-                  bankStatements: [...prev.bankStatements, ...files].slice(0, 8),
+                  bankStatements: [
+                    ...prev.bankStatements,
+                    ...files,
+                  ].slice(0, 8),
                 }))
               }}
             >
@@ -1040,10 +1180,13 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 style={{ display: 'none' }}
               />
               <div className={styles.dropzoneIcon}>📂</div>
-              <p className={styles.dropzoneText}>Click to upload or drag & drop files here</p>
-              <p className={styles.dropzoneHint}>PDF, JPG, PNG — up to 8 files</p>
+              <p className={styles.dropzoneText}>
+                Click to upload or drag & drop files here
+              </p>
+              <p className={styles.dropzoneHint}>
+                PDF, JPG, PNG — up to 8 files
+              </p>
             </div>
-
             {formData.bankStatements.length > 0 && (
               <ul className={styles.fileList}>
                 {formData.bankStatements.map((file, idx) => (
@@ -1063,12 +1206,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
           </div>
         )}
 
-        {/* ── STEP 5: Review & Sign ─────────────────────────────────────── */}
+        {/* STEP 5 */}
         {step === 5 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Review & Sign</h3>
-
-            {/* Summary */}
             <div className={styles.reviewSummary}>
               <div className={styles.reviewRow}>
                 <span>Business</span>
@@ -1076,25 +1217,39 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
               </div>
               <div className={styles.reviewRow}>
                 <span>Funding Requested</span>
-                <strong>${Number(formData.desiredFunding).toLocaleString('en-US')}</strong>
+                <strong>
+                  ${Number(formData.desiredFunding).toLocaleString('en-US')}
+                </strong>
               </div>
               <div className={styles.reviewRow}>
-                <span>Term</span>
-                <strong>{formData.desiredTerm}</strong>
+                <span>Use of Funds</span>
+                <strong>{formData.useOfFunds}</strong>
               </div>
               <div className={styles.reviewRow}>
                 <span>Primary Contact</span>
-                <strong>{formData.owner1.firstName} {formData.owner1.lastName} · {formData.owner1.email}</strong>
+                <strong>
+                  {formData.owner1.firstName} {formData.owner1.lastName} ·{' '}
+                  {formData.owner1.email}
+                </strong>
               </div>
               <div className={styles.reviewRow}>
                 <span>Bank Statements</span>
-                <strong>{formData.bankStatements.length > 0 ? `${formData.bankStatements.length} file(s)` : 'None'}</strong>
+                <strong>
+                  {formData.bankStatements.length > 0
+                    ? `${formData.bankStatements.length} file(s)`
+                    : 'None'}
+                </strong>
               </div>
             </div>
 
-            {/* Signature */}
-            <Field label="Owner Signature" required error={errors.signature}>
-              <p className={styles.signatureHint}>Draw your signature below using mouse or touch.</p>
+            <Field
+              label="Owner Signature"
+              required
+              error={errors.signature}
+            >
+              <p className={styles.signatureHint}>
+                Draw your signature below using mouse or touch.
+              </p>
               <SignatureCanvas
                 value={formData.signatureDataUrl}
                 onChange={(v) => set('signatureDataUrl', v)}
@@ -1102,15 +1257,17 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
               />
             </Field>
 
-            {/* Legal */}
             <div className={styles.legalText}>
               <p>
-                All consumer information is kept strictly confidential. By signing and submitting, you authorize
-                Luminar Capital and/or our affiliates to contact you via telephone, mobile device (including SMS
-                and MMS), and/or email, even if your telephone number is listed on a Do Not Call registry. You
-                also authorize us to obtain consumer or personal, business, and investigative reports including
-                credit card processor statements and bank statements from consumer reporting agencies, and for
-                any and all lawful purposes.
+                All consumer information is kept strictly confidential. By
+                signing and submitting, you authorize Luminar Capital and/or
+                our affiliates to contact you via telephone, mobile device
+                (including SMS and MMS), and/or email, even if your telephone
+                number is listed on a Do Not Call registry. You also authorize
+                us to obtain consumer or personal, business, and investigative
+                reports including credit card processor statements and bank
+                statements from consumer reporting agencies, and for any and
+                all lawful purposes.
               </p>
             </div>
 
@@ -1122,10 +1279,13 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 className={styles.consentCheckbox}
               />
               <span>
-                I agree to the terms above and authorize Luminar Capital to process my application.
+                I agree to the terms above and authorize Luminar Capital to
+                process my application.
               </span>
             </label>
-            {errors.consent && <span className={styles.fieldError}>{errors.consent}</span>}
+            {errors.consent && (
+              <span className={styles.fieldError}>{errors.consent}</span>
+            )}
 
             {submitError && (
               <div className={styles.submitError}>{submitError}</div>
@@ -1133,9 +1293,21 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
 
             <p className={styles.recaptchaNote}>
               This site is protected by reCAPTCHA. The Google{' '}
-              <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>{' '}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Privacy Policy
+              </a>{' '}
               and{' '}
-              <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a>{' '}
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Terms of Service
+              </a>{' '}
               apply.
             </p>
           </div>
@@ -1151,9 +1323,12 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
         ) : (
           <div />
         )}
-
         {step < 5 ? (
-          <button type="button" onClick={goNext} className={styles.btnPrimary}>
+          <button
+            type="button"
+            onClick={goNext}
+            className={styles.btnPrimary}
+          >
             Next Step →
           </button>
         ) : (
@@ -1161,7 +1336,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className={classNames(styles.btnPrimary, isSubmitting && styles.btnDisabled)}
+            className={classNames(
+              styles.btnPrimary,
+              isSubmitting && styles.btnDisabled,
+            )}
           >
             {isSubmitting ? 'Submitting…' : 'Submit Application'}
           </button>
