@@ -226,3 +226,20 @@ svg{
 			}
 	}
 }
+.pac-container {
+  border: 1rem solid var(--color-gray-50) !important;
+  border-top: none !important;
+  border-radius: 0 0 8rem 8rem !important;
+  box-shadow: 0 4rem 12rem rgba(0,0,0,0.08) !important;
+  font-family: var(--font-primary-regular) !important;
+}
+.pac-container::after { display: none !important; }
+.pac-item {
+  font-size: 14rem !important;
+  font-family: var(--font-primary-regular) !important;
+  padding: 8rem 16rem !important;
+  cursor: pointer !important;
+  border-top: 1rem solid var(--color-gray-10) !important;
+}
+.pac-item:hover { background: var(--color-gray-10) !important; }
+.pac-item-selected { background: var(--color-gray-10) !important; }
