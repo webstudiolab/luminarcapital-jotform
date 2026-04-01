@@ -46,6 +46,9 @@ interface FieldError {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
+const MAX_CHARS = 50
+const MAX_FILES = 10
+
 const USE_OF_FUNDS_OPTIONS = [
   'Expansion',
   'Working Capital',
@@ -406,7 +409,6 @@ const ButtonGroup: FC<{
   options: string[]
   value: string
   onChange: (v: string) => void
-  error?: string
 }> = ({ options, value, onChange }) => (
   <div className={styles.buttonGroup}>
     {options.map((opt) => (
@@ -494,9 +496,7 @@ const SignatureCanvas: FC<{
     onChange(canvas.toDataURL())
   }
 
-  const stopDraw = () => {
-    drawing.current = false
-  }
+  const stopDraw = () => { drawing.current = false }
 
   const clear = () => {
     const canvas = canvasRef.current!
@@ -511,10 +511,7 @@ const SignatureCanvas: FC<{
         ref={canvasRef}
         width={600}
         height={150}
-        className={classNames(
-          styles.signatureCanvas,
-          error && styles.inputError,
-        )}
+        className={classNames(styles.signatureCanvas, error && styles.inputError)}
         onMouseDown={startDraw}
         onMouseMove={draw}
         onMouseUp={stopDraw}
@@ -544,16 +541,18 @@ const OwnerBlock: FC<{
       <Field label="First Name" required error={errors[`${prefix}.firstName`]}>
         <TextInput
           value={data.firstName}
-          onChange={(e) => onChange('firstName', e.target.value)}
+          onChange={(e) => onChange('firstName', e.target.value.slice(0, MAX_CHARS))}
           placeholder="John"
+          maxLength={MAX_CHARS}
           error={errors[`${prefix}.firstName`]}
         />
       </Field>
       <Field label="Last Name" required error={errors[`${prefix}.lastName`]}>
         <TextInput
           value={data.lastName}
-          onChange={(e) => onChange('lastName', e.target.value)}
+          onChange={(e) => onChange('lastName', e.target.value.slice(0, MAX_CHARS))}
           placeholder="Smith"
+          maxLength={MAX_CHARS}
           error={errors[`${prefix}.lastName`]}
         />
       </Field>
@@ -571,9 +570,10 @@ const OwnerBlock: FC<{
       <Field label="Email Address" required error={errors[`${prefix}.email`]}>
         <TextInput
           value={data.email}
-          onChange={(e) => onChange('email', e.target.value)}
+          onChange={(e) => onChange('email', e.target.value.slice(0, MAX_CHARS))}
           placeholder="john@example.com"
           type="email"
+          maxLength={MAX_CHARS}
           error={errors[`${prefix}.email`]}
         />
       </Field>
@@ -650,6 +650,10 @@ const validateStep = (step: number, data: FormData): FieldError => {
   const req = (key: string, val: string, label: string) => {
     if (!val.trim()) errors[key] = `${label} is required`
   }
+  const maxLen = (key: string, val: string, label: string) => {
+    if (val.length > MAX_CHARS)
+      errors[key] = `${label} must be ${MAX_CHARS} characters or less`
+  }
 
   if (step === 1) {
     req('desiredFunding', data.desiredFunding, 'Desired funding amount')
@@ -658,11 +662,10 @@ const validateStep = (step: number, data: FormData): FieldError => {
 
   if (step === 2) {
     req('legalBusinessName', data.legalBusinessName, 'Legal business name')
-    if (
-      data.legalBusinessName &&
-      !BUSINESS_NAME_REGEX.test(data.legalBusinessName)
-    )
+    maxLen('legalBusinessName', data.legalBusinessName, 'Legal business name')
+    if (data.legalBusinessName && !BUSINESS_NAME_REGEX.test(data.legalBusinessName))
       errors['legalBusinessName'] = 'Invalid characters in business name'
+    if (data.dba) maxLen('dba', data.dba, 'DBA')
     req('businessAddress', data.businessAddress, 'Business address')
     req('businessPhone', data.businessPhone, 'Business phone')
     req('entityType', data.entityType, 'Entity type')
@@ -679,15 +682,16 @@ const validateStep = (step: number, data: FormData): FieldError => {
   if (step === 3) {
     const validateOwner = (o: Owner, prefix: string) => {
       req(`${prefix}.firstName`, o.firstName, 'First name')
+      maxLen(`${prefix}.firstName`, o.firstName, 'First name')
       if (o.firstName && !NAME_REGEX.test(o.firstName))
-        errors[`${prefix}.firstName`] =
-          "Only letters, spaces, hyphens and apostrophes allowed"
+        errors[`${prefix}.firstName`] = "Only letters, spaces, hyphens and apostrophes allowed"
       req(`${prefix}.lastName`, o.lastName, 'Last name')
+      maxLen(`${prefix}.lastName`, o.lastName, 'Last name')
       if (o.lastName && !NAME_REGEX.test(o.lastName))
-        errors[`${prefix}.lastName`] =
-          "Only letters, spaces, hyphens and apostrophes allowed"
+        errors[`${prefix}.lastName`] = "Only letters, spaces, hyphens and apostrophes allowed"
       req(`${prefix}.phone`, o.phone, 'Phone')
       req(`${prefix}.email`, o.email, 'Email')
+      maxLen(`${prefix}.email`, o.email, 'Email')
       if (o.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.email))
         errors[`${prefix}.email`] = 'Enter a valid email address'
       req(`${prefix}.homeAddress`, o.homeAddress, 'Home address')
@@ -699,10 +703,7 @@ const validateStep = (step: number, data: FormData): FieldError => {
           errors[`${prefix}.dob`] = 'Invalid date of birth'
       }
       req(`${prefix}.creditScore`, o.creditScore, 'Credit score')
-      if (
-        o.creditScore &&
-        (Number(o.creditScore) < 300 || Number(o.creditScore) > 850)
-      )
+      if (o.creditScore && (Number(o.creditScore) < 300 || Number(o.creditScore) > 850))
         errors[`${prefix}.creditScore`] = 'Must be between 300 and 850'
       req(`${prefix}.ssn`, o.ssn, 'SSN')
       if (o.ssn && !/^\d{3}-\d{2}-\d{4}$/.test(o.ssn))
@@ -716,26 +717,17 @@ const validateStep = (step: number, data: FormData): FieldError => {
 
     if (data.hasSecondOwner) {
       validateOwner(data.owner2, 'owner2')
-      const total =
-        Number(data.owner1.ownershipPct) + Number(data.owner2.ownershipPct)
-      if (
-        data.owner1.ownershipPct &&
-        data.owner2.ownershipPct &&
-        total > 100
-      ) {
-        errors['owner1.ownershipPct'] =
-          `Combined ownership cannot exceed 100% (currently ${total}%)`
-        errors['owner2.ownershipPct'] =
-          `Combined ownership cannot exceed 100% (currently ${total}%)`
+      const total = Number(data.owner1.ownershipPct) + Number(data.owner2.ownershipPct)
+      if (data.owner1.ownershipPct && data.owner2.ownershipPct && total > 100) {
+        errors['owner1.ownershipPct'] = `Combined ownership cannot exceed 100% (currently ${total}%)`
+        errors['owner2.ownershipPct'] = `Combined ownership cannot exceed 100% (currently ${total}%)`
       }
     }
   }
 
   if (step === 5) {
-    if (!data.signatureDataUrl)
-      errors['signature'] = 'Please provide your signature'
-    if (!data.consentAgreed)
-      errors['consent'] = 'You must agree to the terms to submit'
+    if (!data.signatureDataUrl) errors['signature'] = 'Please provide your signature'
+    if (!data.consentAgreed) errors['consent'] = 'You must agree to the terms to submit'
   }
 
   return errors
@@ -747,9 +739,7 @@ interface FinancingApplicationFormProps {
   className?: string
 }
 
-const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
-  className,
-}) => {
+const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className }) => {
   const dispatch = useDispatch()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM)
@@ -761,33 +751,21 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
   const formStartTime = useRef<number>(Date.now())
   const [honeypot, setHoneypot] = useState('')
 
-  const set = useCallback(
-    <K extends keyof FormData>(key: K, value: FormData[K]) => {
-      setFormData((prev) => ({ ...prev, [key]: value }))
-    },
-    [],
-  )
+  const set = useCallback(<K extends keyof FormData>(key: K, value: FormData[K]) => {
+    setFormData((prev) => ({ ...prev, [key]: value }))
+  }, [])
 
   const setOwner1 = useCallback((field: keyof Owner, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      owner1: { ...prev.owner1, [field]: value },
-    }))
+    setFormData((prev) => ({ ...prev, owner1: { ...prev.owner1, [field]: value } }))
   }, [])
 
   const setOwner2 = useCallback((field: keyof Owner, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      owner2: { ...prev.owner2, [field]: value },
-    }))
+    setFormData((prev) => ({ ...prev, owner2: { ...prev.owner2, [field]: value } }))
   }, [])
 
   const goNext = () => {
     const errs = validateStep(step, formData)
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs)
-      return
-    }
+    if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setErrors({})
     setStep((s) => s + 1)
     window.scrollTo(0, 0)
@@ -804,7 +782,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
     const newFiles = Array.from(e.target.files)
     setFormData((prev) => ({
       ...prev,
-      bankStatements: [...prev.bankStatements, ...newFiles].slice(0, 8),
+      bankStatements: [...prev.bankStatements, ...newFiles].slice(0, MAX_FILES),
     }))
   }
 
@@ -817,16 +795,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
 
   const handleSubmit = async () => {
     const errs = validateStep(5, formData)
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs)
-      return
-    }
+    if (Object.keys(errs).length > 0) { setErrors(errs); return }
     if (honeypot) return
     const elapsed = Date.now() - formStartTime.current
-    if (elapsed < 4000) {
-      setSubmitError('Please review the form before submitting.')
-      return
-    }
+    if (elapsed < 4000) { setSubmitError('Please review the form before submitting.'); return }
 
     setIsSubmitting(true)
     setSubmitError(null)
@@ -838,7 +810,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
         honeypot,
         timestamp: formStartTime.current,
       })
-
       await browserSendEmail({
         to: formData.owner1.email,
         subject: 'Your Luminar Capital Application Has Been Received',
@@ -846,12 +817,9 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
         honeypot: '',
         timestamp: formStartTime.current,
       })
-
       setIsSuccess(true)
     } catch {
-      setSubmitError(
-        'Submission failed. Please try again or contact us directly.',
-      )
+      setSubmitError('Submission failed. Please try again or contact us directly.')
     } finally {
       setIsSubmitting(false)
     }
@@ -864,14 +832,9 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
           <div className={styles.successIcon}>✓</div>
           <h2 className={styles.successTitle}>Application Submitted!</h2>
           <p className={styles.successText}>
-            Thank you, {formData.owner1.firstName}. A funding specialist will
-            be in touch within 1 business day.
+            Thank you, {formData.owner1.firstName}. A funding specialist will be in touch within 1 business day.
           </p>
-          <button
-            type="button"
-            className={styles.btnPrimary}
-            onClick={() => dispatch(closeModal())}
-          >
+          <button type="button" className={styles.btnPrimary} onClick={() => dispatch(closeModal())}>
             Close
           </button>
         </div>
@@ -882,13 +845,9 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
   return (
     <div className={classNames(styles.form, className)}>
       <input
-        type="text"
-        name="website"
-        value={honeypot}
+        type="text" name="website" value={honeypot}
         onChange={(e) => setHoneypot(e.target.value)}
-        style={{ display: 'none' }}
-        tabIndex={-1}
-        autoComplete="off"
+        style={{ display: 'none' }} tabIndex={-1} autoComplete="off"
       />
 
       {/* Progress */}
@@ -902,30 +861,23 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
               i + 1 < step && styles.progressStepDone,
             )}
           >
-            <div className={styles.progressDot}>
-              {i + 1 < step ? '✓' : i + 1}
-            </div>
+            <div className={styles.progressDot}>{i + 1 < step ? '✓' : i + 1}</div>
             <span className={styles.progressLabel}>{title}</span>
           </div>
         ))}
         <div
           className={styles.progressBar}
-          style={{
-            width: `${((step - 1) / (STEP_TITLES.length - 1)) * 100}%`,
-          }}
+          style={{ width: `${((step - 1) / (STEP_TITLES.length - 1)) * 100}%` }}
         />
       </div>
 
       <div className={styles.body}>
+
         {/* STEP 1 */}
         {step === 1 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Funding Details</h3>
-            <Field
-              label="Desired Funding Amount"
-              required
-              error={errors.desiredFunding}
-            >
+            <Field label="Desired Funding Amount" required error={errors.desiredFunding}>
               <CurrencyInput
                 value={formData.desiredFunding}
                 onChange={(v) => set('desiredFunding', v)}
@@ -934,11 +886,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 error={errors.desiredFunding}
               />
             </Field>
-            <Field
-              label="Intended Use of Funds"
-              required
-              error={errors.useOfFunds}
-            >
+            <Field label="Intended Use of Funds" required error={errors.useOfFunds}>
               <ButtonGroup
                 options={USE_OF_FUNDS_OPTIONS}
                 value={formData.useOfFunds}
@@ -953,31 +901,25 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Business Information</h3>
             <div className={styles.row2}>
-              <Field
-                label="Legal Business Name"
-                required
-                error={errors.legalBusinessName}
-              >
+              <Field label="Legal Business Name" required error={errors.legalBusinessName}>
                 <TextInput
                   value={formData.legalBusinessName}
-                  onChange={(e) => set('legalBusinessName', e.target.value)}
+                  onChange={(e) => set('legalBusinessName', e.target.value.slice(0, MAX_CHARS))}
                   placeholder="Acme Corp LLC"
+                  maxLength={MAX_CHARS}
                   error={errors.legalBusinessName}
                 />
               </Field>
               <Field label="DBA (if applicable)">
                 <TextInput
                   value={formData.dba}
-                  onChange={(e) => set('dba', e.target.value)}
+                  onChange={(e) => set('dba', e.target.value.slice(0, MAX_CHARS))}
                   placeholder="Doing Business As..."
+                  maxLength={MAX_CHARS}
                 />
               </Field>
             </div>
-            <Field
-              label="Business Address"
-              required
-              error={errors.businessAddress}
-            >
+            <Field label="Business Address" required error={errors.businessAddress}>
               <AddressInput
                 value={formData.businessAddress}
                 onChange={(v) => set('businessAddress', v)}
@@ -985,36 +927,21 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
               />
             </Field>
             <div className={styles.row2}>
-              <Field
-                label="Business Phone"
-                required
-                error={errors.businessPhone}
-              >
+              <Field label="Business Phone" required error={errors.businessPhone}>
                 <TextInput
                   value={formData.businessPhone}
-                  onChange={(e) =>
-                    set('businessPhone', formatPhone(e.target.value))
-                  }
+                  onChange={(e) => set('businessPhone', formatPhone(e.target.value))}
                   placeholder="(555) 000-0000"
                   inputMode="tel"
                   error={errors.businessPhone}
                 />
               </Field>
-              <Field
-                label="Federal Tax ID (EIN)"
-                required
-                error={errors.federalTaxId}
-              >
+              <Field label="Federal Tax ID (EIN)" required error={errors.federalTaxId}>
                 <TextInput
                   value={formData.federalTaxId}
                   onChange={(e) => {
-                    const digits = e.target.value
-                      .replace(/\D/g, '')
-                      .slice(0, 9)
-                    const formatted =
-                      digits.length > 2
-                        ? `${digits.slice(0, 2)}-${digits.slice(2)}`
-                        : digits
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 9)
+                    const formatted = digits.length > 2 ? `${digits.slice(0, 2)}-${digits.slice(2)}` : digits
                     set('federalTaxId', formatted)
                   }}
                   placeholder="12-3456789"
@@ -1031,11 +958,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
               />
             </Field>
             <div className={styles.row2}>
-              <Field
-                label="Business Start Date"
-                required
-                error={errors.businessStartDate}
-              >
+              <Field label="Business Start Date" required error={errors.businessStartDate}>
                 <TextInput
                   value={formData.businessStartDate}
                   onChange={(e) => set('businessStartDate', e.target.value)}
@@ -1048,29 +971,18 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 <select
                   value={formData.industry}
                   onChange={(e) => set('industry', e.target.value)}
-                  className={classNames(
-                    styles.select,
-                    errors.industry && styles.inputError,
-                  )}
+                  className={classNames(styles.select, errors.industry && styles.inputError)}
                 >
                   <option value="">Select industry...</option>
                   {INDUSTRIES.map((ind) => (
-                    <option key={ind} value={ind}>
-                      {ind}
-                    </option>
+                    <option key={ind} value={ind}>{ind}</option>
                   ))}
                 </select>
-                {errors.industry && (
-                  <span className={styles.fieldError}>{errors.industry}</span>
-                )}
+                {errors.industry && <span className={styles.fieldError}>{errors.industry}</span>}
               </Field>
             </div>
             <div className={styles.row2}>
-              <Field
-                label="Avg. Monthly Revenue"
-                required
-                error={errors.avgMonthlyRevenue}
-              >
+              <Field label="Avg. Monthly Revenue" required error={errors.avgMonthlyRevenue}>
                 <CurrencyInput
                   value={formData.avgMonthlyRevenue}
                   onChange={(v) => set('avgMonthlyRevenue', v)}
@@ -1079,10 +991,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                   error={errors.avgMonthlyRevenue}
                 />
               </Field>
-              <Field
-                label="Existing Loan Amount"
-                error={errors.existingLoanAmount}
-              >
+              <Field label="Existing Loan Amount" error={errors.existingLoanAmount}>
                 <CurrencyInput
                   value={formData.existingLoanAmount}
                   onChange={(v) => set('existingLoanAmount', v)}
@@ -1099,37 +1008,20 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
         {step === 3 && (
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Owner Information</h3>
-            <OwnerBlock
-              data={formData.owner1}
-              onChange={setOwner1}
-              errors={errors}
-              prefix="owner1"
-            />
+            <OwnerBlock data={formData.owner1} onChange={setOwner1} errors={errors} prefix="owner1" />
             <div className={styles.secondOwnerToggle}>
               <button
                 type="button"
-                onClick={() =>
-                  set('hasSecondOwner', !formData.hasSecondOwner)
-                }
-                className={classNames(
-                  styles.toggleBtn,
-                  formData.hasSecondOwner && styles.toggleBtnActive,
-                )}
+                onClick={() => set('hasSecondOwner', !formData.hasSecondOwner)}
+                className={classNames(styles.toggleBtn, formData.hasSecondOwner && styles.toggleBtnActive)}
               >
-                {formData.hasSecondOwner
-                  ? '− Remove 2nd Owner'
-                  : '+ Add 2nd Owner'}
+                {formData.hasSecondOwner ? '− Remove 2nd Owner' : '+ Add 2nd Owner'}
               </button>
             </div>
             {formData.hasSecondOwner && (
               <>
                 <h4 className={styles.ownerSectionTitle}>Second Owner</h4>
-                <OwnerBlock
-                  data={formData.owner2}
-                  onChange={setOwner2}
-                  errors={errors}
-                  prefix="owner2"
-                />
+                <OwnerBlock data={formData.owner2} onChange={setOwner2} errors={errors} prefix="owner2" />
               </>
             )}
           </div>
@@ -1140,12 +1032,9 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
           <div className={styles.step}>
             <h3 className={styles.stepTitle}>Bank Statements</h3>
             <p className={styles.stepSubtitle}>
-              Upload the last 4 months of your business bank account
-              statements.
+              Upload the last 4 months of your business bank account statements.
               <br />
-              <em>
-                Optional to get started; required to get certified offers.
-              </em>
+              <em>Optional to get started; required to get certified offers.</em>
             </p>
             <div
               className={styles.dropzone}
@@ -1156,10 +1045,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 const files = Array.from(e.dataTransfer.files)
                 setFormData((prev) => ({
                   ...prev,
-                  bankStatements: [
-                    ...prev.bankStatements,
-                    ...files,
-                  ].slice(0, 8),
+                  bankStatements: [...prev.bankStatements, ...files].slice(0, MAX_FILES),
                 }))
               }}
             >
@@ -1172,25 +1058,15 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 style={{ display: 'none' }}
               />
               <div className={styles.dropzoneIcon}>📂</div>
-              <p className={styles.dropzoneText}>
-                Click to upload or drag & drop files here
-              </p>
-              <p className={styles.dropzoneHint}>
-                PDF, JPG, PNG — up to 8 files
-              </p>
+              <p className={styles.dropzoneText}>Click to upload or drag & drop files here</p>
+              <p className={styles.dropzoneHint}>PDF, JPG, PNG — up to {MAX_FILES} files</p>
             </div>
             {formData.bankStatements.length > 0 && (
               <ul className={styles.fileList}>
                 {formData.bankStatements.map((file, idx) => (
                   <li key={idx} className={styles.fileItem}>
                     <span className={styles.fileName}>{file.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(idx)}
-                      className={styles.fileRemove}
-                    >
-                      ×
-                    </button>
+                    <button type="button" onClick={() => removeFile(idx)} className={styles.fileRemove}>×</button>
                   </li>
                 ))}
               </ul>
@@ -1209,9 +1085,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
               </div>
               <div className={styles.reviewRow}>
                 <span>Funding Requested</span>
-                <strong>
-                  ${Number(formData.desiredFunding).toLocaleString('en-US')}
-                </strong>
+                <strong>${Number(formData.desiredFunding).toLocaleString('en-US')}</strong>
               </div>
               <div className={styles.reviewRow}>
                 <span>Use of Funds</span>
@@ -1219,24 +1093,15 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
               </div>
               <div className={styles.reviewRow}>
                 <span>Primary Contact</span>
-                <strong>
-                  {formData.owner1.firstName} {formData.owner1.lastName} ·{' '}
-                  {formData.owner1.email}
-                </strong>
+                <strong>{formData.owner1.firstName} {formData.owner1.lastName} · {formData.owner1.email}</strong>
               </div>
               <div className={styles.reviewRow}>
                 <span>Bank Statements</span>
-                <strong>
-                  {formData.bankStatements.length > 0
-                    ? `${formData.bankStatements.length} file(s)`
-                    : 'None'}
-                </strong>
+                <strong>{formData.bankStatements.length > 0 ? `${formData.bankStatements.length} file(s)` : 'None'}</strong>
               </div>
             </div>
             <Field label="Owner Signature" required error={errors.signature}>
-              <p className={styles.signatureHint}>
-                Draw your signature below using mouse or touch.
-              </p>
+              <p className={styles.signatureHint}>Draw your signature below using mouse or touch.</p>
               <SignatureCanvas
                 value={formData.signatureDataUrl}
                 onChange={(v) => set('signatureDataUrl', v)}
@@ -1245,14 +1110,12 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
             </Field>
             <div className={styles.legalText}>
               <p>
-                All consumer information is kept strictly confidential. By
-                signing and submitting, you authorize Luminar Capital and/or
-                our affiliates to contact you via telephone, mobile device
-                (including SMS and MMS), and/or email, even if your telephone
-                number is listed on a Do Not Call registry. You also authorize
-                us to obtain consumer or personal, business, and investigative
-                reports including credit card processor statements and bank
-                statements from consumer reporting agencies, and for any and
+                All consumer information is kept strictly confidential. By signing and submitting,
+                you authorize Luminar Capital and/or our affiliates to contact you via telephone,
+                mobile device (including SMS and MMS), and/or email, even if your telephone number
+                is listed on a Do Not Call registry. You also authorize us to obtain consumer or
+                personal, business, and investigative reports including credit card processor
+                statements and bank statements from consumer reporting agencies, and for any and
                 all lawful purposes.
               </p>
             </div>
@@ -1263,34 +1126,15 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
                 onChange={(e) => set('consentAgreed', e.target.checked)}
                 className={styles.consentCheckbox}
               />
-              <span>
-                I agree to the terms above and authorize Luminar Capital to
-                process my application.
-              </span>
+              <span>I agree to the terms above and authorize Luminar Capital to process my application.</span>
             </label>
-            {errors.consent && (
-              <span className={styles.fieldError}>{errors.consent}</span>
-            )}
-            {submitError && (
-              <div className={styles.submitError}>{submitError}</div>
-            )}
+            {errors.consent && <span className={styles.fieldError}>{errors.consent}</span>}
+            {submitError && <div className={styles.submitError}>{submitError}</div>}
             <p className={styles.recaptchaNote}>
               This site is protected by reCAPTCHA. The Google{' '}
-              <a
-                href="https://policies.google.com/privacy"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Privacy Policy
-              </a>{' '}
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>{' '}
               and{' '}
-              <a
-                href="https://policies.google.com/terms"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Terms of Service
-              </a>{' '}
+              <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a>{' '}
               apply.
             </p>
           </div>
@@ -1300,29 +1144,18 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({
       {/* Navigation */}
       <div className={styles.nav}>
         {step > 1 ? (
-          <button type="button" onClick={goBack} className={styles.btnBack}>
-            ← Back
-          </button>
+          <button type="button" onClick={goBack} className={styles.btnBack}>← Back</button>
         ) : (
           <div />
         )}
         {step < 5 ? (
-          <button
-            type="button"
-            onClick={goNext}
-            className={styles.btnPrimary}
-          >
-            Next Step →
-          </button>
+          <button type="button" onClick={goNext} className={styles.btnPrimary}>Next Step →</button>
         ) : (
           <button
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className={classNames(
-              styles.btnPrimary,
-              isSubmitting && styles.btnDisabled,
-            )}
+            className={classNames(styles.btnPrimary, isSubmitting && styles.btnDisabled)}
           >
             {isSubmitting ? 'Submitting…' : 'Submit Application'}
           </button>
