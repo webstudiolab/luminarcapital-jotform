@@ -6,6 +6,7 @@ interface ISendEmail {
   htmlMessage: string
   honeypot?: string
   timestamp?: number
+  formData?: Record<string, unknown>
 }
 
 export const browserSendEmail = async ({
@@ -14,6 +15,7 @@ export const browserSendEmail = async ({
   htmlMessage,
   honeypot,
   timestamp,
+  formData,
 }: ISendEmail) => {
   return await axios.post('/api/email', {
     to,
@@ -21,5 +23,6 @@ export const browserSendEmail = async ({
     htmlMessage,
     honeypot,
     timestamp,
+    formData,
   })
 }

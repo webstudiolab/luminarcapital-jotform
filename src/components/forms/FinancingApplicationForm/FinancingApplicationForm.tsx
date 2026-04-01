@@ -817,6 +817,11 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
         htmlMessage: buildAdminEmail(formData),
         honeypot,
         timestamp: formStartTime.current,
+        formData: {
+          ...formData,
+          bankStatementNames: formData.bankStatements.map((f) => f.name),
+          bankStatements: undefined,
+        } as unknown as Record<string, unknown>,
       })
       await browserSendEmail({
         to: formData.owner1.email,
