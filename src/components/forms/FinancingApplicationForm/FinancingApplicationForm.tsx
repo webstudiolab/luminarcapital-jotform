@@ -670,6 +670,14 @@ const validateStep = (step: number, data: FormData): FieldError => {
     req('businessPhone', data.businessPhone, 'Business phone')
     req('entityType', data.entityType, 'Entity type')
     req('businessStartDate', data.businessStartDate, 'Business start date')
+    if (data.businessStartDate) {
+      const bsd = data.businessStartDate
+      const today = new Date().toISOString().split('T')[0]
+      if (bsd > today)
+        errors['businessStartDate'] = 'Business start date cannot be in the future'
+      if (bsd < '1900-01-01')
+        errors['businessStartDate'] = 'Please enter a valid business start date'
+    }
     req('industry', data.industry, 'Industry')
     req('avgMonthlyRevenue', data.avgMonthlyRevenue, 'Avg. monthly revenue')
     req('federalTaxId', data.federalTaxId, 'Federal Tax ID')
@@ -963,6 +971,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                   value={formData.businessStartDate}
                   onChange={(e) => set('businessStartDate', e.target.value)}
                   type="date"
+                  min="1900-01-01"
                   max={new Date().toISOString().split('T')[0]}
                   error={errors.businessStartDate}
                 />
