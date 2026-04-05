@@ -22,11 +22,11 @@ const generateApplicationPDF = async (
 
     const PAGE_W = doc.page.width
     const PAGE_H = doc.page.height
-    const L = 40 // left margin
-    const R = PAGE_W - 40 // right edge
-    const COL_W = R - L // content width
-    const COL2 = L + 175 // value column start
-    const COL2_W = R - COL2 // value column width
+    const L = 40
+    const R = PAGE_W - 40
+    const COL_W = R - L
+    const COL2 = L + 175
+    const COL2_W = R - COL2
     const navy = '#1B2B5E'
     const gray = '#888888'
     const lightGray = '#F7F8FB'
@@ -34,7 +34,6 @@ const generateApplicationPDF = async (
     const rowH = 19
     let y = 0
 
-    // ── ensure space, add page if needed ─────────────────────────────────────
     const ensureSpace = (needed: number) => {
       if (y + needed > PAGE_H - 40) {
         doc.addPage({ margin: 0, size: 'A4' })
@@ -42,32 +41,30 @@ const generateApplicationPDF = async (
       }
     }
 
-    // ── header ────────────────────────────────────────────────────────────────
-    doc.rect(0, 0, PAGE_W, 70).fill(navy)
+    // ── Header ────────────────────────────────────────────────────────────────
+    doc.rect(0, 0, PAGE_W, 75).fill(navy)
     doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(18)
-      .text('LUMINAR CAPITAL', L, 16, { width: COL_W })
-    doc.fillColor('rgba(255,255,255,0.65)').font('Helvetica').fontSize(10)
-      .text('Business Financing Application', L, 40, { width: COL_W })
+      .text('LUMINAR CAPITAL', L, 20, { width: COL_W })
+    doc.fillColor('rgba(255,255,255,0.6)').font('Helvetica').fontSize(9)
+      .text('Business Financing Application', L, 46, { width: COL_W })
 
-    // ── meta ──────────────────────────────────────────────────────────────────
-    doc.rect(0, 70, PAGE_W, 38).fill(lightGray)
-    doc.fillColor(gray).font('Helvetica').fontSize(8.5)
-      .text(`Submitted: ${timestamp}`, L, 80, { width: COL_W / 2 })
-      .text(`IP Address: ${ip}`, L + COL_W / 2, 80, { width: COL_W / 2, align: 'right' })
+    // ── Meta bar ──────────────────────────────────────────────────────────────
+    doc.rect(0, 75, PAGE_W, 36).fill(lightGray)
+    doc.fillColor(gray).font('Helvetica').fontSize(8)
+      .text(`Submitted: ${timestamp}`, L, 85, { width: COL_W / 2 })
+      .text(`IP Address: ${ip}`, L, 97, { width: COL_W / 2 })
 
-    y = 120
+    y = 125
 
-    // ── section header ────────────────────────────────────────────────────────
     const section = (title: string) => {
-      ensureSpace(26)
+      ensureSpace(28)
       y += 8
       doc.rect(L, y, COL_W, 18).fill(navy)
-      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(8)
+      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(7.5)
         .text(title, L + 8, y + 5, { width: COL_W - 16, characterSpacing: 0.8 })
       y += 24
     }
 
-    // ── data row ──────────────────────────────────────────────────────────────
     let rowShade = false
     const row = (label: string, value: string) => {
       ensureSpace(rowH)
@@ -87,13 +84,11 @@ const generateApplicationPDF = async (
     const ssnMask = (s: string) => (s ? `***-**-${s.slice(-4)}` : '—')
     const currency = (v: string) => v ? `$${Number(v).toLocaleString('en-US')}` : '—'
 
-    // ── Funding Details ───────────────────────────────────────────────────────
     resetShade()
     section('FUNDING DETAILS')
     row('Desired Funding Amount', currency(formData.desiredFunding as string))
     row('Use of Funds', formData.useOfFunds as string)
 
-    // ── Business Information ──────────────────────────────────────────────────
     resetShade()
     section('BUSINESS INFORMATION')
     row('Legal Business Name', formData.legalBusinessName as string)
@@ -107,7 +102,6 @@ const generateApplicationPDF = async (
     row('Existing Loan Amount', formData.existingLoanAmount ? currency(formData.existingLoanAmount as string) : 'None')
     row('Federal Tax ID', formData.federalTaxId as string)
 
-    // ── Primary Owner ─────────────────────────────────────────────────────────
     resetShade()
     section('PRIMARY OWNER')
     row('Name', `${o1.firstName || ''} ${o1.lastName || ''}`.trim())
@@ -119,7 +113,6 @@ const generateApplicationPDF = async (
     row('SSN', ssnMask(o1.ssn || ''))
     row('Ownership %', o1.ownershipPct ? `${o1.ownershipPct}%` : '—')
 
-    // ── Second Owner ──────────────────────────────────────────────────────────
     if (formData.hasSecondOwner) {
       resetShade()
       section('SECOND OWNER')
@@ -133,20 +126,17 @@ const generateApplicationPDF = async (
       row('Ownership %', o2.ownershipPct ? `${o2.ownershipPct}%` : '—')
     }
 
-    // ── Bank Statements ───────────────────────────────────────────────────────
     resetShade()
     section('BANK STATEMENTS')
     const files = (formData.bankStatementNames as string[]) || []
     row('Files Attached', files.length > 0 ? `${files.length} file(s) attached to this email` : 'None')
 
-    // ── Signature ─────────────────────────────────────────────────────────────
     resetShade()
     section('ELECTRONIC SIGNATURE')
 
     const sigH = 90
-    ensureSpace(sigH + 20)
+    ensureSpace(sigH + rowH * 3 + 20)
 
-    // Draw signature box
     doc.rect(L, y, COL_W, sigH).strokeColor('#CCCCCC').lineWidth(0.5).stroke()
 
     const sigDataUrl = formData.signatureDataUrl as string
@@ -177,21 +167,194 @@ const generateApplicationPDF = async (
     row('Date & Time', timestamp)
     row('IP Address', ip)
 
-    // ── Legal ─────────────────────────────────────────────────────────────────
-    ensureSpace(68)
+    ensureSpace(80)
     y += 12
-    doc.rect(L, y, COL_W, 56).fill(lightGray)
+    doc.rect(L, y, COL_W, 60).fill(lightGray)
     doc.fillColor(gray).font('Helvetica').fontSize(7)
       .text(
         'All consumer information is kept strictly confidential. By signing and submitting, the applicant authorized Luminar Capital and/or its affiliates to contact them via telephone, mobile device (including SMS and MMS), and/or email, even if the telephone number is listed on a Do Not Call registry. The applicant also authorized Luminar Capital to obtain consumer or personal, business, and investigative reports including credit card processor statements and bank statements from consumer reporting agencies, and for any and all lawful purposes.',
-        L + 10,
-        y + 10,
+        L + 10, y + 10,
         { width: COL_W - 20, lineGap: 1.5 },
       )
 
     doc.end()
   })
 }
+
+// ── Admin email template ──────────────────────────────────────────────────────
+
+const buildAdminEmail = (data: Record<string, unknown>): string => {
+  const o1 = (data.owner1 as Record<string, string>) || {}
+  const o2 = (data.owner2 as Record<string, string>) || {}
+  const ssnMask = (s: string) => (s ? `***-**-${s.slice(-4)}` : '—')
+  const currency = (v: string) => v ? `$${Number(v).toLocaleString('en-US')}` : '—'
+  const files = (data.bankStatementNames as string[]) || []
+
+  const fieldRow = (label: string, value: string, shaded = false) =>
+    `<tr><td style="padding:8px 0;border-bottom:1px solid #eef0f8;${shaded ? 'background:#f9f9fc;' : ''}"><table border="0" width="100%"><tbody><tr>
+      <td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;${shaded ? 'padding-left:4px;' : ''}" width="40%">${label}</td>
+      <td style="font-family:Georgia,serif;font-size:15px;color:#1a1f36;" width="60%">${value || '—'}</td>
+    </tr></tbody></table></td></tr>`
+
+  const sectionHeader = (title: string) =>
+    `<tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#3d52a0;letter-spacing:3px;text-transform:uppercase;padding-bottom:10px;padding-top:24px;border-bottom:2px solid #3d52a0;">${title}</td></tr>`
+
+  return `
+<table border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#eaecf5">
+<tbody><tr><td height="40">&nbsp;</td></tr>
+<tr><td style="padding:0 20px;" align="center">
+<table style="max-width:680px;width:100%;" border="0" width="680" cellspacing="0" cellpadding="0"><tbody>
+<tr><td style="padding-bottom:28px;" align="center">
+  <img style="display:block;margin:0 auto;" src="https://www.luminarcapital.com/color_logo.svg" alt="Luminar Capital" width="200" height="42" />
+</td></tr>
+<tr><td>
+<table style="border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(61,82,160,0.13);" border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
+<tr><td style="padding:36px 48px 32px;" bgcolor="#1a1f36">
+  <p style="margin:0 0 6px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;color:#7091e6;letter-spacing:3px;text-transform:uppercase;">New Application Received</p>
+  <h1 style="margin:0 0 8px 0;font-family:Georgia,serif;font-size:26px;font-weight:bold;color:#ffffff;line-height:1.2;">Financing Application</h1>
+  <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#aab0c4;">${o1.firstName || ''} ${o1.lastName || ''} &middot; ${o1.email || ''}</p>
+</td></tr>
+<tr><td style="padding:32px 48px 40px;" bgcolor="#ffffff">
+<table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+  ${sectionHeader('FUNDING DETAILS')}
+  ${fieldRow('Desired Funding', currency(data.desiredFunding as string))}
+  ${fieldRow('Use of Funds', data.useOfFunds as string, true)}
+  ${sectionHeader('BUSINESS INFORMATION')}
+  ${fieldRow('Legal Business Name', data.legalBusinessName as string)}
+  ${fieldRow('DBA', (data.dba as string) || '—', true)}
+  ${fieldRow('Business Address', data.businessAddress as string)}
+  ${fieldRow('Business Phone', data.businessPhone as string, true)}
+  ${fieldRow('Entity Type', data.entityType as string)}
+  ${fieldRow('Business Start Date', data.businessStartDate as string, true)}
+  ${fieldRow('Industry', data.industry as string)}
+  ${fieldRow('Avg. Monthly Revenue', currency(data.avgMonthlyRevenue as string), true)}
+  ${fieldRow('Existing Loan Amount', data.existingLoanAmount ? currency(data.existingLoanAmount as string) : 'None')}
+  ${fieldRow('Federal Tax ID', data.federalTaxId as string, true)}
+  ${sectionHeader('PRIMARY OWNER')}
+  ${fieldRow('Name', `${o1.firstName || ''} ${o1.lastName || ''}`.trim())}
+  ${fieldRow('Phone', o1.phone || '—', true)}
+  ${fieldRow('Email', o1.email || '—')}
+  ${fieldRow('Home Address', o1.homeAddress || '—', true)}
+  ${fieldRow('Date of Birth', o1.dob || '—')}
+  ${fieldRow('Credit Score', o1.creditScore || '—', true)}
+  ${fieldRow('SSN', ssnMask(o1.ssn || ''))}
+  ${fieldRow('Ownership %', o1.ownershipPct ? `${o1.ownershipPct}%` : '—', true)}
+  ${data.hasSecondOwner ? `
+  ${sectionHeader('SECOND OWNER')}
+  ${fieldRow('Name', `${o2.firstName || ''} ${o2.lastName || ''}`.trim())}
+  ${fieldRow('Phone', o2.phone || '—', true)}
+  ${fieldRow('Email', o2.email || '—')}
+  ${fieldRow('Home Address', o2.homeAddress || '—', true)}
+  ${fieldRow('Date of Birth', o2.dob || '—')}
+  ${fieldRow('Credit Score', o2.creditScore || '—', true)}
+  ${fieldRow('SSN', ssnMask(o2.ssn || ''))}
+  ${fieldRow('Ownership %', o2.ownershipPct ? `${o2.ownershipPct}%` : '—', true)}
+  ` : ''}
+  ${sectionHeader('BANK STATEMENTS')}
+  ${fieldRow('Files Attached', files.length > 0 ? `${files.length} file(s) attached to this email` : 'None')}
+</tbody></table>
+</td></tr>
+<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td style="padding:28px 0 20px;" align="center">
+  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;font-weight:bold;color:#3d52a0;letter-spacing:2.5px;text-transform:uppercase;">LUMINAR CAPITAL</p>
+  <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">Business Financing Solutions</p>
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="40">&nbsp;</td></tr>
+</tbody></table>`
+}
+
+// ── Applicant confirmation email template ─────────────────────────────────────
+
+const buildUserEmail = (data: Record<string, unknown>): string => {
+  const o1 = (data.owner1 as Record<string, string>) || {}
+  const currency = (v: string) => v ? `$${Number(v).toLocaleString('en-US')}` : '—'
+
+  return `
+<table border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#eaecf5">
+<tbody><tr><td height="48">&nbsp;</td></tr>
+<tr><td style="padding:0 20px;" align="center">
+<table style="max-width:620px;width:100%;" border="0" width="620" cellspacing="0" cellpadding="0"><tbody>
+<tr><td style="padding-bottom:30px;" align="center">
+  <img style="display:block;" src="https://www.luminarcapital.com/color_logo.svg" alt="Luminar Capital" width="196" height="41" />
+</td></tr>
+<tr><td>
+<table style="border-radius:16px;overflow:hidden;box-shadow:0 10px 44px rgba(61,82,160,0.14);" border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
+<tr><td style="padding:52px 56px 48px;" align="center" bgcolor="#1a1f36">
+  <table border="0" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
+    <td style="width:68px;height:68px;border-radius:34px;border:2px solid #7091e6;background-color:rgba(112,145,230,0.12);font-size:26px;line-height:68px;color:#7091e6;font-family:Arial,sans-serif;text-align:center;" align="center" valign="middle" width="68" height="68">&#10003;</td>
+  </tr></tbody></table>
+  <p style="margin:22px 0 8px 0;font-family:Georgia,Times New Roman,serif;font-size:10px;color:#7091e6;letter-spacing:3px;text-transform:uppercase;text-align:center;">Application Received</p>
+  <h1 style="margin:0 0 18px 0;font-family:Georgia,Times New Roman,serif;font-size:30px;font-weight:bold;color:#ffffff;letter-spacing:-0.3px;line-height:1.2;text-align:center;">Thank You for<br />Choosing Luminar Capital</h1>
+  <p style="margin:0 auto;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#aab0c4;line-height:1.8;text-align:center;max-width:420px;">Your application has been successfully submitted and is now being reviewed by our financing team.</p>
+</td></tr>
+<tr><td style="padding:0;" bgcolor="#3d52a0">
+  <table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody><tr>
+    <td style="padding:22px 8px;" align="center" valign="middle" width="33%">
+      <p style="margin:0 0 5px 0;font-family:Georgia,Times New Roman,serif;font-size:19px;font-weight:bold;color:#7091e6;text-align:center;">01</p>
+      <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#ffffff;letter-spacing:1.2px;text-transform:uppercase;text-align:center;">Application<br />Received</p>
+    </td>
+    <td style="font-size:0;line-height:0;" bgcolor="#5568b8" width="1">&nbsp;</td>
+    <td style="padding:22px 8px;" align="center" valign="middle" width="33%">
+      <p style="margin:0 0 5px 0;font-family:Georgia,Times New Roman,serif;font-size:19px;font-weight:bold;color:#7091e6;text-align:center;">02</p>
+      <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#ffffff;letter-spacing:1.2px;text-transform:uppercase;text-align:center;">Under<br />Review</p>
+    </td>
+    <td style="font-size:0;line-height:0;" bgcolor="#5568b8" width="1">&nbsp;</td>
+    <td style="padding:22px 8px;" align="center" valign="middle" width="33%">
+      <p style="margin:0 0 5px 0;font-family:Georgia,Times New Roman,serif;font-size:19px;font-weight:bold;color:#7091e6;text-align:center;">03</p>
+      <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#ffffff;letter-spacing:1.2px;text-transform:uppercase;text-align:center;">Decision<br />Delivered</p>
+    </td>
+  </tr></tbody></table>
+</td></tr>
+<tr><td style="padding:44px 56px 48px;" bgcolor="#ffffff">
+  <p style="margin:0 0 20px 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#3a3f58;line-height:1.85;">Hi ${o1.firstName || ''},</p>
+  <p style="margin:0 0 20px 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#3a3f58;line-height:1.85;">Our financing specialists are now reviewing your submission and will be in touch within <strong style="color:#3d52a0;">1&ndash;2 business days</strong>. If any additional information is required, a member of our team will contact you directly.</p>
+  <table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:28px;"><tbody>
+  <tr><td style="border-radius:10px;background-color:#f4f6fc;border-left:4px solid #3d52a0;padding:26px 28px 20px 28px;">
+    <p style="margin:0 0 14px 0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#3d52a0;letter-spacing:3px;text-transform:uppercase;">Application Summary</p>
+    <table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+      <tr>
+        <td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;padding:6px 0;" width="45%">Business</td>
+        <td style="font-family:Georgia,serif;font-size:14px;color:#1a1f36;padding:6px 0;">${data.legalBusinessName}</td>
+      </tr>
+      <tr>
+        <td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;padding:6px 0;" width="45%">Funding Requested</td>
+        <td style="font-family:Georgia,serif;font-size:14px;color:#1a1f36;padding:6px 0;">${currency(data.desiredFunding as string)}</td>
+      </tr>
+      <tr>
+        <td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;padding:6px 0;" width="45%">Use of Funds</td>
+        <td style="font-family:Georgia,serif;font-size:14px;color:#1a1f36;padding:6px 0;">${data.useOfFunds}</td>
+      </tr>
+    </tbody></table>
+  </td></tr>
+  </tbody></table>
+  <table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:36px;"><tbody>
+  <tr><td align="center">
+    <p style="margin:0 0 4px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#6b7a99;text-align:center;">We look forward to supporting your business.</p>
+    <p style="margin:0;font-family:Georgia,Times New Roman,serif;font-size:15px;font-weight:bold;color:#1a1f36;text-align:center;">The Luminar Capital Team</p>
+  </td></tr>
+  </tbody></table>
+</td></tr>
+<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td style="padding:28px 0 20px;" align="center">
+  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;font-weight:bold;color:#3d52a0;letter-spacing:2.5px;text-transform:uppercase;">LUMINAR CAPITAL</p>
+  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">Business Financing Solutions</p>
+  <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:10px;color:#aab0c4;">Please retain this email as confirmation of your application submission.</p>
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="48">&nbsp;</td></tr>
+</tbody></table>`
+}
+
+// ── Handler ───────────────────────────────────────────────────────────────────
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -225,7 +388,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!to) {
       if (subject && subject.includes('Partner')) {
         recipientEmail = process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
-      } else if (subject && subject.includes('Financing')) {
+      } else if (subject && subject.includes('Financing Application')) {
         recipientEmail = process.env.FINANCING_EMAIL || 'clientsuccess@luminarcapital.com'
       } else {
         recipientEmail = process.env.RECIPIENT_EMAIL
@@ -236,9 +399,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('To:', recipientEmail)
     console.log('Subject:', subject)
 
-    const emailAttachments: IAttachment[] = []
-
-    if (!to && subject && subject.includes('Financing') && formData) {
+    // ── Admin financing email — generate PDF, attach files, use branded template
+    if (!to && subject && subject.includes('Financing Application') && formData) {
       const ip =
         (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
         req.socket.remoteAddress ||
@@ -254,6 +416,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         second: '2-digit',
         timeZoneName: 'short',
       })
+
+      const emailAttachments: IAttachment[] = []
 
       try {
         const pdfBuffer = await generateApplicationPDF(formData, ip, submittedAt)
@@ -271,10 +435,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (incomingAttachments && Array.isArray(incomingAttachments) && incomingAttachments.length > 0) {
         for (const file of incomingAttachments) {
           try {
-            const fileBuffer = Buffer.from(file.content, 'base64')
             emailAttachments.push({
               filename: file.filename,
-              content: fileBuffer,
+              content: Buffer.from(file.content, 'base64'),
               contentType: file.contentType,
             })
           } catch (fileError) {
@@ -283,13 +446,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         console.log(`Attached ${incomingAttachments.length} bank statement file(s)`)
       }
+
+      const response = await sendEmail({
+        to: recipientEmail,
+        subject,
+        htmlMessage: buildAdminEmail(formData),
+        attachments: emailAttachments,
+      })
+      console.log('Admin email sent successfully!')
+
+      // Send applicant confirmation
+      const o1 = (formData.owner1 as Record<string, string>) || {}
+      if (o1.email) {
+        await sendEmail({
+          to: o1.email,
+          subject: 'Your Luminar Capital Application Has Been Received',
+          htmlMessage: buildUserEmail(formData),
+          attachments: [],
+        })
+        console.log('Applicant confirmation email sent!')
+      }
+
+      return res.status(200).json({ success: true, response, error: null })
     }
 
+    // ── All other emails (partner forms etc) — use passed htmlMessage
     const response = await sendEmail({
       to: recipientEmail,
       subject,
       htmlMessage,
-      attachments: emailAttachments,
+      attachments: [],
     })
 
     console.log('Email sent successfully!')
