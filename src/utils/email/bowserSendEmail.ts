@@ -9,7 +9,7 @@ export interface IFileAttachment {
 interface ISendEmail {
   to?: string
   subject: string
-  htmlMessage: string
+  htmlMessage?: string
   honeypot?: string
   timestamp?: number
   formData?: Record<string, unknown>

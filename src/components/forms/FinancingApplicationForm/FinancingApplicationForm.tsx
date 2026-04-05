@@ -273,67 +273,6 @@ const buildAdminEmail = (data: FormData): string => {
 </div>`
 }
 
-const buildUserEmail = (data: FormData): string => `
-<table border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#eaecf5">
-<tbody><tr><td height="48">&nbsp;</td></tr>
-<tr><td style="padding:0 20px;" align="center">
-<table style="max-width:620px;width:100%;" border="0" width="620" cellspacing="0" cellpadding="0"><tbody>
-<tr><td style="padding-bottom:30px;" align="center">
-  <img style="display:block;" src="https://www.luminarcapital.com/color_logo.svg" alt="Luminar Capital" width="196" height="41" />
-</td></tr>
-<tr><td>
-<table style="border-radius:16px;overflow:hidden;box-shadow:0 10px 44px rgba(61,82,160,0.14);" border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
-<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
-<tr><td style="padding:52px 56px 48px;" align="center" bgcolor="#1a1f36">
-  <table border="0" cellspacing="0" cellpadding="0" align="center"><tbody><tr>
-    <td style="width:68px;height:68px;border-radius:34px;border:2px solid #7091e6;background-color:rgba(112,145,230,0.12);font-size:26px;line-height:68px;color:#7091e6;font-family:Arial,sans-serif;text-align:center;" align="center" valign="middle" width="68" height="68">✓</td>
-  </tr></tbody></table>
-  <p style="margin:22px 0 8px 0;font-family:Georgia,Times New Roman,serif;font-size:10px;color:#7091e6;letter-spacing:3px;text-transform:uppercase;text-align:center;">Application Received</p>
-  <h1 style="margin:0 0 18px 0;font-family:Georgia,Times New Roman,serif;font-size:30px;font-weight:bold;color:#ffffff;letter-spacing:-0.3px;line-height:1.2;text-align:center;">Thank You for<br />Choosing Luminar Capital</h1>
-  <p style="margin:0 auto;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#aab0c4;line-height:1.8;text-align:center;max-width:420px;">Your application has been successfully submitted and is now being reviewed by our financing team.</p>
-</td></tr>
-<tr><td style="padding:0;" bgcolor="#3d52a0">
-  <table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody><tr>
-    <td style="padding:22px 8px;" align="center" valign="middle" width="33%"><p style="margin:0 0 5px 0;font-family:Georgia,Times New Roman,serif;font-size:19px;font-weight:bold;color:#7091e6;text-align:center;">01</p><p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#ffffff;letter-spacing:1.2px;text-transform:uppercase;text-align:center;">Application<br />Received</p></td>
-    <td style="font-size:0;line-height:0;" bgcolor="#5568b8" width="1">&nbsp;</td>
-    <td style="padding:22px 8px;" align="center" valign="middle" width="33%"><p style="margin:0 0 5px 0;font-family:Georgia,Times New Roman,serif;font-size:19px;font-weight:bold;color:#7091e6;text-align:center;">02</p><p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#ffffff;letter-spacing:1.2px;text-transform:uppercase;text-align:center;">Under<br />Review</p></td>
-    <td style="font-size:0;line-height:0;" bgcolor="#5568b8" width="1">&nbsp;</td>
-    <td style="padding:22px 8px;" align="center" valign="middle" width="33%"><p style="margin:0 0 5px 0;font-family:Georgia,Times New Roman,serif;font-size:19px;font-weight:bold;color:#7091e6;text-align:center;">03</p><p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#ffffff;letter-spacing:1.2px;text-transform:uppercase;text-align:center;">Decision<br />Delivered</p></td>
-  </tr></tbody></table>
-</td></tr>
-<tr><td style="padding:44px 56px 48px;" bgcolor="#ffffff">
-  <p style="margin:0 0 20px 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#3a3f58;line-height:1.85;">Hi ${data.owner1.firstName},</p>
-  <p style="margin:0 0 20px 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#3a3f58;line-height:1.85;">Our financing specialists are now reviewing your submission and will be in touch within <strong style="color:#3d52a0;">1&ndash;2 business days</strong>. If any additional information is required, a member of our team will contact you directly.</p>
-  <table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:28px;"><tbody>
-  <tr><td style="border-radius:10px;background-color:#f4f6fc;border-left:4px solid #3d52a0;padding:26px 28px 20px 28px;">
-    <p style="margin:0 0 8px 0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#3d52a0;letter-spacing:3px;text-transform:uppercase;">Application Summary</p>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
-      <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;padding:6px 0;" width="45%">Business</td><td style="font-family:Georgia,serif;font-size:14px;color:#1a1f36;padding:6px 0;">${data.legalBusinessName}</td></tr>
-      <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;padding:6px 0;" width="45%">Funding Requested</td><td style="font-family:Georgia,serif;font-size:14px;color:#1a1f36;padding:6px 0;">$${Number(data.desiredFunding).toLocaleString('en-US')}</td></tr>
-      <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;padding:6px 0;" width="45%">Use of Funds</td><td style="font-family:Georgia,serif;font-size:14px;color:#1a1f36;padding:6px 0;">${data.useOfFunds}</td></tr>
-    </tbody></table>
-  </td></tr>
-  </tbody></table>
-  <table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:36px;"><tbody>
-  <tr><td align="center">
-    <p style="margin:0 0 4px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#6b7a99;text-align:center;">We look forward to supporting your business.</p>
-    <p style="margin:0;font-family:Georgia,Times New Roman,serif;font-size:15px;font-weight:bold;color:#1a1f36;text-align:center;">The Luminar Capital Team</p>
-  </td></tr>
-  </tbody></table>
-</td></tr>
-<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
-</tbody></table>
-</td></tr>
-<tr><td style="padding:28px 0 20px;" align="center">
-  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;font-weight:bold;color:#3d52a0;letter-spacing:2.5px;text-transform:uppercase;">LUMINAR CAPITAL</p>
-  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">Business Financing Solutions</p>
-  <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:10px;color:#aab0c4;">Please retain this email as confirmation of your application submission.</p>
-</td></tr>
-</tbody></table>
-</td></tr>
-<tr><td height="48">&nbsp;</td></tr>
-</tbody></table>`
-
 // ─── Google Places ────────────────────────────────────────────────────────────
 
 declare global {
@@ -861,7 +800,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
       // Admin email with PDF + all bank statements attached
       await browserSendEmail({
         subject: `Financing Application — ${formData.legalBusinessName} — ${formData.owner1.firstName} ${formData.owner1.lastName}`,
-        htmlMessage: buildAdminEmail(formData),
         honeypot,
         timestamp: formStartTime.current,
         formData: {
@@ -870,15 +808,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
           bankStatements: undefined,
         } as unknown as Record<string, unknown>,
         attachments: fileAttachments,
-      })
-
-      // Confirmation email to applicant — no attachments
-      await browserSendEmail({
-        to: formData.owner1.email,
-        subject: 'Your Luminar Capital Application Has Been Received',
-        htmlMessage: buildUserEmail(formData),
-        honeypot: '',
-        timestamp: formStartTime.current,
       })
 
       setIsSuccess(true)
