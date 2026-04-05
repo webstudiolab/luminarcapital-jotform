@@ -22,57 +22,56 @@ const generateApplicationPDF = async (
 
     const PAGE_W = doc.page.width
     const PAGE_H = doc.page.height
-    const L = 40
-    const R = PAGE_W - 40
+    const L = 36
+    const R = PAGE_W - 36
     const COL_W = R - L
-    const COL2 = L + 175
+    const COL2 = L + 160
     const COL2_W = R - COL2
     const navy = '#1B2B5E'
     const gray = '#888888'
     const lightGray = '#F7F8FB'
     const darkText = '#1a1f36'
-    const rowH = 19
+    const rowH = 14
     let y = 0
 
     const ensureSpace = (needed: number) => {
-      if (y + needed > PAGE_H - 40) {
+      if (y + needed > PAGE_H - 30) {
         doc.addPage({ margin: 0, size: 'A4' })
-        y = 40
+        y = 30
       }
     }
 
     // ── Header ────────────────────────────────────────────────────────────────
-    doc.rect(0, 0, PAGE_W, 75).fill(navy)
-    doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(18)
-      .text('LUMINAR CAPITAL', L, 20, { width: COL_W })
-    doc.fillColor('rgba(255,255,255,0.6)').font('Helvetica').fontSize(9)
-      .text('Business Financing Application', L, 46, { width: COL_W })
+    doc.rect(0, 0, PAGE_W, 52).fill(navy)
+    doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(14)
+      .text('LUMINAR CAPITAL', L, 12, { width: COL_W })
+    doc.fillColor('rgba(255,255,255,0.6)').font('Helvetica').fontSize(8)
+      .text('Business Financing Application', L, 32, { width: COL_W })
 
     // ── Meta bar ──────────────────────────────────────────────────────────────
-    doc.rect(0, 75, PAGE_W, 36).fill(lightGray)
-    doc.fillColor(gray).font('Helvetica').fontSize(8)
-      .text(`Submitted: ${timestamp}`, L, 85, { width: COL_W / 2 })
-      .text(`IP Address: ${ip}`, L, 97, { width: COL_W / 2 })
+    doc.rect(0, 52, PAGE_W, 24).fill(lightGray)
+    doc.fillColor(gray).font('Helvetica').fontSize(7)
+      .text(`Submitted: ${timestamp}`, L, 58, { width: COL_W / 2 })
+      .text(`IP Address: ${ip}`, L, 68, { width: COL_W / 2 })
 
-    y = 125
+    y = 84
 
     const section = (title: string) => {
-      ensureSpace(28)
-      y += 8
-      doc.rect(L, y, COL_W, 18).fill(navy)
-      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(7.5)
-        .text(title, L + 8, y + 5, { width: COL_W - 16, characterSpacing: 0.8 })
-      y += 24
+      y += 4
+      doc.rect(L, y, COL_W, 13).fill(navy)
+      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(6.5)
+        .text(title, L + 6, y + 4, { width: COL_W - 12, characterSpacing: 0.6 })
+      y += 17
     }
 
     let rowShade = false
     const row = (label: string, value: string) => {
       ensureSpace(rowH)
       if (rowShade) doc.rect(L, y, COL_W, rowH).fill('#F3F4F8')
-      doc.fillColor(gray).font('Helvetica').fontSize(8.5)
-        .text(label, L + 6, y + 5, { width: 160, lineBreak: false })
-      doc.fillColor(darkText).font('Helvetica-Bold').fontSize(8.5)
-        .text(value || '—', COL2, y + 5, { width: COL2_W - 6, lineBreak: false })
+      doc.fillColor(gray).font('Helvetica').fontSize(7)
+        .text(label, L + 4, y + 4, { width: 152, lineBreak: false })
+      doc.fillColor(darkText).font('Helvetica-Bold').fontSize(7)
+        .text(value || '—', COL2, y + 4, { width: COL2_W - 4, lineBreak: false })
       y += rowH
       rowShade = !rowShade
     }
@@ -102,28 +101,66 @@ const generateApplicationPDF = async (
     row('Existing Loan Amount', formData.existingLoanAmount ? currency(formData.existingLoanAmount as string) : 'None')
     row('Federal Tax ID', formData.federalTaxId as string)
 
-    resetShade()
-    section('PRIMARY OWNER')
-    row('Name', `${o1.firstName || ''} ${o1.lastName || ''}`.trim())
-    row('Phone', o1.phone || '—')
-    row('Email', o1.email || '—')
-    row('Home Address', o1.homeAddress || '—')
-    row('Date of Birth', o1.dob || '—')
-    row('Credit Score', o1.creditScore || '—')
-    row('SSN', ssnMask(o1.ssn || ''))
-    row('Ownership %', o1.ownershipPct ? `${o1.ownershipPct}%` : '—')
+    // ── Owner section — side by side if 2 owners ──────────────────────────────
+    const hasTwo = !!formData.hasSecondOwner
+    y += 4
 
-    if (formData.hasSecondOwner) {
-      resetShade()
-      section('SECOND OWNER')
-      row('Name', `${o2.firstName || ''} ${o2.lastName || ''}`.trim())
-      row('Phone', o2.phone || '—')
-      row('Email', o2.email || '—')
-      row('Home Address', o2.homeAddress || '—')
-      row('Date of Birth', o2.dob || '—')
-      row('Credit Score', o2.creditScore || '—')
-      row('SSN', ssnMask(o2.ssn || ''))
-      row('Ownership %', o2.ownershipPct ? `${o2.ownershipPct}%` : '—')
+    if (hasTwo) {
+      // Two-column owner layout
+      const halfW = (COL_W - 4) / 2
+      const C1 = L
+      const C2 = L + halfW + 4
+
+      // Section headers side by side
+      doc.rect(C1, y, halfW, 13).fill(navy)
+      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(6.5)
+        .text('PRIMARY OWNER', C1 + 6, y + 4, { width: halfW - 12, characterSpacing: 0.6, lineBreak: false })
+      doc.rect(C2, y, halfW, 13).fill('#2d4070')
+      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(6.5)
+        .text('SECOND OWNER', C2 + 6, y + 4, { width: halfW - 12, characterSpacing: 0.6, lineBreak: false })
+      y += 17
+
+      const ownerFields: Array<[string, string, string]> = [
+        ['Name', `${o1.firstName || ''} ${o1.lastName || ''}`.trim(), `${o2.firstName || ''} ${o2.lastName || ''}`.trim()],
+        ['Phone', o1.phone || '—', o2.phone || '—'],
+        ['Email', o1.email || '—', o2.email || '—'],
+        ['Home Address', o1.homeAddress || '—', o2.homeAddress || '—'],
+        ['Date of Birth', o1.dob || '—', o2.dob || '—'],
+        ['Credit Score', o1.creditScore || '—', o2.creditScore || '—'],
+        ['SSN', ssnMask(o1.ssn || ''), ssnMask(o2.ssn || '')],
+        ['Ownership %', o1.ownershipPct ? `${o1.ownershipPct}%` : '—', o2.ownershipPct ? `${o2.ownershipPct}%` : '—'],
+      ]
+
+      const labelW = 56
+      let shade = false
+      for (const [label, v1, v2] of ownerFields) {
+        if (shade) {
+          doc.rect(C1, y, halfW, rowH).fill('#F3F4F8')
+          doc.rect(C2, y, halfW, rowH).fill('#F3F4F8')
+        }
+        doc.fillColor(gray).font('Helvetica').fontSize(7)
+          .text(label, C1 + 4, y + 4, { width: labelW, lineBreak: false })
+        doc.fillColor(darkText).font('Helvetica-Bold').fontSize(7)
+          .text(v1, C1 + labelW + 6, y + 4, { width: halfW - labelW - 10, lineBreak: false })
+        doc.fillColor(gray).font('Helvetica').fontSize(7)
+          .text(label, C2 + 4, y + 4, { width: labelW, lineBreak: false })
+        doc.fillColor(darkText).font('Helvetica-Bold').fontSize(7)
+          .text(v2, C2 + labelW + 6, y + 4, { width: halfW - labelW - 10, lineBreak: false })
+        y += rowH
+        shade = !shade
+      }
+    } else {
+      // Single owner
+      y -= 4
+      section('PRIMARY OWNER')
+      row('Name', `${o1.firstName || ''} ${o1.lastName || ''}`.trim())
+      row('Phone', o1.phone || '—')
+      row('Email', o1.email || '—')
+      row('Home Address', o1.homeAddress || '—')
+      row('Date of Birth', o1.dob || '—')
+      row('Credit Score', o1.creditScore || '—')
+      row('SSN', ssnMask(o1.ssn || ''))
+      row('Ownership %', o1.ownershipPct ? `${o1.ownershipPct}%` : '—')
     }
 
     resetShade()
@@ -134,8 +171,8 @@ const generateApplicationPDF = async (
     resetShade()
     section('ELECTRONIC SIGNATURE')
 
-    const sigH = 90
-    ensureSpace(sigH + rowH * 3 + 20)
+    const sigH = 60
+    ensureSpace(sigH + rowH * 3 + 50)
 
     doc.rect(L, y, COL_W, sigH).strokeColor('#CCCCCC').lineWidth(0.5).stroke()
 
@@ -167,14 +204,14 @@ const generateApplicationPDF = async (
     row('Date & Time', timestamp)
     row('IP Address', ip)
 
-    ensureSpace(80)
-    y += 12
-    doc.rect(L, y, COL_W, 60).fill(lightGray)
-    doc.fillColor(gray).font('Helvetica').fontSize(7)
+    ensureSpace(50)
+    y += 6
+    doc.rect(L, y, COL_W, 42).fill(lightGray)
+    doc.fillColor(gray).font('Helvetica').fontSize(6)
       .text(
         'All consumer information is kept strictly confidential. By signing and submitting, the applicant authorized Luminar Capital and/or its affiliates to contact them via telephone, mobile device (including SMS and MMS), and/or email, even if the telephone number is listed on a Do Not Call registry. The applicant also authorized Luminar Capital to obtain consumer or personal, business, and investigative reports including credit card processor statements and bank statements from consumer reporting agencies, and for any and all lawful purposes.',
-        L + 10, y + 10,
-        { width: COL_W - 20, lineGap: 1.5 },
+        L + 8, y + 8,
+        { width: COL_W - 16, lineGap: 1 },
       )
 
     doc.end()
@@ -345,7 +382,8 @@ const buildUserEmail = (data: Record<string, unknown>): string => {
 </td></tr>
 <tr><td style="padding:28px 0 20px;" align="center">
   <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;font-weight:bold;color:#3d52a0;letter-spacing:2.5px;text-transform:uppercase;">LUMINAR CAPITAL</p>
-  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">Business Financing Solutions</p>
+  <p style="margin:0 0 3px 0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">Business Financing Solutions</p>
+  <p style="margin:0 0 3px 0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">+1 (305) 307-0190</p>
   <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:10px;color:#aab0c4;">Please retain this email as confirmation of your application submission.</p>
 </td></tr>
 </tbody></table>
