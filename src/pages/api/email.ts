@@ -7,7 +7,7 @@ const generateApplicationPDF = async (
   ip: string,
   timestamp: string,
 ): Promise<Buffer> => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const doc = new PDFDocument({
       margin: 0,
       size: 'A4',
@@ -42,19 +42,41 @@ const generateApplicationPDF = async (
     }
 
     // ── Header ────────────────────────────────────────────────────────────────
-    doc.rect(0, 0, PAGE_W, 52).fill(navy)
-    doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(14)
-      .text('LUMINAR CAPITAL', L, 12, { width: COL_W })
-    doc.fillColor('rgba(255,255,255,0.6)').font('Helvetica').fontSize(8)
-      .text('Business Financing Application', L, 32, { width: COL_W })
+    doc.rect(0, 0, PAGE_W, 52).fill('#ffffff')
+    doc.rect(0, 52, PAGE_W, 4).fill(navy)
+
+    // Logo left
+    try {
+      const https = require('https')
+      const fetchLogo = (): Promise<Buffer> => new Promise((res, rej) => {
+        https.get('https://www.luminarcapital.com/Luminar-Logo.jpg', (r: any) => {
+          const chunks: Buffer[] = []
+          r.on('data', (c: Buffer) => chunks.push(c))
+          r.on('end', () => res(Buffer.concat(chunks)))
+          r.on('error', rej)
+        }).on('error', rej)
+      })
+      const logoBuffer = await fetchLogo()
+      doc.image(logoBuffer, L, 8, { height: 36, fit: [130, 36] })
+    } catch (logoErr) {
+      console.error('Logo load error:', logoErr)
+      doc.fillColor(navy).font('Helvetica-Bold').fontSize(12)
+        .text('LUMINAR CAPITAL', L, 18, { width: 130, lineBreak: false })
+    }
+
+    // Title right
+    doc.fillColor(navy).font('Helvetica-Bold').fontSize(12)
+      .text('LUMINAR CAPITAL', L + 148, 14, { width: COL_W - 148 })
+    doc.fillColor('#444444').font('Helvetica').fontSize(8)
+      .text('Business Financing Application', L + 148, 30, { width: COL_W - 148 })
 
     // ── Meta bar ──────────────────────────────────────────────────────────────
-    doc.rect(0, 52, PAGE_W, 24).fill(lightGray)
+    doc.rect(0, 56, PAGE_W, 24).fill(lightGray)
     doc.fillColor(gray).font('Helvetica').fontSize(7)
-      .text(`Submitted: ${timestamp}`, L, 58, { width: COL_W / 2 })
-      .text(`IP Address: ${ip}`, L, 68, { width: COL_W / 2 })
+      .text(`Submitted: ${timestamp}`, L, 62, { width: COL_W / 2 })
+      .text(`IP Address: ${ip}`, L, 72, { width: COL_W / 2 })
 
-    y = 84
+    y = 88
 
     const section = (title: string) => {
       y += 4
