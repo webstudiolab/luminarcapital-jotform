@@ -1,5 +1,11 @@
 import axios from 'axios'
 
+export interface IFileAttachment {
+  filename: string
+  content: string // base64
+  contentType: string
+}
+
 interface ISendEmail {
   to?: string
   subject: string
@@ -7,6 +13,7 @@ interface ISendEmail {
   honeypot?: string
   timestamp?: number
   formData?: Record<string, unknown>
+  attachments?: IFileAttachment[]
 }
 
 export const browserSendEmail = async ({
@@ -16,6 +23,7 @@ export const browserSendEmail = async ({
   honeypot,
   timestamp,
   formData,
+  attachments,
 }: ISendEmail) => {
   return await axios.post('/api/email', {
     to,
@@ -24,5 +32,6 @@ export const browserSendEmail = async ({
     honeypot,
     timestamp,
     formData,
+    attachments,
   })
 }

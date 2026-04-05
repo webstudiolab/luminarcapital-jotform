@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect, FC } from 'react'
 import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
 import { closeModal } from '@/store/slices/modalSlice'
-import { browserSendEmail } from '@/utils/email/bowserSendEmail'
+import { browserSendEmail, IFileAttachment } from '@/utils/email/bowserSendEmail'
 import styles from './FinancingApplicationForm.module.scss'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -198,6 +198,18 @@ const formatPhone = (val: string): string => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
 }
 
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result as string
+      resolve(result.split(',')[1]) // strip data URL prefix, return pure base64
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 // ─── Email templates ──────────────────────────────────────────────────────────
 
 const buildAdminEmail = (data: FormData): string => {
@@ -255,7 +267,7 @@ const buildAdminEmail = (data: FormData): string => {
     </table>` : ''}
     <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
       <tr><td colspan="2" style="padding:0 0 12px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1B2B5E;border-bottom:2px solid #e0e4ef;">Bank Statements</td></tr>
-      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Files Uploaded</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.bankStatements.length > 0 ? `${data.bankStatements.length} file(s)` : 'None'}</td></tr>
+      <tr><td style="padding:10px 0;color:#666;font-size:14px;">Files Attached</td><td style="padding:10px 0;font-weight:600;font-size:14px;">${data.bankStatements.length > 0 ? `${data.bankStatements.length} file(s) attached to this email` : 'None'}</td></tr>
     </table>
   </div>
 </div>`
@@ -306,10 +318,7 @@ declare global {
       }
     }
     grecaptcha: {
-      execute: (
-        siteKey: string,
-        options: { action: string },
-      ) => Promise<string>
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
       ready: (callback: () => void) => void
     }
   }
@@ -331,7 +340,6 @@ const usePlacesAutocomplete = (
         if (place.formatted_address) onSelect(place.formatted_address)
       })
     }
-
     if (window.google?.maps?.places) {
       initAutocomplete()
     } else {
@@ -395,11 +403,7 @@ const CurrencyInput: FC<{
         value={value ? formatCurrency(value) : ''}
         onChange={handleChange}
         placeholder={placeholder || '0'}
-        className={classNames(
-          styles.input,
-          styles.inputCurrency,
-          error && styles.inputError,
-        )}
+        className={classNames(styles.input, styles.inputCurrency, error && styles.inputError)}
       />
     </div>
   )
@@ -510,7 +514,7 @@ const SignatureCanvas: FC<{
       <canvas
         ref={canvasRef}
         width={600}
-        height={150}
+        height={200}
         className={classNames(styles.signatureCanvas, error && styles.inputError)}
         onMouseDown={startDraw}
         onMouseMove={draw}
@@ -671,11 +675,10 @@ const validateStep = (step: number, data: FormData): FieldError => {
     req('entityType', data.entityType, 'Entity type')
     req('businessStartDate', data.businessStartDate, 'Business start date')
     if (data.businessStartDate) {
-      const bsd = data.businessStartDate
       const today = new Date().toISOString().split('T')[0]
-      if (bsd > today)
+      if (data.businessStartDate > today)
         errors['businessStartDate'] = 'Business start date cannot be in the future'
-      if (bsd < '1900-01-01')
+      if (data.businessStartDate < '1900-01-01')
         errors['businessStartDate'] = 'Please enter a valid business start date'
     }
     req('industry', data.industry, 'Industry')
@@ -812,6 +815,16 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     setSubmitError(null)
 
     try {
+      // Convert bank statement files to base64
+      const fileAttachments: IFileAttachment[] = await Promise.all(
+        formData.bankStatements.map(async (file) => ({
+          filename: file.name,
+          content: await fileToBase64(file),
+          contentType: file.type || 'application/octet-stream',
+        }))
+      )
+
+      // Admin email with PDF + all bank statements attached
       await browserSendEmail({
         subject: `Financing Application — ${formData.legalBusinessName} — ${formData.owner1.firstName} ${formData.owner1.lastName}`,
         htmlMessage: buildAdminEmail(formData),
@@ -822,7 +835,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
           bankStatementNames: formData.bankStatements.map((f) => f.name),
           bankStatements: undefined,
         } as unknown as Record<string, unknown>,
+        attachments: fileAttachments,
       })
+
+      // Confirmation email to applicant — no attachments
       await browserSendEmail({
         to: formData.owner1.email,
         subject: 'Your Luminar Capital Application Has Been Received',
@@ -830,6 +846,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
         honeypot: '',
         timestamp: formStartTime.current,
       })
+
       setIsSuccess(true)
     } catch {
       setSubmitError('Submission failed. Please try again or contact us directly.')
@@ -885,7 +902,6 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
       </div>
 
       <div className={styles.body}>
-
         {/* STEP 1 */}
         {step === 1 && (
           <div className={styles.step}>
