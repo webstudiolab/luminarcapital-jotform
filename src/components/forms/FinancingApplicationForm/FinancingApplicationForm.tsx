@@ -1103,13 +1103,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
             </Field>
             <div className={styles.legalText}>
               <p>
-                All consumer information is kept strictly confidential. By signing and submitting,
-                you authorize Luminar Capital and/or our affiliates to contact you via telephone,
-                mobile device (including SMS and MMS), and/or email, even if your telephone number
-                is listed on a Do Not Call registry. You also authorize us to obtain consumer or
-                personal, business, and investigative reports including credit card processor
-                statements and bank statements from consumer reporting agencies, and for any and
-                all lawful purposes.
+                All consumer information is kept strictly confidential. Luminar Capital takes your privacy seriously. By signing and submitting this application form, each of the above listed business and business owner/officer (individually and collectively, 'you') authorize Luminar Capital (LC) or our affiliates to contact you via telephone, mobile device (including SMS and MMS), and/or email, even if you are on a corporate, state or national Do Not Call Registry. You also authorize each of its representatives, successors, assigns and designees that may be involved with or acquire commercial loans having daily repayment features or purchases of future receivables including Merchant Cash Advance transactions, including without limitation the application therefor (collectively, 'Transactions') to obtain consumer or personal, business and investigative reports and other information about you, including credit card processor statements and bank statements, from one or more consumer reporting agencies, such as TransUnion, Experian and Equifax, Identity IQ and from other credit bureaus, banks, creditors, government agencies and other third parties (the 'Recipients'). You also authorize LC to transmit this application form, along with any of the foregoing information obtained in connection with this application, to any or all of the Recipients for the foregoing purposes. You also consent to the release, by any creditor or financial institution, of any information relating to any of you, to LC and to each of the Recipients, on its own behalf and authorize LC to communicate with the Recipients on your behalf and represent you with the Recipients. You also authorize LC and each of its Recipients to contact you via text message, automated call or email message at the contact information listed above
               </p>
             </div>
             <label className={styles.consentRow}>
