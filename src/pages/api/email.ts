@@ -102,7 +102,7 @@ const generateApplicationPDF = async (
 
     const o1 = (formData.owner1 as Record<string, string>) || {}
     const o2 = (formData.owner2 as Record<string, string>) || {}
-    const ssnMask = (s: string) => (s ? `***-**-${s.slice(-4)}` : '—')
+    const ssnMask = (s: string) => s || '—'
     const currency = (v: string) => v ? `$${Number(v).toLocaleString('en-US')}` : '—'
 
     resetShade()
@@ -243,7 +243,7 @@ const generateApplicationPDF = async (
 const buildAdminEmail = (data: Record<string, unknown>): string => {
   const o1 = (data.owner1 as Record<string, string>) || {}
   const o2 = (data.owner2 as Record<string, string>) || {}
-  const ssnMask = (s: string) => (s ? `***-**-${s.slice(-4)}` : '—')
+  const ssnMask = (s: string) => s || '—'
   const currency = (v: string) => v ? `$${Number(v).toLocaleString('en-US')}` : '—'
   const files = (data.bankStatementNames as string[]) || []
 

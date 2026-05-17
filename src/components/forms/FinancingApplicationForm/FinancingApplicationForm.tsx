@@ -306,7 +306,7 @@ const usePlacesAutocomplete = (
       if (!inputRef.current || !window.google?.maps?.places) return
       const autocomplete = new window.google.maps.places.Autocomplete(
         inputRef.current,
-        { types: ['address'], componentRestrictions: { country: 'us' } },
+        { componentRestrictions: { country: 'us' } },
       )
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace()
