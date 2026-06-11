@@ -30,9 +30,9 @@ const cards = [
     icon: DiscountIcon,
   },
   {
-    title: 'Flex Line Financing',
+    title: 'Luminar Line',
     description:
-      'We believe in offering financing that is flexible and tailored to your needs. Flex line financing enables you to quickly access the capital required, instead of committing to a large sum immediately. This cost friendly solution can be utilized on multiple occasions and integrates into your cash flow.',
+      'We believe in offering financing that is flexible and tailored to your needs. Luminar Line enables you to quickly access the capital required, instead of committing to a large sum immediately. This cost friendly solution can be utilized on multiple occasions and integrates into your cash flow.',
     href: '/financing-options?origin=2&scroll=true',
     icon: CreditCardIcon,
   },

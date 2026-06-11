@@ -66,7 +66,7 @@ export const navData: INavData = {
           href: '/financing-options?origin=1&scroll=true',
         },
         {
-          label: 'Flex Line Financing',
+          label: 'Luminar Line',
           href: '/financing-options?origin=2&scroll=true',
         },
       ],
