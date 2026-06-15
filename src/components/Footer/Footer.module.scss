@@ -147,6 +147,10 @@
 		}
 	
 		&-link{
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
 			color: var(--color-black);
 			font: var(--font-body-lg);
 			transition: color var(--transition-duration-button) var(--transition-easing-button);
