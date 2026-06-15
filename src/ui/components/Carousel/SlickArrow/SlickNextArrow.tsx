@@ -6,13 +6,15 @@ import styles from './SlickArrow.module.scss'
 const SlickNextArrow = (props: ISlickArrow) => {
   const { className, style, onClick } = props
   return (
-    <div
+    <button
+      type="button"
+      aria-label="Next slide"
       className={classNames(styles['arrow'], styles['arrow-next'], className)}
       style={{ ...style }}
       onClick={onClick}
     >
-      <ArrowRightIcon />
-    </div>
+      <ArrowRightIcon aria-hidden="true" />
+    </button>
   )
 }
 

@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import classNames from 'classnames'
 import Select, { Props } from 'react-select'
 import { customStyles } from '@/ui/components/SelectField/styles'
@@ -9,7 +10,10 @@ interface ISelectField extends Props<IOption> {
   error?: string
 }
 
-const SelectField = ({ className, error, ...props }: ISelectField) => {
+const SelectField = ({ className, error, placeholder, ...props }: ISelectField) => {
+  const generatedId = useId()
+  const inputId = props.inputId || generatedId
+
   return (
     <div
       className={classNames(
@@ -20,11 +24,18 @@ const SelectField = ({ className, error, ...props }: ISelectField) => {
     >
       <Select
         {...props}
+        inputId={inputId}
+        placeholder={placeholder}
+        aria-label={typeof placeholder === 'string' ? placeholder : undefined}
         styles={customStyles}
         isSearchable={false}
         isMulti={false}
       />
-      {error ? <span className={styles['select-error']}>{error}</span> : null}
+      {error ? (
+        <span role="alert" className={styles['select-error']}>
+          {error}
+        </span>
+      ) : null}
     </div>
   )
 }

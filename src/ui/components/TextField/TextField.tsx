@@ -1,4 +1,4 @@
-import { forwardRef, InputHTMLAttributes } from 'react'
+import { forwardRef, InputHTMLAttributes, useId } from 'react'
 import classNames from 'classnames'
 import styles from './TextField.module.scss'
 
@@ -14,10 +14,19 @@ const TextField = forwardRef<HTMLInputElement, ITextField>(
     { className, placeholder, error = null, isFocused, ...props }: ITextField,
     ref,
   ) => {
+    const id = useId()
+
     return (
-      <label className={classNames(styles['textField-container'], className)}>
+      <label
+        htmlFor={id}
+        className={classNames(styles['textField-container'], className)}
+      >
         <input
+          id={id}
           ref={ref}
+          aria-label={placeholder}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
           className={classNames(
             styles['textField-item'],
             error ? styles['error'] : null,
@@ -26,6 +35,7 @@ const TextField = forwardRef<HTMLInputElement, ITextField>(
         />
         {placeholder ? (
           <span
+            aria-hidden="true"
             className={classNames(
               styles['textField-placeholder'],
               isFocused ? styles['textField-placeholder-active'] : '',
@@ -35,11 +45,19 @@ const TextField = forwardRef<HTMLInputElement, ITextField>(
           </span>
         ) : null}
         {error ? (
-          <span className={styles['textField-error']}>{error}</span>
+          <span
+            id={`${id}-error`}
+            role="alert"
+            className={styles['textField-error']}
+          >
+            {error}
+          </span>
         ) : null}
       </label>
     )
   },
 )
+
+TextField.displayName = 'TextField'
 
 export default TextField

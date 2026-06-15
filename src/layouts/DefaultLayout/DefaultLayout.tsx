@@ -20,8 +20,12 @@ interface IDefaultLayout {
 const DefaultLayout = ({ children }: IDefaultLayout) => {
   return (
     <MetaLayout>
+      {/* Skip navigation link - hidden until focused by keyboard users */}
+      <a href="#main-content" className={styles['skip-link']}>
+        Skip to main content
+      </a>
       <Header />
-      <main className={styles['main']}>
+      <main id="main-content" className={styles['main']}>
         {children}
         <div
           className={classNames(

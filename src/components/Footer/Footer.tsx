@@ -30,7 +30,8 @@ const renderLink = (
   }
   if (link.modal) {
     return (
-      <span
+      <button
+        type="button"
         className={styles['footer-link']}
         onClick={() =>
           handleModalTrigger({
@@ -40,7 +41,7 @@ const renderLink = (
         }
       >
         {link.label}
-      </span>
+      </button>
     )
   }
   return null
@@ -78,10 +79,11 @@ const Footer = ({ className }: IFooter) => {
                     key={`social-icon-${index}`}
                     href={social.href}
                     target="_blank"
-                    title={social.title}
+                    rel="noreferrer"
+                    aria-label={`${social.title} (opens in new tab)`}
                     className={styles['footer-social-icon']}
                   >
-                    {createElement(social.icon)}
+                    <span aria-hidden="true">{createElement(social.icon)}</span>
                   </a>
                 ))}
               </div>
@@ -109,6 +111,21 @@ const Footer = ({ className }: IFooter) => {
             </div>
           </div>
         </div>
+
+        {/* Accessibility Statement */}
+        <div className={styles['footer-accessibility']}>
+          <p className={styles['footer-accessibility-text']}>
+            <strong>Accessibility:</strong> Luminar Capital is committed to
+            ensuring this website is accessible to all users, including people
+            with disabilities. If you experience any accessibility barriers,
+            please contact us at{' '}
+            <a href="mailto:clientsuccess@luminarcapital.com">
+              clientsuccess@luminarcapital.com
+            </a>{' '}
+            and we will work to resolve the issue promptly.
+          </p>
+        </div>
+
         <div className={styles['footer-copyright']}>
           <p className={styles['footer-copyright-item']}>
             Copyright &copy; {new Date().getFullYear()} Luminar Capital LLC. All

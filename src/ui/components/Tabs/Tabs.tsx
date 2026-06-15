@@ -12,10 +12,13 @@ interface ITabs {
 const Tabs = ({ className, data, activeTab, onSwitch }: ITabs) => {
   return (
     <div className={classNames(styles['tabs'], className)}>
-      <div className={styles['tabs-panel']}>
+      <div className={styles['tabs-panel']} role="tablist">
         {data.map((tab, index) => (
-          <div
+          <button
             key={`tab-${index}`}
+            type="button"
+            role="tab"
+            aria-selected={Number(activeTab) === tab.value}
             className={classNames(
               styles['tab'],
               Number(activeTab) === tab.value && styles['active'],
@@ -23,7 +26,7 @@ const Tabs = ({ className, data, activeTab, onSwitch }: ITabs) => {
             onClick={() => onSwitch(String(tab.value))}
           >
             {tab.title}
-          </div>
+          </button>
         ))}
       </div>
     </div>

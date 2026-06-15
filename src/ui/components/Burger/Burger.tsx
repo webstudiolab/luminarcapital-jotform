@@ -9,7 +9,11 @@ interface IBurger {
 
 const Burger = ({ className, isActive, onClick }: IBurger) => {
   return (
-    <div
+    <button
+      type="button"
+      aria-label={isActive ? 'Close menu' : 'Open menu'}
+      aria-expanded={isActive}
+      aria-controls="main-navigation"
       className={classNames(
         styles['burger'],
         isActive ? styles['active'] : null,
@@ -17,12 +21,12 @@ const Burger = ({ className, isActive, onClick }: IBurger) => {
       )}
       onClick={onClick}
     >
-      <div className={styles['burger-box']}>
+      <div className={styles['burger-box']} aria-hidden="true">
         <div className={styles['burger-box-arrow']} />
         <div className={styles['burger-box-arrow']} />
         <div className={styles['burger-box-arrow']} />
       </div>
-    </div>
+    </button>
   )
 }
 

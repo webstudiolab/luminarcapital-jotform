@@ -1,12 +1,16 @@
 import { ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
+import HeroBanner from '@/ui/components/HeroBanner/HeroBanner'
 import styles from './HeroDefault.module.scss'
 
 const LottieFrame = dynamic(
   () => import('@/ui/components/LottieFrame/LottieFrame'),
   {
     ssr: false,
+    loading: () => (
+      <HeroBanner src="/banners/hero-home-banner.svg" title="Luminar Capital" />
+    ),
   },
 )
 
@@ -27,24 +31,27 @@ const HeroDefault = ({
 }: IHeroDefault) => {
   return (
     <>
-      <div className={styles['heroDefault-abstract']} />
+      <div className={styles['heroDefault-abstract']} aria-hidden="true" />
       <section className={classNames(styles['heroDefault'], className)}>
         <div className="content-block">
           <div className="row">
             <div className="col-xs-12 col-lg-6 col-gutter-lr">
               <div className={styles['heroDefault-content']}>
                 <div className={styles['heroDefault-title']}>
-                  <h1 className="font-display">{title}</h1>
+                  <h1>{title}</h1>
                 </div>
                 <div className={styles['heroDefault-description']}>
-                  <p>{description}</p>
+                  <p className="description">{description}</p>
                 </div>
                 <div className={styles['heroDefault-actions']}>{actions}</div>
               </div>
             </div>
             <div className="col-xs-12 col-lg-6 col-gutter-lr">
               <div className={styles['heroDefault-banner']}>
-                <LottieFrame data={banner} />
+                <LottieFrame
+                  data={banner}
+                  ariaLabel="Decorative illustration"
+                />
               </div>
             </div>
           </div>

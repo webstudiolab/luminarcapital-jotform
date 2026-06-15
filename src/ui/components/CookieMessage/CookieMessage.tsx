@@ -25,15 +25,25 @@ const CookieMessage = () => {
 
   if (enableCookie === null) {
     return (
-      <section className={styles['section']}>
+      <section
+        className={styles['section']}
+        role="dialog"
+        aria-label="Cookie consent"
+        aria-live="polite"
+      >
         <div className="content-block">
           <div className={styles['section-box']}>
-            <div
+            <button
+              type="button"
+              aria-label="Dismiss cookie notice"
               className={styles['section-trigger']}
               onClick={() => handleRemoveCookie()}
             >
-              <CloseIcon className={styles['section-trigger-icon']} />
-            </div>
+              <CloseIcon
+                className={styles['section-trigger-icon']}
+                aria-hidden="true"
+              />
+            </button>
             <div className={styles['section-box-content']}>
               <h4>We Use Cookies</h4>
               <p className={styles['section-box-content-description']}>

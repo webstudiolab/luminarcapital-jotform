@@ -31,7 +31,7 @@ const HeroHome = ({
 }: IHeroDefault) => {
   return (
     <>
-      <div className={styles['heroDefault-abstract']} />
+      <div className={styles['heroDefault-abstract']} aria-hidden="true" />
       <section className={classNames(styles['heroDefault'], className)}>
         <div className="content-block">
           <div className="row">
@@ -48,7 +48,10 @@ const HeroHome = ({
             </div>
             <div className="col-xs-12 col-lg-6 col-gutter-lr">
               <div className={styles['heroDefault-banner']}>
-                <LottieFrame data={banner} />
+                <LottieFrame
+                  data={banner}
+                  ariaLabel="Illustration of business growth and financing"
+                />
               </div>
             </div>
           </div>

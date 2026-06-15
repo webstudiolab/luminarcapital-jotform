@@ -30,4 +30,25 @@
 					background-image: url('/abstract/footer-abstract-mobile.svg');
 				}
 		}
+}/* ADD THIS TO: src/layouts/DefaultLayout/DefaultLayout.module.scss */
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 9999;
+  padding: 12px 20px;
+  background: #1b2b5e;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s;
+
+  &:focus {
+    top: 0;
+    outline: 3px solid #f4a623;
+    outline-offset: 2px;
+  }
 }

@@ -84,15 +84,12 @@ const Header = ({ className }: IHeader) => {
 
   const handleModalTrigger = useCallback(
     ({ modal, size }: IModalPayload) => {
-      // Open modal window
       dispatch(openModal({ modal, size }))
-      // Close navigation
       setIsMenuOpen(false)
     },
     [dispatch],
   )
 
-  // Detect scroll for sticky
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', onScroll, { passive: true })
@@ -103,7 +100,6 @@ const Header = ({ className }: IHeader) => {
     }
   }, [onScroll])
 
-  // Close navigation on page change
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth <= 900) {
       setIsMenuOpen(false)
@@ -121,11 +117,13 @@ const Header = ({ className }: IHeader) => {
     >
       <div className="content-block">
         <div className={styles['header-panel']}>
-          <Link href="/" className={styles['header-panel-logo']}>
+          <Link href="/" className={styles['header-panel-logo']} aria-label="Luminar Capital — home">
             <Image src="/color_logo.svg" alt="Luminar Capital" fill />
           </Link>
           <nav
+            id="main-navigation"
             ref={scope}
+            aria-label="Main navigation"
             className={classNames(
               styles['header-panel-nav'],
               isMenuOpen ? styles['active'] : null,
@@ -156,7 +154,7 @@ const Header = ({ className }: IHeader) => {
               <Button
                 className={styles['header-actions-item']}
                 onClick={() =>
-                  handleModalTrigger({ modal: 'jotform', size: 'xl' })
+                  handleModalTrigger({ modal: 'financing', size: 'xl' })
                 }
               >
                 Apply for Financing

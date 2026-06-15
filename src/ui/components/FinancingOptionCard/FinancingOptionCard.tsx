@@ -12,9 +12,11 @@ const FinancingOptionCard = ({
   href,
 }: IFinancingOptionCard) => {
   return (
-    <div className={classNames(styles['card'], className)} aria-hidden="false">
+    <div className={classNames(styles['card'], className)}>
       {icon ? (
-        <div className={styles['card-icon']}>{createElement(icon)}</div>
+        <div className={styles['card-icon']} aria-hidden="true">
+          {createElement(icon)}
+        </div>
       ) : null}
       <div>
         <h3 className={styles['card-title']}>{title}</h3>
