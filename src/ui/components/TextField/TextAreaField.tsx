@@ -1,4 +1,4 @@
-import { ChangeEvent, forwardRef, TextareaHTMLAttributes } from 'react'
+import { ChangeEvent, forwardRef, TextareaHTMLAttributes, useId } from 'react'
 import classNames from 'classnames'
 import styles from './TextField.module.scss'
 
@@ -22,10 +22,16 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, ITextAreaField>(
     }: ITextAreaField,
     ref,
   ) => {
+    const id = useId()
+
     return (
-      <label className={classNames(styles['textField-container'], className)}>
+      <label htmlFor={id} className={classNames(styles['textField-container'], className)}>
         <textarea
+          id={id}
           ref={ref}
+          aria-label={placeholder}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
           className={classNames(
             styles['textField-area'],
             error ? styles['error'] : null,
@@ -35,6 +41,7 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, ITextAreaField>(
         />
         {placeholder ? (
           <span
+            aria-hidden="true"
             className={classNames(
               styles['textField-placeholder'],
               isFocused ? styles['textField-placeholder-active'] : '',
@@ -44,11 +51,13 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, ITextAreaField>(
           </span>
         ) : null}
         {error ? (
-          <span className={styles['textField-error']}>{error}</span>
+          <span id={`${id}-error`} role="alert" className={styles['textField-error']}>{error}</span>
         ) : null}
       </label>
     )
   },
 )
+
+TextAreaField.displayName = 'TextAreaField'
 
 export default TextAreaField

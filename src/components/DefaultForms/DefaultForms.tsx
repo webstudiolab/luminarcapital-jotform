@@ -57,9 +57,9 @@ const DefaultForms = ({ className }: IDefaultForms) => {
             <div className={styles['section-box-icon']}>
               <Image src="/logo_icon.svg" alt="Let's get in touch!" fill />
             </div>
-            <h3 className={classNames(styles['section-box-title'], 'h2')}>
+            <h2 className={classNames(styles["section-box-title"], "h1")}>
               Let&apos;s get in touch!
-            </h3>
+            </h2>
             <p className={styles['section-box-description']}>
               Illuminate your company with Luminar Capital today.
             </p>
