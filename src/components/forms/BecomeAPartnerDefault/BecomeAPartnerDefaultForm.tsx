@@ -73,10 +73,8 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
   )
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    // REMOVED CONSENT VALIDATION - checkbox is now optional
     setIsSubmitting(true)
     try {
-      // Send email to admin
       await browserSendEmail({
         subject: `${EMAIL_SUBJECT.PARTNER} - ${data.company_name}`,
         htmlMessage: messages.admin(data),
@@ -84,7 +82,6 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
         timestamp: formStartTime.current,
       })
 
-      // Send confirmation email to user
       await browserSendEmail({
         to: data.email,
         subject: EMAIL_SUBJECT.PARTNER,
@@ -121,26 +118,10 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
     placeholder: string
     error?: string
   }[] = [
-    {
-      name: 'name',
-      placeholder: 'Full Name',
-      error: errors.name?.message,
-    },
-    {
-      name: 'email',
-      placeholder: 'Email',
-      error: errors.email?.message,
-    },
-    {
-      name: 'company_name',
-      placeholder: 'Company Name',
-      error: errors.company_name?.message,
-    },
-    {
-      name: 'phone',
-      placeholder: 'Phone Number',
-      error: errors.phone?.message,
-    },
+    { name: 'name', placeholder: 'Full Name', error: errors.name?.message },
+    { name: 'email', placeholder: 'Email', error: errors.email?.message },
+    { name: 'company_name', placeholder: 'Company Name', error: errors.company_name?.message },
+    { name: 'phone', placeholder: 'Phone Number', error: errors.phone?.message },
   ]
 
   return (
@@ -153,6 +134,8 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
             aria-hidden="true"
           >
             <input
+              aria-hidden="true"
+              aria-label="leave blank"
               type="text"
               name="website"
               tabIndex={-1}
@@ -176,8 +159,8 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
           ))}
 
           <div className={styles['form-body-grid-item']}>
-            {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
             <label
+              htmlFor="partner-consent"
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -186,6 +169,7 @@ const BecomeAPartnerDefaultForm = ({ className }: IBecomeAPartnerDefault) => {
               }}
             >
               <input
+                id="partner-consent"
                 type="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
