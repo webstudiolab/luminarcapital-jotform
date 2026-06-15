@@ -18,15 +18,15 @@ const Portfolio = ({ className }: IPortfolio) => {
         <div className="row">
           <div className="col-xs-12 col-lg-6 col-gutter-lr">
             <div className={styles['section-content']}>
-              <p className={classNames(styles['section-title'], 'h1')}>
+              <h2 className={classNames(styles['section-title'], 'h1')}>
                 Advanced Portfolio Management
-              </p>
+              </h2>
               <div className={styles['section-description']}>
                 <p>
                   At Luminar Capital, we empower our referral partners with
                   advanced portfolio management through our cutting-edge
                   platform, offering unparalleled transparency regarding your
-                  portfolio. Our platform is perfect for enhancing clients’
+                  portfolio. Our platform is perfect for enhancing clients&apos;
                   access to capital, guaranteeing a flawless, efficient, and
                   transparent experience for everyone.
                 </p>

@@ -82,10 +82,8 @@ const ApplyForFinancingDefaultForm = ({
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-      // REMOVED CONSENT VALIDATION - checkbox is now optional
     setIsSubmitting(true)
     try {
-      // Send email to admin
       await browserSendEmail({
         subject: `${EMAIL_SUBJECT.FINANCING} - ${data.business_name}`,
         htmlMessage: messages.admin(data),
@@ -93,7 +91,6 @@ const ApplyForFinancingDefaultForm = ({
         timestamp: formStartTime.current,
       })
 
-      // Send confirmation email to user
       await browserSendEmail({
         to: data.email,
         subject: EMAIL_SUBJECT.FINANCING,
@@ -170,6 +167,8 @@ const ApplyForFinancingDefaultForm = ({
             aria-hidden="true"
           >
             <input
+              aria-hidden="true"
+              aria-label="leave blank"
               type="text"
               name="website"
               tabIndex={-1}
@@ -259,8 +258,8 @@ const ApplyForFinancingDefaultForm = ({
             onBlur={handleBlur}
           />
 
-          {/* CHECKBOX - NOW OPTIONAL (removed 'required' attribute) */}
           <label
+            htmlFor="financing-default-consent"
             style={{
               display: 'flex',
               alignItems: 'flex-start',
@@ -269,6 +268,7 @@ const ApplyForFinancingDefaultForm = ({
             }}
           >
             <input
+              id="financing-default-consent"
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
