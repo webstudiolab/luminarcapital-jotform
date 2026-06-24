@@ -8,12 +8,24 @@
   box-sizing: border-box;
 }
 
-:focus, :active {
+:focus {
   outline: none;
 }
 
-a:focus, a:active {
+:focus-visible {
+  outline: 3px solid #4143EC;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+a:focus {
   outline: none;
+}
+
+a:focus-visible {
+  outline: 3px solid #4143EC;
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
 aside, nav, footer, header, section {
@@ -33,10 +45,6 @@ body {
   text-size-adjust: 100%;
   text-rendering: optimizelegibility;
 }
-
-//input, button, textarea {
-//  font-family: var(--font-family-primary);
-//}
 
 input::-ms-clear {
   display: none;

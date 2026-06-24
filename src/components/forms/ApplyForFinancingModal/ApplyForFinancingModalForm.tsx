@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useRef, useCallback } from 'react'
+import { useState, ChangeEvent, useRef, useCallback, useEffect } from 'react'
 import Image from 'next/image'
 import classNames from 'classnames'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -31,6 +31,8 @@ interface IFormInput {
   average_of_monthly_sales: string
   phone: string
 }
+
+const STORAGE_KEY = 'luminar_financing_modal_form'
 
 const fieldsBySteps: Record<number, Array<keyof IFormInput>> = {
   0: ['amount_of_financing_requested'],
@@ -71,6 +73,28 @@ const ApplyForFinancingModalForm = ({
   const [honeypot, setHoneypot] = useState('')
   const formStartTime = useRef<number>(Date.now())
 
+  // Restore saved form state
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        Object.entries(parsed).forEach(([key, val]) => {
+          if (val) {
+            setValue(key as keyof IFormInput, val as string)
+            setIsFocused((prev) => ({ ...prev, [key]: true }))
+          }
+        })
+      }
+    } catch {}
+  }, [setValue])
+
+  const saveToStorage = useCallback(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getValues()))
+    } catch {}
+  }, [getValues])
+
   const settings = {
     accessibility: false,
     swipe: false,
@@ -98,8 +122,9 @@ const ApplyForFinancingModalForm = ({
       const { name } = e.target
       setValue(name as keyof IFormInput, e.target.value)
       await trigger(name as keyof IFormInput)
+      saveToStorage()
     },
-    [setValue, trigger],
+    [setValue, trigger, saveToStorage],
   )
 
   const handleCheckboxChange = useCallback(
@@ -136,6 +161,7 @@ const ApplyForFinancingModalForm = ({
       })
 
       setIsSubmittedSuccess(true)
+      localStorage.removeItem(STORAGE_KEY)
 
       setTimeout(() => {
         reset()
@@ -162,9 +188,7 @@ const ApplyForFinancingModalForm = ({
   const handleNext = useCallback(async () => {
     const currentFields =
       fieldsBySteps[currentSlide as keyof typeof fieldsBySteps]
-
     const isValid = await trigger(currentFields)
-
     if (isValid) {
       sliderRef.current?.slickNext()
       setCurrentSlide((prevState) => prevState + 1)
@@ -176,11 +200,26 @@ const ApplyForFinancingModalForm = ({
     sliderRef.current?.slickPrev()
   }, [])
 
+  // Block arrow keys from scrolling page; Enter advances steps
+  const handleKeyDown = useCallback(
+    async (e: React.KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.stopPropagation()
+      }
+      if (e.key === 'Enter' && currentSlide < 3) {
+        e.preventDefault()
+        await handleNext()
+      }
+    },
+    [currentSlide, handleNext],
+  )
+
   return (
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={classNames(styles['form'], className)}
+        onKeyDown={handleKeyDown}
       >
         {/* HONEYPOT - Hidden spam trap */}
         <div
@@ -223,7 +262,7 @@ const ApplyForFinancingModalForm = ({
                 />
               ))}
               {errors.amount_of_financing_requested?.message ? (
-                <span className={styles['form-error']}>
+                <span className={styles['form-error']} role="alert">
                   {errors.amount_of_financing_requested.message}
                 </span>
               ) : null}
@@ -248,7 +287,7 @@ const ApplyForFinancingModalForm = ({
                 />
               ))}
               {errors.average_of_monthly_sales?.message ? (
-                <span className={styles['form-error']}>
+                <span className={styles['form-error']} role="alert">
                   {errors.average_of_monthly_sales.message}
                 </span>
               ) : null}
@@ -321,7 +360,7 @@ const ApplyForFinancingModalForm = ({
         </Slider>
 
         {submittedError ? (
-          <p className={classNames(styles['form-error'], styles['static'])}>
+          <p className={classNames(styles['form-error'], styles['static'])} role="alert">
             {submittedError}
           </p>
         ) : null}
