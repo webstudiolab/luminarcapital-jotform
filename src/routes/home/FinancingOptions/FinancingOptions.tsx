@@ -109,7 +109,7 @@ const FinancingOptions = ({ className }: IFinancingOptions) => {
                   />
                 </div>
               ))}
-              <div className="col-sm-12 col-md-12">
+              <div className="col-sm-12 col-md-6 col-md-offset-6">
                 <FinancingOptionCAT />
               </div>
             </div>
