@@ -6,6 +6,24 @@ import { Provider } from 'react-redux'
 import { store } from '@/store'
 import DefaultLayout from '@/layouts/DefaultLayout/DefaultLayout'
 import Script from 'next/script'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { openModal } from '@/store/slices/modalSlice'
+
+function ModalHandler() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const { modal } = router.query
+    if (modal === 'financing') {
+      store.dispatch(openModal({ modal: 'financing', size: 'xl' }))
+    } else if (modal === 'partner') {
+      store.dispatch(openModal({ modal: 'partner', size: 'lg' }))
+    }
+  }, [router.query])
+
+  return null
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,6 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
         strategy="lazyOnload"
       />
       <DefaultLayout>
+        <ModalHandler />
         <Component {...pageProps} />
       </DefaultLayout>
     </Provider>

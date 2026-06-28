@@ -433,6 +433,8 @@ const SignatureCanvas: FC<{
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const drawing = useRef(false)
   const lastPos = useRef({ x: 0, y: 0 })
+  const [mode, setMode] = useState<'draw' | 'type'>('draw')
+  const [typedName, setTypedName] = useState('')
 
   const getPos = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current!
@@ -480,27 +482,80 @@ const SignatureCanvas: FC<{
     const ctx = canvas.getContext('2d')!
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     onChange('')
+    setTypedName('')
   }
+
+  // Render typed name onto canvas in script font
+  const renderTypedSignature = useCallback((name: string) => {
+    setTypedName(name)
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')!
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    if (!name) { onChange(''); return }
+    ctx.font = '64px "Dancing Script", "Brush Script MT", cursive'
+    ctx.fillStyle = '#1B2B5E'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(name, canvas.width / 2, canvas.height / 2)
+    onChange(canvas.toDataURL())
+  }, [onChange])
 
   return (
     <div className={styles.signatureWrap}>
+      {/* Mode toggle */}
+      <div className={styles.signatureToggle} role="group" aria-label="Signature method">
+        <button
+          type="button"
+          onClick={() => { setMode('draw'); clear() }}
+          className={classNames(styles.signatureToggleBtn, mode === 'draw' && styles.signatureToggleBtnActive)}
+        >
+          Draw
+        </button>
+        <button
+          type="button"
+          onClick={() => { setMode('type'); clear() }}
+          className={classNames(styles.signatureToggleBtn, mode === 'type' && styles.signatureToggleBtnActive)}
+        >
+          Type
+        </button>
+      </div>
+
+      {mode === 'type' && (
+        <input
+          type="text"
+          value={typedName}
+          onChange={(e) => renderTypedSignature(e.target.value)}
+          placeholder="Type your full name"
+          aria-label="Type your signature"
+          className={styles.signatureTypeInput}
+          autoFocus
+        />
+      )}
+
       <canvas
         ref={canvasRef}
         width={600}
         height={200}
-        className={classNames(styles.signatureCanvas, error && styles.inputError)}
-        onMouseDown={startDraw}
-        onMouseMove={draw}
-        onMouseUp={stopDraw}
-        onMouseLeave={stopDraw}
-        onTouchStart={startDraw}
-        onTouchMove={draw}
-        onTouchEnd={stopDraw}
+        aria-label="Signature drawing area"
+        role="img"
+        className={classNames(
+          styles.signatureCanvas,
+          error && styles.inputError,
+          mode === 'type' && styles.signatureCanvasType,
+        )}
+        onMouseDown={mode === 'draw' ? startDraw : undefined}
+        onMouseMove={mode === 'draw' ? draw : undefined}
+        onMouseUp={mode === 'draw' ? stopDraw : undefined}
+        onMouseLeave={mode === 'draw' ? stopDraw : undefined}
+        onTouchStart={mode === 'draw' ? startDraw : undefined}
+        onTouchMove={mode === 'draw' ? draw : undefined}
+        onTouchEnd={mode === 'draw' ? stopDraw : undefined}
       />
       <button type="button" onClick={clear} className={styles.signatureClear}>
         Clear
       </button>
-      {error && <span className={styles.fieldError}>{error}</span>}
+      {error && <span className={styles.fieldError} role="alert">{error}</span>}
     </div>
   )
 }
@@ -1029,7 +1084,8 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
               <br />
               <em>Optional to get started; required to get certified offers.</em>
             </p>
-            <div
+            <button
+              type="button"
               className={styles.dropzone}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
@@ -1050,10 +1106,10 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
                 onChange={handleFiles}
                 style={{ display: 'none' }}
               />
-              <div className={styles.dropzoneIcon}>📂</div>
+              <div className={styles.dropzoneIcon} aria-hidden="true">📂</div>
               <p className={styles.dropzoneText}>Click to upload or drag & drop files here</p>
               <p className={styles.dropzoneHint}>PDF, JPG, PNG — up to {MAX_FILES} files</p>
-            </div>
+            </button>
             {formData.bankStatements.length > 0 && (
               <ul className={styles.fileList}>
                 {formData.bankStatements.map((file, idx) => (
@@ -1094,7 +1150,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
               </div>
             </div>
             <Field label="Owner Signature" required error={errors.signature}>
-              <p className={styles.signatureHint}>Draw your signature below using mouse or touch.</p>
+              <p className={styles.signatureHint}>Draw your signature below, or switch to Type to sign with your name.</p>
               <SignatureCanvas
                 value={formData.signatureDataUrl}
                 onChange={(v) => set('signatureDataUrl', v)}
