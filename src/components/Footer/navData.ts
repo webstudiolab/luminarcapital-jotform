@@ -69,6 +69,10 @@ export const navData: INavData = {
           label: 'Luminar Line',
           href: '/financing-options?origin=2&scroll=true',
         },
+        {
+          label: 'Luminar Financial',
+          href: '/financing-options?origin=3&scroll=true',
+        },
       ],
     },
     {

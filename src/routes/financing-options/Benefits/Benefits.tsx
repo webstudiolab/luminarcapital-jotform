@@ -18,7 +18,8 @@ interface IBenefits {
 const tabs: ITab[] = [
   { title: 'Revenue Based Financing', value: 0 },
   { title: 'Early Repayment Discounts', value: 1 },
-  { title: 'Luminar Line', value: 2 },
+  { title: 'Revolving Working Capital', value: 2 },
+  { title: 'Luminar Financial', value: 3 },
 ]
 
 const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
@@ -90,10 +91,7 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
                     className="col-xs-12 col-lg-6"
                   >
                     <div className={styles['benefit-card']}>
-                      <div
-                        className={styles['benefit-card-icon']}
-                        aria-hidden="true"
-                      >
+                      <div className={styles['benefit-card-icon']}>
                         {createElement(IconComponent)}
                       </div>
                       <div className={styles['benefit-card-content']}>
@@ -139,13 +137,10 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
         </div>
       </div>
       <div className={styles['section-tabs']}>
-        <div className={styles['section-tabs-panel']} role="tablist">
+        <div className={styles['section-tabs-panel']}>
           {tabs.map((tab, index) => (
-            <button
+            <div
               key={`financing-tab-${index}`}
-              type="button"
-              role="tab"
-              aria-selected={activeIndex === tab.value}
               className={classNames(
                 styles['tab'],
                 activeIndex === tab.value ? styles['active'] : null,
@@ -153,7 +148,7 @@ const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {
               onClick={() => handleFormSwitch(String(tab.value))}
             >
               {tab.title}
-            </button>
+            </div>
           ))}
         </div>
       </div>
