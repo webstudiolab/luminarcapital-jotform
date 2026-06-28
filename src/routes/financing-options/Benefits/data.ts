@@ -59,13 +59,13 @@ export const data: { [key: string]: IBenefit[] } = {
     {
       title: 'Flexible Funding Structures',
       description:
-        'Access a range of financing options including working capital loans, equipment financing, business lines of credit, and SBA loan alternatives. Each solution is tailored to your business profile, time in operation, and financial performance — with terms explained in plain language so you can choose with confidence.',
+        'Access a range of financing options including working capital loans, equipment financing, business lines of credit, and SBA loan alternatives. Each solution is tailored to your business profile, time in operation, and financial performance, with terms explained in plain language so you can choose with confidence.',
       banner: '/banners/benefits/benefit-4.svg',
     },
     {
       title: 'Responsive Support from Start to Close',
       description:
-        'Work with a dedicated specialist who stays accountable throughout the entire process. Your information is handled discreetly, and every recommendation is aligned to your goals — not a one-size-fits-all product. Businesses that value clarity and credibility choose Luminar Financial.',
+        'Work with a dedicated specialist who stays accountable throughout the entire process. Your information is handled discreetly, and every recommendation is aligned to your goals, not a one-size-fits-all product. Businesses that value clarity and credibility choose Luminar Financial.',
       banner: '/banners/benefits/benefit-2.svg',
     },
   ],

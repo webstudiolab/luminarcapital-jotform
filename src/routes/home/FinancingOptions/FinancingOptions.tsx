@@ -6,6 +6,7 @@ import FinancingOptionCard from '@/ui/components/FinancingOptionCard/FinancingOp
 import MoneyIcon from '@/ui/icons/Money'
 import DiscountIcon from '@/ui/icons/Discount'
 import CreditCardIcon from '@/ui/icons/CreditCard'
+import CustomerIcon from '@/ui/icons/Customer'
 import FinancingOptionCAT from '@/ui/components/FinancingOptionCAT/FinancingOptionCAT'
 import { cardsCarouselSettings } from '@/config/constants'
 import styles from './FinancingOptions.module.scss'
@@ -36,7 +37,90 @@ const cards = [
     href: '/financing-options?origin=2&scroll=true',
     icon: CreditCardIcon,
   },
+  {
+    title: 'Luminar Financial',
+    description:
+      'A premium, business-first lending experience for qualified companies. Luminar Financial combines clear terms, confidential guidance, and efficient underwriting to help your business move from review to funding with confidence.',
+    href: '/financing-options?origin=3&scroll=true',
+    icon: CustomerIcon,
+  },
 ] as IFinancingOptionCard[]
+
+const FinancingOptions = ({ className }: IFinancingOptions) => {
+  const [isDesktop, setIsDesktop] = useState<boolean>(true)
+  const [trackHeight, setTrackHeight] = useState<number | 'auto'>('auto')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsDesktop(window.innerWidth > 600)
+    }
+  }, [])
+
+  return (
+    <section className={classNames(styles['finOptions'], 'p-100-0', className)}>
+      <div className="content-block">
+        <div className="section-title text-center">
+          <h2 className="h1">Our Financing Options</h2>
+        </div>
+        <div className={styles['finOptions-cards']}>
+          {!isDesktop ? (
+            <>
+              <Slider
+                {...cardsCarouselSettings}
+                className="board-slider"
+                onInit={() => {
+                  const track = document.querySelector(
+                    '.board-slider .slick-track',
+                  )
+                  if (track) {
+                    setTrackHeight(track.getBoundingClientRect().height)
+                  }
+                }}
+              >
+                {cards.map(({ title, description, icon, href }, index) => (
+                  <div key={`financing-card-${index}`}>
+                    <div style={{ height: trackHeight }}>
+                      <FinancingOptionCard
+                        title={title}
+                        description={description}
+                        icon={icon}
+                        href={href}
+                        className={styles['finOptions-cards-slide']}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </Slider>
+              <FinancingOptionCAT />
+            </>
+          ) : (
+            <div className="row">
+              {cards.map(({ title, description, icon, href }, index) => (
+                <div
+                  className="col-sm-12 col-md-6"
+                  key={`financing-card-${index}`}
+                >
+                  <FinancingOptionCard
+                    title={title}
+                    description={description}
+                    icon={icon}
+                    href={href}
+                    className={styles['finOptions-cards-slide']}
+                  />
+                </div>
+              ))}
+              <div className="col-sm-12 col-md-12">
+                <FinancingOptionCAT />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default FinancingOptions
 
 const FinancingOptions = ({ className }: IFinancingOptions) => {
   const [isDesktop, setIsDesktop] = useState<boolean>(true)
