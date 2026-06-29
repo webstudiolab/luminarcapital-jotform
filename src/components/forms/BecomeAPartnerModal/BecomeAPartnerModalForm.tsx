@@ -107,7 +107,6 @@ const BecomeAPartnerModalForm = ({
     },
     dots: true,
     dotsClass: classNames(styles['form-slider-dots'], 'modal-slider-dots'),
-    
   }
 
   const handleChange = useCallback(
@@ -207,6 +206,9 @@ const BecomeAPartnerModalForm = ({
     [currentSlide, handleNext],
   )
 
+  // tabIndex helper — hidden slides must not be focusable
+  const ti = (slide: number) => currentSlide === slide ? 0 : -1
+
   return (
     <>
       <form
@@ -237,7 +239,7 @@ const BecomeAPartnerModalForm = ({
           }}
           {...settings}
         >
-          <div className={styles['form-step']}>
+          <div className={styles['form-step']} aria-hidden={currentSlide !== 0}>
             <p className={classNames(styles['form-step-title'])}>
               What&apos;s the name of your company?
             </p>
@@ -250,11 +252,12 @@ const BecomeAPartnerModalForm = ({
                 isFocused={isFocused['company_name']}
                 onBlur={handleBlur}
                 onChange={handleChange}
+                tabIndex={ti(0)}
               />
             </div>
           </div>
 
-          <div className={styles['form-step']}>
+          <div className={styles['form-step']} aria-hidden={currentSlide !== 1}>
             <p className={classNames(styles['form-step-title'])}>
               Tell us about yourself
             </p>
@@ -267,11 +270,12 @@ const BecomeAPartnerModalForm = ({
                 isFocused={isFocused['name']}
                 onBlur={handleBlur}
                 onChange={handleChange}
+                tabIndex={ti(1)}
               />
             </div>
           </div>
 
-          <div className={styles['form-step']}>
+          <div className={styles['form-step']} aria-hidden={currentSlide !== 2}>
             <p className={classNames(styles['form-step-title'])}>
               How can we connect?
             </p>
@@ -284,6 +288,7 @@ const BecomeAPartnerModalForm = ({
                 isFocused={isFocused['phone']}
                 onBlur={handleBlur}
                 onChange={handleChange}
+                tabIndex={ti(2)}
               />
               <TextField
                 {...register('email')}
@@ -294,6 +299,7 @@ const BecomeAPartnerModalForm = ({
                 isFocused={isFocused['email']}
                 onBlur={handleBlur}
                 onChange={handleChange}
+                tabIndex={ti(2)}
               />
               <div className={styles['consent-container']}>
                 <input
@@ -301,6 +307,7 @@ const BecomeAPartnerModalForm = ({
                   type="checkbox"
                   checked={consent}
                   onChange={handleCheckboxChange}
+                  tabIndex={ti(2)}
                 />
                 <label htmlFor="partner-modal-consent">
                   <PPMessage />
@@ -325,6 +332,7 @@ const BecomeAPartnerModalForm = ({
               styles['prev'],
               currentSlide === 0 ? styles['hidden'] : '',
             )}
+            tabIndex={currentSlide === 0 ? -1 : 0}
           >
             Back
           </Button>
@@ -335,6 +343,7 @@ const BecomeAPartnerModalForm = ({
               styles['next'],
               currentSlide === 2 ? styles['hidden'] : '',
             )}
+            tabIndex={currentSlide === 2 ? -1 : 0}
           >
             Next
           </Button>
@@ -345,6 +354,7 @@ const BecomeAPartnerModalForm = ({
             )}
             type="submit"
             disabled={isSubmitting}
+            tabIndex={currentSlide !== 2 ? -1 : 0}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
