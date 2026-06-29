@@ -17,6 +17,7 @@ interface IButton {
   href?: string
   onClick?: () => void
   type?: 'button' | 'submit'
+  tabIndex?: number
 }
 
 const Button = ({
@@ -33,6 +34,7 @@ const Button = ({
   asDefaultLink = false,
   onClick,
   type = 'button',
+  tabIndex,
   ...props
 }: IButton) => {
   const classes = classNames(
@@ -79,6 +81,7 @@ const Button = ({
       className={classes}
       disabled={disabled}
       onClick={onClick}
+      tabIndex={tabIndex}
       type={type}
     >
       {content}
