@@ -332,7 +332,6 @@ const BecomeAPartnerModalForm = ({
               styles['prev'],
               currentSlide === 0 ? styles['hidden'] : '',
             )}
-            tabIndex={currentSlide === 0 ? -1 : 0}
           >
             Back
           </Button>
@@ -343,7 +342,6 @@ const BecomeAPartnerModalForm = ({
               styles['next'],
               currentSlide === 2 ? styles['hidden'] : '',
             )}
-            tabIndex={currentSlide === 2 ? -1 : 0}
           >
             Next
           </Button>
@@ -354,7 +352,6 @@ const BecomeAPartnerModalForm = ({
             )}
             type="submit"
             disabled={isSubmitting}
-            tabIndex={currentSlide !== 2 ? -1 : 0}
           >
             {isSubmitting ? (
               <div className={styles['form-action-icon']}>
