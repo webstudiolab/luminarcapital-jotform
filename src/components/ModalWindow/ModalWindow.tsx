@@ -81,8 +81,8 @@ const ModalWindow = () => {
       }
     }
 
-    document.addEventListener('keydown', handleTab)
-    return () => document.removeEventListener('keydown', handleTab)
+    document.addEventListener('keydown', handleTab, true)
+    return () => document.removeEventListener('keydown', handleTab, true)
   }, [isOpen])
 
   if (!isOpen) return null
