@@ -107,7 +107,7 @@ const BecomeAPartnerModalForm = ({
     },
     dots: true,
     dotsClass: classNames(styles['form-slider-dots'], 'modal-slider-dots'),
-    adaptiveHeight: true,
+    
   }
 
   const handleChange = useCallback(

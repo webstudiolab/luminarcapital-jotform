@@ -14,6 +14,7 @@
     flex-direction: column;
     justify-content: center;
     padding-top: 70rem;
+    min-height: 280rem;
 
     @include maxWidth($sm-max) {
       padding-top: 62rem;
