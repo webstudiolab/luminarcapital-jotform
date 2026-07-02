@@ -51,22 +51,10 @@ export const data: { [key: string]: IBenefit[] } = {
   ],
   3: [
     {
-      title: 'Business-First Lending',
+      title: 'Relationship-Based Term Business Loans',
       description:
-        'Luminar Financial delivers a premium, bank-like financing experience built around your company\'s objectives. With confidential guidance, clear terms, and disciplined underwriting, qualified businesses can move from review to funding without unnecessary back-and-forth or delays.',
+        'Predictable capital for your next big move. Our Term Business Loans deliver upfront funding paired with fixed, straightforward repayment structures. Ideal for fixed-asset purchases, equipment upgrades, or physical expansions, our loan options ensure you know your exact cost of capital from day one. Enjoy the same rapid underwriting and transparent terms you expect from Luminar, with the stability of fixed milestones.',
       banner: '/banners/benefits/benefit-1.svg',
-    },
-    {
-      title: 'Flexible Funding Structures',
-      description:
-        'Access a range of financing options including working capital loans, equipment financing, business lines of credit, and SBA loan alternatives. Each solution is tailored to your business profile, time in operation, and financial performance, with terms explained in plain language so you can choose with confidence.',
-      banner: '/banners/benefits/benefit-4.svg',
-    },
-    {
-      title: 'Responsive Support from Start to Close',
-      description:
-        'Work with a dedicated specialist who stays accountable throughout the entire process. Your information is handled discreetly, and every recommendation is aligned to your goals, not a one-size-fits-all product. Businesses that value clarity and credibility choose Luminar Financial.',
-      banner: '/banners/benefits/benefit-2.svg',
     },
   ],
 }

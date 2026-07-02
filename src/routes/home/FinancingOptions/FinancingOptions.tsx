@@ -6,7 +6,7 @@ import FinancingOptionCard from '@/ui/components/FinancingOptionCard/FinancingOp
 import MoneyIcon from '@/ui/icons/Money'
 import DiscountIcon from '@/ui/icons/Discount'
 import CreditCardIcon from '@/ui/icons/CreditCard'
-import CustomerIcon from '@/ui/icons/Customer'
+import BriefcaseIcon from '@/ui/icons/Briefcase'
 import FinancingOptionCAT from '@/ui/components/FinancingOptionCAT/FinancingOptionCAT'
 import { cardsCarouselSettings } from '@/config/constants'
 import styles from './FinancingOptions.module.scss'
@@ -38,11 +38,11 @@ const cards = [
     icon: CreditCardIcon,
   },
   {
-    title: 'Luminar Financial',
+    title: 'Business-First Term Business Loans',
     description:
-      'A premium, business-first lending experience for qualified companies. Luminar Financial combines clear terms, confidential guidance, and efficient underwriting to help your business move from review to funding with confidence.',
+      'We know that every business milestone requires a different financial tool. While our revenue-backed financing offers ultimate flexibility, our Custom Business Loans provide the rock-solid predictability needed for large-scale expansions. Receive a lump-sum capital injection with fixed, transparent terms that allow you to plan your budget with total confidence. No templates, no red tape—just tailored financing built to scale your business.',
     href: '/financing-options?origin=3&scroll=true',
-    icon: CustomerIcon,
+    icon: BriefcaseIcon,
   },
 ] as IFinancingOptionCard[]
 

@@ -19,7 +19,7 @@ const tabs: ITab[] = [
   { title: 'Revenue Based Financing', value: 0 },
   { title: 'Early Repayment Discounts', value: 1 },
   { title: 'Luminar Line', value: 2 },
-  { title: 'Luminar Financial', value: 3 },
+  { title: 'Term Loans', value: 3 },
 ]
 
 const Benefits = ({ className, benefits, sectionTitle }: IBenefits) => {

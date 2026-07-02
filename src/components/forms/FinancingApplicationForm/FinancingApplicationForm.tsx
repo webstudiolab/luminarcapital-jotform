@@ -485,15 +485,24 @@ const SignatureCanvas: FC<{
     setTypedName('')
   }
 
-  // Render typed name onto canvas in script font
+  const MAX_SIG_CHARS = 40
+
+  // Render typed name onto canvas — auto-scales font to fit width
   const renderTypedSignature = useCallback((name: string) => {
+    if (name.length > MAX_SIG_CHARS) return
     setTypedName(name)
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')!
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     if (!name) { onChange(''); return }
-    ctx.font = '64px "Dancing Script", "Brush Script MT", cursive'
+    // Start at 72px and scale down until text fits within 90% of canvas width
+    let fontSize = 72
+    ctx.font = `${fontSize}px "Dancing Script", "Brush Script MT", cursive`
+    while (ctx.measureText(name).width > canvas.width * 0.9 && fontSize > 20) {
+      fontSize -= 2
+      ctx.font = `${fontSize}px "Dancing Script", "Brush Script MT", cursive`
+    }
     ctx.fillStyle = '#1B2B5E'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -503,22 +512,24 @@ const SignatureCanvas: FC<{
 
   return (
     <div className={styles.signatureWrap}>
-      {/* Mode toggle */}
+      {/* iOS-style toggle */}
       <div className={styles.signatureToggle} role="group" aria-label="Signature method">
-        <button
-          type="button"
-          onClick={() => { setMode('draw'); clear() }}
-          className={classNames(styles.signatureToggleBtn, mode === 'draw' && styles.signatureToggleBtnActive)}
-        >
-          Draw
-        </button>
-        <button
-          type="button"
-          onClick={() => { setMode('type'); clear() }}
-          className={classNames(styles.signatureToggleBtn, mode === 'type' && styles.signatureToggleBtnActive)}
-        >
-          Type
-        </button>
+        <div className={styles.signatureToggleTrack}>
+          <button
+            type="button"
+            onClick={() => { setMode('draw'); clear() }}
+            className={classNames(styles.signatureToggleBtn, mode === 'draw' && styles.signatureToggleBtnActive)}
+          >
+            Draw
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode('type'); clear() }}
+            className={classNames(styles.signatureToggleBtn, mode === 'type' && styles.signatureToggleBtnActive)}
+          >
+            Type
+          </button>
+        </div>
       </div>
 
       {mode === 'type' && (
@@ -529,6 +540,7 @@ const SignatureCanvas: FC<{
           placeholder="Type your full name"
           aria-label="Type your signature"
           className={styles.signatureTypeInput}
+          maxLength={MAX_SIG_CHARS}
           autoFocus
         />
       )}

@@ -25,9 +25,6 @@ const nav = [
     href: '/financing-options',
   },
   {
-    label: 'Learning Center',
-    href: '/learning-center',
-  },
   {
     label: 'Partners',
     href: '/partners',
