@@ -79,7 +79,6 @@ export const navData: INavData = {
       title: 'Discover',
       nav: [
         {
-        {
           label: 'Partners',
           href: '/partners',
         },
