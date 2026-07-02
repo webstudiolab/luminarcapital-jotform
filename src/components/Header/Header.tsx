@@ -25,7 +25,6 @@ const nav = [
     href: '/financing-options',
   },
   {
-  {
     label: 'Partners',
     href: '/partners',
   },
