@@ -25,7 +25,7 @@ export const navData: INavData = {
     {
       title: 'Google',
       icon: GoogleMinifyIcon,
-      href: 'https://www.google.com/maps/place/Luminar+Capital+LLC/@26.00742,-80.35894,17z',
+      href: 'https://www.google.com/maps/place/Luminar+Capital+LLC/@26.00742,-80.35894,17z/data=!3m1!4b1!4m6!3m5!1s0x88d9a73fbf62549d:0x9dc7e744d953b42c!8m2!3d26.00742!4d-80.35894!16s%2Fg%2F11nqm2plqm?entry=ttu&g_ep=EgoyMDI2MDYyOC4wIKXMDSoASAFQAw%3D%3D',
     },
     {
       title: 'LinkedIn',
