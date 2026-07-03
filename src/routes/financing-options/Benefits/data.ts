@@ -51,9 +51,9 @@ export const data: { [key: string]: IBenefit[] } = {
   ],
   3: [
     {
-      title: 'Relationship-Based Term Business Loans',
+      title: 'Relationship-Based Term Loans',
       description:
-        'Predictable capital for your next big move. Our Term Business Loans deliver upfront funding paired with fixed, straightforward repayment structures. Ideal for fixed-asset purchases, equipment upgrades, or physical expansions, our loan options ensure you know your exact cost of capital from day one. Enjoy the same rapid underwriting and transparent terms you expect from Luminar, with the stability of fixed milestones.',
+        'Predictable capital for your next big move. Our business term loans deliver upfront funding paired with fixed, straightforward repayment structures. Ideal for fixed-asset purchases, equipment upgrades, or physical expansions, our loan options ensure you know your exact cost of capital from day one. Enjoy the same rapid underwriting and transparent terms you expect from Luminar, with the stability of fixed milestones.',
       banner: '/banners/benefits/benefit-1.svg',
     },
   ],

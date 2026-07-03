@@ -25,7 +25,7 @@ export const navData: INavData = {
     {
       title: 'Google',
       icon: GoogleMinifyIcon,
-      href: '/',
+      href: 'https://www.google.com/maps/place/Luminar+Capital+LLC/@26.00742,-80.35894,17z',
     },
     {
       title: 'LinkedIn',
@@ -70,7 +70,7 @@ export const navData: INavData = {
           href: '/financing-options?origin=2&scroll=true',
         },
         {
-          label: 'Luminar Financial',
+          label: 'Term Loans',
           href: '/financing-options?origin=3&scroll=true',
         },
       ],

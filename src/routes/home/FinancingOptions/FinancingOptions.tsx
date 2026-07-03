@@ -38,9 +38,9 @@ const cards = [
     icon: CreditCardIcon,
   },
   {
-    title: 'Business-First Term Business Loans',
+    title: 'Business-First Term Loans',
     description:
-      'We know that every business milestone requires a different financial tool. While our revenue-backed financing offers ultimate flexibility, our Custom Business Loans provide the rock-solid predictability needed for large-scale expansions. Receive a lump-sum capital injection with fixed, transparent terms that allow you to plan your budget with total confidence. No templates, no red tape—just tailored financing built to scale your business.',
+      'We know that every business milestone requires a different financial tool. While our revenue-backed financing offers ultimate flexibility, our customized business term loans provide the rock-solid predictability needed for large-scale expansions. Receive a lump-sum capital injection with fixed, transparent terms that allow you to plan your budget with total confidence. No templates, no red tape—just tailored financing built to scale your business.',
     href: '/financing-options?origin=3&scroll=true',
     icon: BriefcaseIcon,
   },
@@ -109,7 +109,7 @@ const FinancingOptions = ({ className }: IFinancingOptions) => {
                   />
                 </div>
               ))}
-              <div className="col-sm-12 col-md-6 col-md-offset-6">
+              <div className="col-sm-12 col-md-6 col-md-offset-3">
                 <FinancingOptionCAT />
               </div>
             </div>
