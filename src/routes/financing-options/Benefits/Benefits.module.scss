@@ -26,7 +26,7 @@
 					top: 40rem;
 					align-items: flex-end;
 					justify-content: flex-start;
-					height: 108rem;
+					height: 120rem;
 					margin-top: 15rem;
 					overflow: hidden;
 					
@@ -47,7 +47,7 @@
 							margin-bottom: -12rem;
 							padding: 0 16rem 12rem;
 							overflow-x: auto;
-							white-space: nowrap;
+							white-space: normal;
 						}
 				}
 		}
@@ -83,10 +83,10 @@
 		@include maxWidth($sm-max){
 			display: inline-block;
 			width: 160rem;
-			height: 60rem;
+			height: 72rem;
 			padding: 12rem;
 			font: var(--font-body-md);
-			white-space: nowrap;
+			white-space: normal;
 			
 				&:not(:last-child){
 					margin-right: 12rem;
