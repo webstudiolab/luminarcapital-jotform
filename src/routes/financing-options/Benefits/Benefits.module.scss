@@ -26,9 +26,9 @@
 					top: 40rem;
 					align-items: flex-end;
 					justify-content: flex-start;
-					height: 120rem;
+					height: 100rem;
 					margin-top: 15rem;
-					overflow: hidden;
+					overflow: visible;
 					
 						&::-webkit-scrollbar {
 							display: none;
@@ -42,12 +42,12 @@
 					padding: 24rem 16rem;
 					
 						@include maxWidth($sm-max){
-							display: block;
+							display: flex;
+							flex-wrap: nowrap;
 							gap: 0;
 							margin-bottom: -12rem;
 							padding: 0 16rem 12rem;
 							overflow-x: auto;
-							white-space: normal;
 						}
 				}
 		}
@@ -81,15 +81,19 @@
 		}
 	
 		@include maxWidth($sm-max){
-			display: inline-block;
-			width: 160rem;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			width: 150rem;
 			height: 72rem;
-			padding: 12rem;
+			padding: 10rem 12rem;
 			font: var(--font-body-md);
 			white-space: normal;
+			text-align: center;
 			
 				&:not(:last-child){
-					margin-right: 12rem;
+					margin-right: 10rem;
 				}
 		}
 	
