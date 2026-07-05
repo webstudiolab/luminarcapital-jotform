@@ -82,11 +82,11 @@
 	
 		@include maxWidth($sm-max){
 			display: inline-block;
-			width: 120rem;
+			width: 160rem;
 			height: 60rem;
 			padding: 12rem;
 			font: var(--font-body-md);
-			white-space: normal;
+			white-space: nowrap;
 			
 				&:not(:last-child){
 					margin-right: 12rem;
