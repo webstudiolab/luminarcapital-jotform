@@ -2,6 +2,31 @@ import { NextApiResponse, NextApiRequest } from 'next'
 import { sendEmail, IAttachment } from '@/utils/email'
 import PDFDocument from 'pdfkit'
 
+// Raise Next's default 1MB JSON body-parser limit. Bank-statement files are
+// sent as base64 inside the JSON body, which inflates their size by ~33%,
+// so the old 1MB default rejected almost any real attachment with a 413
+// before this handler ever ran.
+//
+// IMPORTANT: this does NOT raise Vercel's own hard request-body cap
+// (~4.5MB on serverless functions) — that ceiling can't be lifted from
+// application code. Anything under ~4.5MB now has a real chance of getting
+// through; anything larger will still fail, and needs the durable fix
+// (browser → Vercel Blob direct upload, links emailed instead of raw
+// attachments) called out in the forms handover doc.
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+}
+
+// Admin notification routing — fixed recipients for every form (financing,
+// partner, and anything else), replacing the old per-form PARTNER_EMAIL /
+// FINANCING_EMAIL split. Overridable via env vars if ever needed.
+const ADMIN_TO_EMAIL = process.env.ADMIN_TO_EMAIL || 'submissions@luminarcapital.com'
+const ADMIN_CC_EMAIL = process.env.ADMIN_CC_EMAIL || 'clientsuccess@luminarcapital.com'
+
 const generateApplicationPDF = async (
   formData: Record<string, unknown>,
   ip: string,
@@ -442,19 +467,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
+    // Admin notifications (no explicit `to`) always go to the fixed
+    // submissions/clientsuccess addresses below. Applicant confirmations
+    // (which pass `to: data.email`) are unaffected and never get the cc.
     let recipientEmail = to
+    let ccEmail: string | undefined
     if (!to) {
-      if (subject && subject.includes('Partner')) {
-        recipientEmail = process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
-      } else if (subject && subject.includes('Financing Application')) {
-        recipientEmail = process.env.FINANCING_EMAIL || 'clientsuccess@luminarcapital.com'
-      } else {
-        recipientEmail = process.env.RECIPIENT_EMAIL
-      }
+      recipientEmail = ADMIN_TO_EMAIL
+      ccEmail = ADMIN_CC_EMAIL
     }
 
     console.log('=== EMAIL DEBUG ===')
     console.log('To:', recipientEmail)
+    console.log('Cc:', ccEmail || '(none)')
     console.log('Subject:', subject)
 
     // ── Admin financing email — generate PDF, attach files, use branded template
@@ -507,30 +532,40 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const response = await sendEmail({
         to: recipientEmail,
+        cc: ccEmail,
         subject,
         htmlMessage: buildAdminEmail(formData),
         attachments: emailAttachments,
       })
       console.log('Admin email sent successfully!')
 
-      // Send applicant confirmation
+      // Send applicant confirmation — best-effort. A relay refusing an
+      // external recipient here must NOT fail the whole request: the admin
+      // notification above already succeeded, so the submission itself
+      // must be reported as successful regardless of what happens next.
       const o1 = (formData.owner1 as Record<string, string>) || {}
       if (o1.email) {
-        await sendEmail({
-          to: o1.email,
-          subject: 'Your Luminar Capital Application Has Been Received',
-          htmlMessage: buildUserEmail(formData),
-          attachments: [],
-        })
-        console.log('Applicant confirmation email sent!')
+        try {
+          await sendEmail({
+            to: o1.email,
+            subject: 'Your Luminar Capital Application Has Been Received',
+            htmlMessage: buildUserEmail(formData),
+            attachments: [],
+          })
+          console.log('Applicant confirmation email sent!')
+        } catch (confirmError) {
+          console.error('Applicant confirmation email failed (non-fatal):', confirmError)
+        }
       }
 
       return res.status(200).json({ success: true, response, error: null })
     }
 
-    // ── All other emails (partner forms etc) — use passed htmlMessage
+    // ── All other emails (partner forms, financing quick-forms, applicant
+    //    confirmations) — use passed htmlMessage
     const response = await sendEmail({
       to: recipientEmail,
+      cc: ccEmail,
       subject,
       htmlMessage,
       attachments: [],

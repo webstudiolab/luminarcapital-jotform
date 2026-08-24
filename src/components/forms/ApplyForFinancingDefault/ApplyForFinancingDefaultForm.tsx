@@ -91,13 +91,20 @@ const ApplyForFinancingDefaultForm = ({
         timestamp: formStartTime.current,
       })
 
-      await browserSendEmail({
-        to: data.email,
-        subject: EMAIL_SUBJECT.FINANCING,
-        htmlMessage: messages.user(),
-        honeypot: honeypot,
-        timestamp: formStartTime.current,
-      })
+      // Confirmation email to the applicant is best-effort — a failure here
+      // (e.g. a mail relay refusing an external recipient) must not make a
+      // submission that already reached us look like it failed.
+      try {
+        await browserSendEmail({
+          to: data.email,
+          subject: EMAIL_SUBJECT.FINANCING,
+          htmlMessage: messages.user(),
+          honeypot: honeypot,
+          timestamp: formStartTime.current,
+        })
+      } catch (confirmErr) {
+        console.error('Applicant confirmation email failed (non-fatal):', confirmErr)
+      }
 
       setIsSubmittedSuccess(true)
 
@@ -116,8 +123,8 @@ const ApplyForFinancingDefaultForm = ({
         formStartTime.current = Date.now()
       }, 1000)
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } }
-      setSubmittedError(error.response?.data?.message || 'Submission failed')
+      const error = err as { response?: { data?: { error?: string } } }
+      setSubmittedError(error.response?.data?.error || 'Submission failed')
       setTimeout(() => setSubmittedError(null), 3000)
     } finally {
       setIsSubmitting(false)

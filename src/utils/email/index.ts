@@ -9,6 +9,7 @@ export interface IAttachment {
 
 export interface ISendEmail {
   to?: string
+  cc?: string
   subject: string
   htmlMessage?: string
   attachments?: IAttachment[]
@@ -29,18 +30,20 @@ const transporter = nodemailer.createTransport({
 
 export const sendEmail = async ({
   to = process.env.RECIPIENT_EMAIL,
+  cc,
   subject,
   htmlMessage = '',
   attachments = [],
 }: ISendEmail) => {
   const recipient = to || process.env.RECIPIENT_EMAIL
-  console.log('Sending email to:', recipient)
+  console.log('Sending email to:', recipient, cc ? `(cc: ${cc})` : '')
   return await transporter.sendMail({
     from: {
       name: process.env.SENDER_NAME!,
       address: process.env.SENDER_EMAIL!,
     },
     to: recipient,
+    ...(cc ? { cc } : {}),
     subject,
     text: striptags(htmlMessage),
     html: htmlMessage,

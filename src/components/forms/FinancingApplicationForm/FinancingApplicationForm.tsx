@@ -49,6 +49,20 @@ interface FieldError {
 const MAX_CHARS = 50
 const MAX_FILES = 10
 
+// Bank statements are emailed as base64 JSON attachments, which inflates
+// their size by ~37%. Vercel's serverless functions hard-cap the total
+// request body around 4.5MB — a limit that CANNOT be raised from application
+// code (raising Next's own bodyParser sizeLimit only helps up to that wall).
+// Blocking oversized selections here, with a clear message, replaces a
+// guaranteed-to-fail submission (and a generic "Submission failed" at the
+// very end of a 5-step form) with an honest, immediate explanation.
+// The fully durable fix remains browser -> Vercel Blob direct upload with
+// links emailed instead of raw attachments; this is a stopgap until that's
+// built.
+const MAX_TOTAL_ATTACHMENT_BYTES = 3 * 1024 * 1024 // ~3MB of original file bytes
+
+const formatMB = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(1)}MB`
+
 const USE_OF_FUNDS_OPTIONS = [
   'Expansion',
   'Working Capital',
@@ -798,6 +812,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const formStartTime = useRef<number>(Date.now())
   const [honeypot, setHoneypot] = useState('')
@@ -828,16 +843,34 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
     window.scrollTo(0, 0)
   }
 
+  // Shared by the file picker and the drag-and-drop handler. Rejects (with a
+  // clear, immediate message) any selection that would push the total
+  // request past what Vercel will actually accept — instead of silently
+  // accepting the files and only failing at the very end of the form.
+  const addFiles = (incoming: File[]) => {
+    setFormData((prev) => {
+      const combined = [...prev.bankStatements, ...incoming].slice(0, MAX_FILES)
+      const totalBytes = combined.reduce((sum, f) => sum + f.size, 0)
+      if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+        setFileError(
+          `These files total ${formatMB(totalBytes)}, which is too large to email as attachments ` +
+          `(limit ~${formatMB(MAX_TOTAL_ATTACHMENT_BYTES)}). Please remove a file, or upload fewer ` +
+          `pages per statement, and try again.`,
+        )
+        return prev
+      }
+      setFileError(null)
+      return { ...prev, bankStatements: combined }
+    })
+  }
+
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
-    const newFiles = Array.from(e.target.files)
-    setFormData((prev) => ({
-      ...prev,
-      bankStatements: [...prev.bankStatements, ...newFiles].slice(0, MAX_FILES),
-    }))
+    addFiles(Array.from(e.target.files))
   }
 
   const removeFile = (idx: number) => {
+    setFileError(null)
     setFormData((prev) => ({
       ...prev,
       bankStatements: prev.bankStatements.filter((_, i) => i !== idx),
@@ -878,8 +911,20 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
       })
 
       setIsSuccess(true)
-    } catch {
-      setSubmitError('Submission failed. Please try again or contact us directly.')
+    } catch (err: unknown) {
+      // Previously this caught with no error variable at all, so the actual
+      // cause was always thrown away and this exact generic string shown —
+      // regardless of whether it was a size limit, a mail error, or
+      // something else. Now the real server-provided reason (returned under
+      // `.error` by /api/email) is surfaced when available.
+      const error = err as { response?: { data?: { error?: string } } }
+      const reason = error.response?.data?.error
+      console.error('Financing application submission failed:', err)
+      setSubmitError(
+        reason
+          ? `Submission failed: ${reason}`
+          : 'Submission failed. Please try again or contact us directly.',
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -1103,11 +1148,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault()
-                const files = Array.from(e.dataTransfer.files)
-                setFormData((prev) => ({
-                  ...prev,
-                  bankStatements: [...prev.bankStatements, ...files].slice(0, MAX_FILES),
-                }))
+                addFiles(Array.from(e.dataTransfer.files))
               }}
             >
               <input
@@ -1120,8 +1161,9 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
               />
               <div className={styles.dropzoneIcon} aria-hidden="true">📂</div>
               <p className={styles.dropzoneText}>Click to upload or drag & drop files here</p>
-              <p className={styles.dropzoneHint}>PDF, JPG, PNG — up to {MAX_FILES} files</p>
+              <p className={styles.dropzoneHint}>PDF, JPG, PNG — up to {MAX_FILES} files, {formatMB(MAX_TOTAL_ATTACHMENT_BYTES)} total</p>
             </button>
+            {fileError && <span className={styles.fieldError} role="alert">{fileError}</span>}
             {formData.bankStatements.length > 0 && (
               <ul className={styles.fileList}>
                 {formData.bankStatements.map((file, idx) => (
