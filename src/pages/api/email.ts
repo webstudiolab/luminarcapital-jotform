@@ -21,11 +21,13 @@ export const config = {
   },
 }
 
-// Admin notification routing — fixed recipients for every form (financing,
-// partner, and anything else), replacing the old per-form PARTNER_EMAIL /
-// FINANCING_EMAIL split. Overridable via env vars if ever needed.
-const ADMIN_TO_EMAIL = process.env.ADMIN_TO_EMAIL || 'submissions@luminarcapital.com'
-const ADMIN_CC_EMAIL = process.env.ADMIN_CC_EMAIL || 'clientsuccess@luminarcapital.com'
+// Admin notification recipients for the Apply for Financing forms ONLY.
+// Partner forms still go to PARTNER_EMAIL and anything else to
+// RECIPIENT_EMAIL, as before. See the routing block in the handler.
+const ADMIN_TO_EMAIL =
+  process.env.ADMIN_TO_EMAIL || 'submissions@luminarcapital.com'
+const ADMIN_CC_EMAIL =
+  process.env.ADMIN_CC_EMAIL || 'clientsuccess@luminarcapital.com'
 
 const generateApplicationPDF = async (
   formData: Record<string, unknown>,
@@ -467,14 +469,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // Admin notifications (no explicit `to`) always go to the fixed
-    // submissions/clientsuccess addresses below. Applicant confirmations
-    // (which pass `to: data.email`) are unaffected and never get the cc.
+    // Admin notifications (no explicit `to`) are routed by form:
+    //   Apply for Financing: To submissions@, Cc clientsuccess@
+    //   Become a Partner:    To PARTNER_EMAIL, no cc (unchanged)
+    //   Anything else:       To RECIPIENT_EMAIL, no cc (unchanged)
+    // Financing is checked first so a business name containing "Partner"
+    // can't send a financing lead to the partners inbox.
+    // Applicant confirmations (which pass `to`) are unaffected, never cc'd.
     let recipientEmail = to
     let ccEmail: string | undefined
     if (!to) {
-      recipientEmail = ADMIN_TO_EMAIL
-      ccEmail = ADMIN_CC_EMAIL
+      if (subject && subject.includes('Financing Application')) {
+        recipientEmail = ADMIN_TO_EMAIL
+        ccEmail = ADMIN_CC_EMAIL
+      } else if (subject && subject.includes('Partner')) {
+        recipientEmail =
+          process.env.PARTNER_EMAIL || 'partners@luminarcapital.com'
+      } else {
+        recipientEmail = process.env.RECIPIENT_EMAIL
+      }
     }
 
     console.log('=== EMAIL DEBUG ===')
