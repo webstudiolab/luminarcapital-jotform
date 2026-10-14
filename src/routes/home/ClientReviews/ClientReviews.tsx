@@ -7,6 +7,7 @@ import GoogleIcon from '@/ui/icons/Google'
 import SlickNextArrow from '@/ui/components/Carousel/SlickArrow/SlickNextArrow'
 import SlickPrevArrow from '@/ui/components/Carousel/SlickArrow/SlickPrevArrow'
 import { IGoogleReview } from '@/types'
+import { BUSINESS } from '@/config/business'
 import styles from './ClientReviews.module.scss'
 
 interface IClientReviews {
@@ -69,7 +70,7 @@ const ClientReviews = ({ className, data }: IClientReviews) => {
             </Slider>
             <div className={styles['carousel-action']}>
               <Button
-                href="https://www.google.com/maps/search/?api=1&query=Google&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4"
+                href={BUSINESS.googleProfileUrl}
                 icon={GoogleIcon}
                 variant="outlined"
                 size="xl"

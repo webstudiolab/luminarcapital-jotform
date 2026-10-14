@@ -5,6 +5,7 @@ import PhoneIcon from '@/ui/icons/Phone'
 import MailIcon from '@/ui/icons/Mail'
 import MarkerIcon from '@/ui/icons/Marker'
 import styles from './ContactsData.module.scss'
+import { BUSINESS } from '@/config/business'
 
 interface IContactsData {
   className?: string
@@ -42,8 +43,8 @@ const ContactsDataItem = ({ data: contact }: { data: IContactsDataItem }) => {
 const ContactsData = ({ className, contactInfo }: IContactsData) => {
   const defaultContacts: IContactsDataItem[] = [
     {
-      href: 'tel:3053070190',
-      label: '(305) 307-0190',
+      href: BUSINESS.phoneHref,
+      label: BUSINESS.phoneDisplay,
       blank: false,
       icon: PhoneIcon,
     },
@@ -54,8 +55,8 @@ const ContactsData = ({ className, contactInfo }: IContactsData) => {
       icon: MailIcon,
     },
     {
-      href: 'https://maps.app.goo.gl/XDnwr6xX7NtxSoUn6',
-      label: '25 SE 2nd Ave Ste 550-789 Miami, FL 33131',
+      href: BUSINESS.googleProfileUrl,
+      label: BUSINESS.addressDisplay,
       blank: true,
       icon: MarkerIcon,
     },

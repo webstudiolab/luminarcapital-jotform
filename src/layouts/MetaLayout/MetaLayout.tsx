@@ -1,10 +1,18 @@
 import { ReactNode } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { BUSINESS } from '@/config/business'
 
 const MetaLayout = ({ children }: { children: ReactNode }) => {
+  const { asPath } = useRouter()
+  // Self referencing canonical, query strings and hashes stripped
+  const path = asPath.split(/[?#]/)[0]
+  const canonical = `${BUSINESS.url}${path === '/' ? '/' : path.replace(/\/$/, '')}`
+
   return (
     <>
       <Head>
+        <link rel="canonical" href={canonical} key="canonical" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"

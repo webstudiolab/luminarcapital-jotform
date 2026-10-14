@@ -9,6 +9,7 @@ import Script from 'next/script'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { openModal } from '@/store/slices/modalSlice'
+import { captureAttribution } from '@/utils/attribution'
 
 function ModalHandler() {
   const router = useRouter()
@@ -26,6 +27,10 @@ function ModalHandler() {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    captureAttribution()
+  }, [])
+
   return (
     <Provider store={store}>
       <Script

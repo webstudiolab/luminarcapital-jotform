@@ -441,6 +441,45 @@ const buildUserEmail = (data: Record<string, unknown>): string => {
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 
+// ── Lead source block appended to admin notifications ───────────────────────
+
+const esc = (v: unknown) =>
+  String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] as string)
+
+const buildAttributionBlock = (attribution: any): string => {
+  if (!attribution) return ''
+  const touchRows = (label: string, t: any) => {
+    if (!t) return `<tr><td colspan="2" style="padding:4px 0;color:#6b7a99;">${label}: not recorded</td></tr>`
+    const rows: [string, unknown][] = [
+      ['Source', t.source],
+      ['Landing page', t.landingPage],
+      ['Referrer', t.referrer || '(none)'],
+      ['UTM source', t.utm_source],
+      ['UTM medium', t.utm_medium],
+      ['UTM campaign', t.utm_campaign],
+      ['UTM term', t.utm_term],
+      ['UTM content', t.utm_content],
+      ['Google Ads click', t.gclid ? 'Yes' : undefined],
+      ['Date', t.timestamp],
+    ]
+    return (
+      `<tr><td colspan="2" style="padding:12px 0 4px;font-weight:bold;color:#3d52a0;">${label}</td></tr>` +
+      rows
+        .filter(([, v]) => v)
+        .map(([k, v]) => `<tr><td style="padding:3px 12px 3px 0;color:#6b7a99;width:140px;">${k}</td><td style="padding:3px 0;color:#1a1f36;">${esc(v)}</td></tr>`)
+        .join('')
+    )
+  }
+  return `
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;margin:24px auto;font-family:Helvetica,Arial,sans-serif;font-size:13px;">
+<tbody>
+<tr><td colspan="2" style="font-size:9px;font-weight:bold;color:#3d52a0;letter-spacing:3px;text-transform:uppercase;padding-bottom:8px;border-bottom:2px solid #3d52a0;">Lead Source</td></tr>
+<tr><td style="padding:10px 12px 4px 0;color:#6b7a99;width:140px;">Lead source</td><td style="padding:10px 0 4px;font-weight:bold;color:#1a1f36;">${esc(attribution.leadSource)}</td></tr>
+${touchRows('This visit', attribution.lastTouch)}
+${touchRows('First visit', attribution.firstTouch)}
+</tbody></table>`
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -454,7 +493,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       timestamp,
       formData,
       attachments: incomingAttachments,
+      attribution,
     } = req.body
+    const attributionBlock = buildAttributionBlock(attribution)
 
     if (honeypot && honeypot.trim() !== '') {
       console.warn('Spam detected: Honeypot filled')
@@ -547,7 +588,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         to: recipientEmail,
         cc: ccEmail,
         subject,
-        htmlMessage: buildAdminEmail(formData),
+        htmlMessage: buildAdminEmail(formData) + attributionBlock,
         attachments: emailAttachments,
       })
       console.log('Admin email sent successfully!')
@@ -580,7 +621,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       to: recipientEmail,
       cc: ccEmail,
       subject,
-      htmlMessage,
+      htmlMessage: to ? htmlMessage : (htmlMessage || '') + attributionBlock,
       attachments: [],
     })
 

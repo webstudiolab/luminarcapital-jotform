@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import OrganizationSchema from '@/components/StructuredData/OrganizationSchema'
 import FinancingOptions from '@/routes/home/FinancingOptions/FinancingOptions'
 import Button from '@/ui/components/Button/Button'
 import CallToAction from '@/ui/components/CTA/CallToAction'
@@ -61,12 +62,13 @@ export default function Home({ experienceCards, pageData }: HomeProps) {
   return (
     <>
       <Head>
-        <title>Luminar Capital</title>
+        <title>Luminar Capital | Small Business Financing and Working Capital</title>
         <meta
           name="description"
           content="Flexible financing options that fuel the growth of small businesses."
         />
       </Head>
+      <OrganizationSchema />
       <HeroHome
         title={
           pageFields.heroTitle ||

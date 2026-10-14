@@ -37,7 +37,7 @@ const DefaultLayout = ({ children }: IDefaultLayout) => {
       <Footer />
       <ModalWindow />
       <CookieMessage />
-      <GoogleAnalytics gaId="G-M9ZF18E4ER" />
+      <GoogleAnalytics gaId="G-JXF0GY9QF0" />
     </MetaLayout>
   )
 }
