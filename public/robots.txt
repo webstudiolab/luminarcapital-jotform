@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://luminarcapital.com/sitemap.xml
+Sitemap: https://www.luminarcapital.com/sitemap.xml

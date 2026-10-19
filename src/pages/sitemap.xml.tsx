@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 
-const BASE_URL = 'https://luminarcapital.com'
+const BASE_URL = 'https://www.luminarcapital.com'
 
 const STATIC_ROUTES = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
