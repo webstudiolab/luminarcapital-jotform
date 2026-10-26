@@ -7,7 +7,8 @@ const MetaLayout = ({ children }: { children: ReactNode }) => {
   const { asPath } = useRouter()
   // Self referencing canonical, query strings and hashes stripped
   const path = asPath.split(/[?#]/)[0]
-  const canonical = `${BUSINESS.url}${path === '/' ? '/' : path.replace(/\/$/, '')}`
+  const clean = path.split(/[?#]/)[0].replace(/\/index$/, '').replace(/\/$/, '')
+  const canonical = `${BUSINESS.url}${clean || '/'}`
 
   return (
     <>
