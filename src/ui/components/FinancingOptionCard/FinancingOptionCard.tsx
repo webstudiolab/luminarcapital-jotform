@@ -29,7 +29,7 @@ const FinancingOptionCard = ({
           size="lg"
           className={styles['card-action']}
         >
-          Learn more
+          Learn more<span className={styles["sr-only"]}> about {title}</span>
         </Button>
       ) : null}
     </div>
