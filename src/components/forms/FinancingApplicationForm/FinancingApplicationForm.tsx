@@ -316,6 +316,13 @@ const usePlacesAutocomplete = (
   onSelect: (address: string) => void,
 ) => {
   useEffect(() => {
+    if (!document.getElementById('google-maps-places')) {
+      const script = document.createElement('script')
+      script.id = 'google-maps-places'
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
+      script.async = true
+      document.head.appendChild(script)
+    }
     const initAutocomplete = () => {
       if (!inputRef.current || !window.google?.maps?.places) return
       const autocomplete = new window.google.maps.places.Autocomplete(
