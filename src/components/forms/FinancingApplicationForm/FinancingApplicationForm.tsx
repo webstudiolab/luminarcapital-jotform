@@ -7,7 +7,7 @@ import styles from './FinancingApplicationForm.module.scss'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-interface Owner {
+export interface Owner {
   firstName: string
   lastName: string
   phone: string
@@ -40,13 +40,13 @@ interface FormData {
   consentAgreed: boolean
 }
 
-interface FieldError {
+export interface FieldError {
   [key: string]: string
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const MAX_CHARS = 50
+export const MAX_CHARS = 50
 const MAX_FILES = 10
 
 // Bank statements are emailed as base64 JSON attachments, which inflates
@@ -59,9 +59,9 @@ const MAX_FILES = 10
 // The fully durable fix remains browser -> Vercel Blob direct upload with
 // links emailed instead of raw attachments; this is a stopgap until that's
 // built.
-const MAX_TOTAL_ATTACHMENT_BYTES = 3 * 1024 * 1024 // ~3MB of original file bytes
+export const MAX_TOTAL_ATTACHMENT_BYTES = 3 * 1024 * 1024 // ~3MB of original file bytes
 
-const formatMB = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(1)}MB`
+export const formatMB = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(1)}MB`
 
 const USE_OF_FUNDS_OPTIONS = [
   'Expansion',
@@ -133,7 +133,7 @@ const INDUSTRIES = [
   'Other',
 ]
 
-const EMPTY_OWNER: Owner = {
+export const EMPTY_OWNER: Owner = {
   firstName: '',
   lastName: '',
   phone: '',
@@ -165,6 +165,10 @@ const INITIAL_FORM: FormData = {
   signatureDataUrl: '',
   consentAgreed: false,
 }
+
+// Consent wording shown before signing. Shared with the additional owner form.
+export const LEGAL_CONSENT_TEXT =
+  "All consumer information is kept strictly confidential. Luminar Capital takes your privacy seriously. By signing and submitting this application form, each of the above listed business and business owner/officer (individually and collectively, 'you') authorize Luminar Capital (LC) or our affiliates to contact you via telephone, mobile device (including SMS and MMS), and/or email, even if you are on a corporate, state or national Do Not Call Registry. You also authorize each of its representatives, successors, assigns and designees that may be involved with or acquire commercial loans having daily repayment features or purchases of future receivables including Merchant Cash Advance transactions, including without limitation the application therefor (collectively, 'Transactions') to obtain consumer or personal, business and investigative reports and other information about you, including credit card processor statements and bank statements, from one or more consumer reporting agencies, such as TransUnion, Experian and Equifax, Identity IQ and from other credit bureaus, banks, creditors, government agencies and other third parties (the 'Recipients'). You also authorize LC to transmit this application form, along with any of the foregoing information obtained in connection with this application, to any or all of the Recipients for the foregoing purposes. You also consent to the release, by any creditor or financial institution, of any information relating to any of you, to LC and to each of the Recipients, on its own behalf and authorize LC to communicate with the Recipients on your behalf and represent you with the Recipients. You also authorize LC and each of its Recipients to contact you via text message, automated call or email message at the contact information listed above"
 
 const STEP_TITLES = [
   'Funding Details',
@@ -212,7 +216,7 @@ const formatPhone = (val: string): string => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
 }
 
-const fileToBase64 = (file: File): Promise<string> => {
+export const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {
@@ -350,7 +354,7 @@ const usePlacesAutocomplete = (
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-const Field: FC<{
+export const Field: FC<{
   label: string
   error?: string
   required?: boolean
@@ -367,7 +371,7 @@ const Field: FC<{
   </div>
 )
 
-const TextInput: FC<
+export const TextInput: FC<
   React.InputHTMLAttributes<HTMLInputElement> & { error?: string }
 > = ({ error, className, ...props }) => (
   <input
@@ -446,7 +450,7 @@ const AddressInput: FC<{
   )
 }
 
-const SignatureCanvas: FC<{
+export const SignatureCanvas: FC<{
   value: string
   onChange: (dataUrl: string) => void
   error?: string
@@ -595,7 +599,7 @@ const SignatureCanvas: FC<{
 
 // ─── Owner Block ──────────────────────────────────────────────────────────────
 
-const OwnerBlock: FC<{
+export const OwnerBlock: FC<{
   data: Owner
   onChange: (field: keyof Owner, value: string) => void
   errors: FieldError
@@ -707,8 +711,54 @@ const OwnerBlock: FC<{
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
-const NAME_REGEX = /^[a-zA-Z\s'-]+$/
-const BUSINESS_NAME_REGEX = /^[a-zA-Z0-9\s'&.,()/-]+$/
+export const NAME_REGEX = /^[a-zA-Z\s'-]+$/
+export const BUSINESS_NAME_REGEX = /^[a-zA-Z0-9\s'&.,()/-]+$/
+
+// Shared with the additional owner form so both apply the same rules.
+export const validateOwner = (
+  o: Owner,
+  prefix: string,
+  errors: FieldError,
+): void => {
+  const req = (key: string, val: string, label: string) => {
+    if (!val.trim()) errors[key] = `${label} is required`
+  }
+  const maxLen = (key: string, val: string, label: string) => {
+    if (val.length > MAX_CHARS)
+      errors[key] = `${label} must be ${MAX_CHARS} characters or less`
+  }
+
+  req(`${prefix}.firstName`, o.firstName, 'First name')
+  maxLen(`${prefix}.firstName`, o.firstName, 'First name')
+  if (o.firstName && !NAME_REGEX.test(o.firstName))
+    errors[`${prefix}.firstName`] = "Only letters, spaces, hyphens and apostrophes allowed"
+  req(`${prefix}.lastName`, o.lastName, 'Last name')
+  maxLen(`${prefix}.lastName`, o.lastName, 'Last name')
+  if (o.lastName && !NAME_REGEX.test(o.lastName))
+    errors[`${prefix}.lastName`] = "Only letters, spaces, hyphens and apostrophes allowed"
+  req(`${prefix}.phone`, o.phone, 'Phone')
+  req(`${prefix}.email`, o.email, 'Email')
+  maxLen(`${prefix}.email`, o.email, 'Email')
+  if (o.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.email))
+    errors[`${prefix}.email`] = 'Enter a valid email address'
+  req(`${prefix}.homeAddress`, o.homeAddress, 'Home address')
+  req(`${prefix}.dob`, o.dob, 'Date of birth')
+  if (o.dob) {
+    if (o.dob > getMaxDOB())
+      errors[`${prefix}.dob`] = 'Must be at least 18 years old'
+    if (o.dob < getMinDOB())
+      errors[`${prefix}.dob`] = 'Invalid date of birth'
+  }
+  req(`${prefix}.creditScore`, o.creditScore, 'Credit score')
+  if (o.creditScore && (Number(o.creditScore) < 300 || Number(o.creditScore) > 850))
+    errors[`${prefix}.creditScore`] = 'Must be between 300 and 850'
+  req(`${prefix}.ssn`, o.ssn, 'SSN')
+  if (o.ssn && !/^\d{3}-\d{2}-\d{4}$/.test(o.ssn))
+    errors[`${prefix}.ssn`] = 'Format: 123-45-6789'
+  req(`${prefix}.ownershipPct`, o.ownershipPct, 'Ownership %')
+  if (o.ownershipPct && Number(o.ownershipPct) > 100)
+    errors[`${prefix}.ownershipPct`] = 'Cannot exceed 100%'
+}
 
 const validateStep = (step: number, data: FormData): FieldError => {
   const errors: FieldError = {}
@@ -752,43 +802,10 @@ const validateStep = (step: number, data: FormData): FieldError => {
   }
 
   if (step === 3) {
-    const validateOwner = (o: Owner, prefix: string) => {
-      req(`${prefix}.firstName`, o.firstName, 'First name')
-      maxLen(`${prefix}.firstName`, o.firstName, 'First name')
-      if (o.firstName && !NAME_REGEX.test(o.firstName))
-        errors[`${prefix}.firstName`] = "Only letters, spaces, hyphens and apostrophes allowed"
-      req(`${prefix}.lastName`, o.lastName, 'Last name')
-      maxLen(`${prefix}.lastName`, o.lastName, 'Last name')
-      if (o.lastName && !NAME_REGEX.test(o.lastName))
-        errors[`${prefix}.lastName`] = "Only letters, spaces, hyphens and apostrophes allowed"
-      req(`${prefix}.phone`, o.phone, 'Phone')
-      req(`${prefix}.email`, o.email, 'Email')
-      maxLen(`${prefix}.email`, o.email, 'Email')
-      if (o.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.email))
-        errors[`${prefix}.email`] = 'Enter a valid email address'
-      req(`${prefix}.homeAddress`, o.homeAddress, 'Home address')
-      req(`${prefix}.dob`, o.dob, 'Date of birth')
-      if (o.dob) {
-        if (o.dob > getMaxDOB())
-          errors[`${prefix}.dob`] = 'Must be at least 18 years old'
-        if (o.dob < getMinDOB())
-          errors[`${prefix}.dob`] = 'Invalid date of birth'
-      }
-      req(`${prefix}.creditScore`, o.creditScore, 'Credit score')
-      if (o.creditScore && (Number(o.creditScore) < 300 || Number(o.creditScore) > 850))
-        errors[`${prefix}.creditScore`] = 'Must be between 300 and 850'
-      req(`${prefix}.ssn`, o.ssn, 'SSN')
-      if (o.ssn && !/^\d{3}-\d{2}-\d{4}$/.test(o.ssn))
-        errors[`${prefix}.ssn`] = 'Format: 123-45-6789'
-      req(`${prefix}.ownershipPct`, o.ownershipPct, 'Ownership %')
-      if (o.ownershipPct && Number(o.ownershipPct) > 100)
-        errors[`${prefix}.ownershipPct`] = 'Cannot exceed 100%'
-    }
-
-    validateOwner(data.owner1, 'owner1')
+    validateOwner(data.owner1, 'owner1', errors)
 
     if (data.hasSecondOwner) {
-      validateOwner(data.owner2, 'owner2')
+      validateOwner(data.owner2, 'owner2', errors)
       const total = Number(data.owner1.ownershipPct) + Number(data.owner2.ownershipPct)
       if (data.owner1.ownershipPct && data.owner2.ownershipPct && total > 100) {
         errors['owner1.ownershipPct'] = `Combined ownership cannot exceed 100% (currently ${total}%)`
@@ -1220,7 +1237,7 @@ const FinancingApplicationForm: FC<FinancingApplicationFormProps> = ({ className
             </Field>
             <div className={styles.legalText}>
               <p>
-                All consumer information is kept strictly confidential. Luminar Capital takes your privacy seriously. By signing and submitting this application form, each of the above listed business and business owner/officer (individually and collectively, 'you') authorize Luminar Capital (LC) or our affiliates to contact you via telephone, mobile device (including SMS and MMS), and/or email, even if you are on a corporate, state or national Do Not Call Registry. You also authorize each of its representatives, successors, assigns and designees that may be involved with or acquire commercial loans having daily repayment features or purchases of future receivables including Merchant Cash Advance transactions, including without limitation the application therefor (collectively, 'Transactions') to obtain consumer or personal, business and investigative reports and other information about you, including credit card processor statements and bank statements, from one or more consumer reporting agencies, such as TransUnion, Experian and Equifax, Identity IQ and from other credit bureaus, banks, creditors, government agencies and other third parties (the 'Recipients'). You also authorize LC to transmit this application form, along with any of the foregoing information obtained in connection with this application, to any or all of the Recipients for the foregoing purposes. You also consent to the release, by any creditor or financial institution, of any information relating to any of you, to LC and to each of the Recipients, on its own behalf and authorize LC to communicate with the Recipients on your behalf and represent you with the Recipients. You also authorize LC and each of its Recipients to contact you via text message, automated call or email message at the contact information listed above
+                {LEGAL_CONSENT_TEXT}
               </p>
             </div>
             <label className={styles.consentRow}>

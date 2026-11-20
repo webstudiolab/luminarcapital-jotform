@@ -39,7 +39,9 @@ export const browserSendEmail = async ({
   })
 
   // Admin notification (no `to`) succeeding = one real lead. Record it in GA4.
-  if (!to) {
+  // Additional owner submissions belong to an application that already
+  // exists, so they are not a new lead and are not recorded.
+  if (!to && !subject.includes('Additional Owner')) {
     try {
       const formType = subject.includes('Partner') ? 'partner' : 'financing'
       sendGAEvent('event', 'generate_lead', {

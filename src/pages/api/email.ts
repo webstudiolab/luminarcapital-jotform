@@ -29,6 +29,10 @@ const ADMIN_TO_EMAIL =
 const ADMIN_CC_EMAIL =
   process.env.ADMIN_CC_EMAIL || 'clientsuccess@luminarcapital.com'
 
+// Consent wording printed on the signed PDFs.
+const LEGAL_TEXT =
+  'All consumer information is kept strictly confidential. Luminar Capital takes your privacy seriously. By signing and submitting this application form, each of the above listed business and business owner/officer (individually and collectively, \'you\') authorize Luminar Capital (LC) or our affiliates to contact you via telephone, mobile device (including SMS and MMS), and/or email, even if you are on a corporate, state or national Do Not Call Registry. You also authorize each of its representatives, successors, assigns and designees that may be involved with or acquire commercial loans having daily repayment features or purchases of future receivables including Merchant Cash Advance transactions, including without limitation the application therefor (collectively, \'Transactions\') to obtain consumer or personal, business and investigative reports and other information about you, including credit card processor statements and bank statements, from one or more consumer reporting agencies, such as TransUnion, Experian and Equifax, Identity IQ and from other credit bureaus, banks, creditors, government agencies and other third parties (the \'Recipients\'). You also authorize LC to transmit this application form, along with any of the foregoing information obtained in connection with this application, to any or all of the Recipients for the foregoing purposes. You also consent to the release, by any creditor or financial institution, of any information relating to any of you, to LC and to each of the Recipients, on its own behalf and authorize LC to communicate with the Recipients on your behalf and represent you with the Recipients. You also authorize LC and each of its Recipients to contact you via text message, automated call or email message at the contact information listed above.'
+
 const generateApplicationPDF = async (
   formData: Record<string, unknown>,
   ip: string,
@@ -255,7 +259,7 @@ const generateApplicationPDF = async (
 
     ensureSpace(50)
     y += 6
-    const legalText = 'All consumer information is kept strictly confidential. Luminar Capital takes your privacy seriously. By signing and submitting this application form, each of the above listed business and business owner/officer (individually and collectively, \'you\') authorize Luminar Capital (LC) or our affiliates to contact you via telephone, mobile device (including SMS and MMS), and/or email, even if you are on a corporate, state or national Do Not Call Registry. You also authorize each of its representatives, successors, assigns and designees that may be involved with or acquire commercial loans having daily repayment features or purchases of future receivables including Merchant Cash Advance transactions, including without limitation the application therefor (collectively, \'Transactions\') to obtain consumer or personal, business and investigative reports and other information about you, including credit card processor statements and bank statements, from one or more consumer reporting agencies, such as TransUnion, Experian and Equifax, Identity IQ and from other credit bureaus, banks, creditors, government agencies and other third parties (the \'Recipients\'). You also authorize LC to transmit this application form, along with any of the foregoing information obtained in connection with this application, to any or all of the Recipients for the foregoing purposes. You also consent to the release, by any creditor or financial institution, of any information relating to any of you, to LC and to each of the Recipients, on its own behalf and authorize LC to communicate with the Recipients on your behalf and represent you with the Recipients. You also authorize LC and each of its Recipients to contact you via text message, automated call or email message at the contact information listed above.'
+    const legalText = LEGAL_TEXT
     const legalHeight = doc.heightOfString(legalText, { width: COL_W - 16, lineGap: 1 }) + 16
     doc.rect(L, y, COL_W, legalHeight).fill(lightGray)
     doc.fillColor(gray).font('Helvetica').fontSize(6)
@@ -480,6 +484,246 @@ ${touchRows('First visit', attribution.firstTouch)}
 </tbody></table>`
 }
 
+// ── Additional owner (second owner added to an existing application) ────────
+// Submitted from the unlisted /apply/additional-owner page. Same recipients
+// as financing applications; PDF + both licence images attached.
+
+const fetchLogoBuffer = (): Promise<Buffer> =>
+  new Promise((resolve, reject) => {
+    const https = require('https')
+    https
+      .get('https://www.luminarcapital.com/Luminar-Logo.jpg', (r: any) => {
+        const chunks: Buffer[] = []
+        r.on('data', (c: Buffer) => chunks.push(c))
+        r.on('end', () => resolve(Buffer.concat(chunks)))
+        r.on('error', reject)
+      })
+      .on('error', reject)
+  })
+
+const generateAdditionalOwnerPDF = async (
+  formData: Record<string, unknown>,
+  ip: string,
+  timestamp: string,
+): Promise<Buffer> => {
+  let logo: Buffer | null = null
+  try {
+    logo = await fetchLogoBuffer()
+  } catch (logoErr) {
+    console.error('Logo load error:', logoErr)
+  }
+
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({ margin: 0, size: 'A4', bufferPages: true, autoFirstPage: true })
+    const chunks: Buffer[] = []
+    doc.on('data', (chunk) => chunks.push(chunk))
+    doc.on('end', () => resolve(Buffer.concat(chunks)))
+    doc.on('error', reject)
+
+    const PAGE_W = doc.page.width
+    const PAGE_H = doc.page.height
+    const L = 36
+    const R = PAGE_W - 36
+    const COL_W = R - L
+    const COL2 = L + 160
+    const COL2_W = R - COL2
+    const navy = '#1B2B5E'
+    const gray = '#888888'
+    const lightGray = '#F7F8FB'
+    const darkText = '#1a1f36'
+    const rowH = 14
+    let y = 0
+
+    const ensureSpace = (needed: number) => {
+      if (y + needed > PAGE_H - 30) {
+        doc.addPage({ margin: 0, size: 'A4' })
+        y = 30
+      }
+    }
+
+    doc.rect(0, 0, PAGE_W, 52).fill('#ffffff')
+    doc.rect(0, 52, PAGE_W, 4).fill(navy)
+    if (logo) {
+      try {
+        doc.image(logo, L, 8, { height: 36, fit: [130, 36] })
+      } catch {
+        logo = null
+      }
+    }
+    if (!logo) {
+      doc.fillColor(navy).font('Helvetica-Bold').fontSize(12)
+        .text('LUMINAR CAPITAL', L, 18, { width: 130, lineBreak: false })
+    }
+    doc.fillColor(navy).font('Helvetica-Bold').fontSize(12)
+      .text('LUMINAR CAPITAL', L + 148, 14, { width: COL_W - 148 })
+    doc.fillColor('#444444').font('Helvetica').fontSize(8)
+      .text('Additional Owner Information', L + 148, 30, { width: COL_W - 148 })
+
+    doc.rect(0, 56, PAGE_W, 24).fill(lightGray)
+    doc.fillColor(gray).font('Helvetica').fontSize(7)
+      .text(`Submitted: ${timestamp}`, L, 62, { width: COL_W / 2 })
+      .text(`IP Address: ${ip}`, L, 72, { width: COL_W / 2 })
+    y = 88
+
+    const section = (title: string) => {
+      y += 4
+      doc.rect(L, y, COL_W, 13).fill(navy)
+      doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(6.5)
+        .text(title, L + 6, y + 4, { width: COL_W - 12, characterSpacing: 0.6 })
+      y += 17
+    }
+    let rowShade = false
+    const row = (label: string, value: string) => {
+      ensureSpace(rowH)
+      if (rowShade) doc.rect(L, y, COL_W, rowH).fill('#F3F4F8')
+      doc.fillColor(gray).font('Helvetica').fontSize(7)
+        .text(label, L + 4, y + 4, { width: 152, lineBreak: false })
+      doc.fillColor(darkText).font('Helvetica-Bold').fontSize(7)
+        .text(value || '—', COL2, y + 4, { width: COL2_W - 4, lineBreak: false })
+      y += rowH
+      rowShade = !rowShade
+    }
+
+    const o = (formData.owner as Record<string, string>) || {}
+    const files = (formData.licenceFileNames as string[]) || []
+    const fullName = `${o.firstName || ''} ${o.lastName || ''}`.trim()
+
+    rowShade = false
+    section('BUSINESS')
+    row('Legal Business Name', formData.legalBusinessName as string)
+
+    rowShade = false
+    section('ADDITIONAL OWNER')
+    row('Name', fullName)
+    row('Phone', o.phone || '—')
+    row('Email', o.email || '—')
+    row('Home Address', o.homeAddress || '—')
+    row('Date of Birth', o.dob || '—')
+    row('Credit Score', o.creditScore || '—')
+    row('SSN', o.ssn || '—')
+    row('Ownership %', o.ownershipPct ? `${o.ownershipPct}%` : '—')
+
+    rowShade = false
+    section("DRIVER'S LICENSE")
+    row('Files Attached', files.length > 0 ? files.join(', ') : 'None')
+
+    rowShade = false
+    section('ELECTRONIC SIGNATURE')
+    const sigH = 60
+    ensureSpace(sigH + rowH * 3 + 50)
+    doc.rect(L, y, COL_W, sigH).strokeColor('#CCCCCC').lineWidth(0.5).stroke()
+    const sigDataUrl = formData.signatureDataUrl as string
+    let sigDrawn = false
+    if (sigDataUrl && sigDataUrl.startsWith('data:image/png;base64,')) {
+      try {
+        const sigBuffer = Buffer.from(sigDataUrl.replace('data:image/png;base64,', ''), 'base64')
+        doc.image(sigBuffer, L + 4, y + 4, {
+          fit: [COL_W - 8, sigH - 8],
+          align: 'center',
+          valign: 'center',
+        })
+        sigDrawn = true
+      } catch (err) {
+        console.error('Signature image error:', err)
+      }
+    }
+    if (!sigDrawn) {
+      doc.fillColor(gray).font('Helvetica').fontSize(8)
+        .text('Signature captured electronically', L + 8, y + sigH / 2 - 5)
+    }
+    y += sigH + 8
+    rowShade = false
+    row('Signed by', fullName)
+    row('Date & Time', timestamp)
+    row('IP Address', ip)
+
+    ensureSpace(50)
+    y += 6
+    const legalHeight = doc.heightOfString(LEGAL_TEXT, { width: COL_W - 16, lineGap: 1 }) + 16
+    doc.rect(L, y, COL_W, legalHeight).fill(lightGray)
+    doc.fillColor(gray).font('Helvetica').fontSize(6)
+      .text(LEGAL_TEXT, L + 8, y + 8, { width: COL_W - 16, lineGap: 1 })
+
+    doc.end()
+  })
+}
+
+const emailFieldRow = (label: string, value: string, shaded = false) =>
+  `<tr><td style="padding:8px 0;border-bottom:1px solid #eef0f8;${shaded ? 'background:#f9f9fc;' : ''}"><table border="0" width="100%"><tbody><tr>
+    <td style="font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;text-transform:uppercase;font-weight:600;${shaded ? 'padding-left:4px;' : ''}" width="40%">${label}</td>
+    <td style="font-family:Georgia,serif;font-size:15px;color:#1a1f36;" width="60%">${esc(value) || '—'}</td>
+  </tr></tbody></table></td></tr>`
+
+const emailSectionHeader = (title: string) =>
+  `<tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;color:#3d52a0;letter-spacing:3px;text-transform:uppercase;padding-bottom:10px;padding-top:24px;border-bottom:2px solid #3d52a0;">${title}</td></tr>`
+
+const emailShell = (inner: string) => `
+<table border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#eaecf5">
+<tbody><tr><td height="40">&nbsp;</td></tr>
+<tr><td style="padding:0 20px;" align="center">
+<table style="max-width:680px;width:100%;" border="0" width="680" cellspacing="0" cellpadding="0"><tbody>
+<tr><td style="padding-bottom:28px;" align="center">
+  <img style="display:block;margin:0 auto;" src="https://www.luminarcapital.com/color_logo.svg" alt="Luminar Capital" width="200" height="42" />
+</td></tr>
+<tr><td>
+<table style="border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(61,82,160,0.13);" border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
+${inner}
+<tr><td style="background:linear-gradient(90deg,#3d52a0 0%,#7091e6 50%,#3d52a0 100%);font-size:0;line-height:0;" height="5">&nbsp;</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td style="padding:28px 0 20px;" align="center">
+  <p style="margin:0 0 5px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;font-weight:bold;color:#3d52a0;letter-spacing:2.5px;text-transform:uppercase;">LUMINAR CAPITAL</p>
+  <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#6b7a99;">Business Financing Solutions</p>
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="40">&nbsp;</td></tr>
+</tbody></table>`
+
+const buildAdditionalOwnerAdminEmail = (data: Record<string, unknown>): string => {
+  const o = (data.owner as Record<string, string>) || {}
+  const files = (data.licenceFileNames as string[]) || []
+  return emailShell(`
+<tr><td style="padding:36px 48px 32px;" bgcolor="#1a1f36">
+  <p style="margin:0 0 6px 0;font-family:Helvetica,Arial,sans-serif;font-size:10px;color:#7091e6;letter-spacing:3px;text-transform:uppercase;">Existing Application</p>
+  <h1 style="margin:0 0 8px 0;font-family:Georgia,serif;font-size:26px;font-weight:bold;color:#ffffff;line-height:1.2;">Additional Owner Added</h1>
+  <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#aab0c4;">${esc(data.legalBusinessName)} &middot; ${esc(`${o.firstName || ''} ${o.lastName || ''}`.trim())}</p>
+</td></tr>
+<tr><td style="padding:32px 48px 40px;" bgcolor="#ffffff">
+<table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+  ${emailSectionHeader('BUSINESS')}
+  ${emailFieldRow('Legal Business Name', data.legalBusinessName as string)}
+  ${emailSectionHeader('ADDITIONAL OWNER')}
+  ${emailFieldRow('Name', `${o.firstName || ''} ${o.lastName || ''}`.trim())}
+  ${emailFieldRow('Phone', o.phone || '—', true)}
+  ${emailFieldRow('Email', o.email || '—')}
+  ${emailFieldRow('Home Address', o.homeAddress || '—', true)}
+  ${emailFieldRow('Date of Birth', o.dob || '—')}
+  ${emailFieldRow('Credit Score', o.creditScore || '—', true)}
+  ${emailFieldRow('SSN', o.ssn || '—')}
+  ${emailFieldRow('Ownership %', o.ownershipPct ? `${o.ownershipPct}%` : '—', true)}
+  ${emailSectionHeader("DRIVER'S LICENSE")}
+  ${emailFieldRow('Files Attached', files.length > 0 ? `${files.length} file(s) attached to this email` : 'None')}
+</tbody></table>
+</td></tr>`)
+}
+
+const buildAdditionalOwnerUserEmail = (data: Record<string, unknown>): string => {
+  const o = (data.owner as Record<string, string>) || {}
+  return emailShell(`
+<tr><td style="padding:44px 48px 40px;" align="center" bgcolor="#1a1f36">
+  <p style="margin:0 0 8px 0;font-family:Georgia,Times New Roman,serif;font-size:10px;color:#7091e6;letter-spacing:3px;text-transform:uppercase;text-align:center;">Information Received</p>
+  <h1 style="margin:0;font-family:Georgia,Times New Roman,serif;font-size:28px;font-weight:bold;color:#ffffff;line-height:1.2;text-align:center;">Thank You, ${esc(o.firstName)}</h1>
+</td></tr>
+<tr><td style="padding:40px 48px 44px;" bgcolor="#ffffff">
+  <p style="margin:0 0 20px 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#3a3f58;line-height:1.85;">We have received your details and added them to the application for <strong style="color:#3d52a0;">${esc(data.legalBusinessName)}</strong>.</p>
+  <p style="margin:0 0 28px 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#3a3f58;line-height:1.85;">If anything else is needed, a member of our team will contact you directly.</p>
+  <p style="margin:0 0 4px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#6b7a99;text-align:center;">We look forward to supporting your business.</p>
+  <p style="margin:0;font-family:Georgia,Times New Roman,serif;font-size:15px;font-weight:bold;color:#1a1f36;text-align:center;">The Luminar Capital Team</p>
+</td></tr>`)
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -511,6 +755,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Admin notifications (no explicit `to`) are routed by form:
+    //   Additional Owner:    To submissions@, Cc clientsuccess@
     //   Apply for Financing: To submissions@, Cc clientsuccess@
     //   Become a Partner:    To PARTNER_EMAIL, no cc (unchanged)
     //   Anything else:       To RECIPIENT_EMAIL, no cc (unchanged)
@@ -520,7 +765,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let recipientEmail = to
     let ccEmail: string | undefined
     if (!to) {
-      if (subject && subject.includes('Financing Application')) {
+      if (
+        subject &&
+        (subject.startsWith('Additional Owner') ||
+          subject.includes('Financing Application'))
+      ) {
         recipientEmail = ADMIN_TO_EMAIL
         ccEmail = ADMIN_CC_EMAIL
       } else if (subject && subject.includes('Partner')) {
@@ -535,6 +784,77 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('To:', recipientEmail)
     console.log('Cc:', ccEmail || '(none)')
     console.log('Subject:', subject)
+
+    // ── Additional owner — PDF + licence images to the team, confirmation to the owner
+    if (!to && subject && subject.startsWith('Additional Owner') && formData) {
+      const ip =
+        (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+        req.socket.remoteAddress ||
+        'Unknown'
+      const submittedAt = new Date().toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short',
+      })
+
+      const emailAttachments: IAttachment[] = []
+      try {
+        const pdfBuffer = await generateAdditionalOwnerPDF(formData, ip, submittedAt)
+        const businessName = ((formData.legalBusinessName as string) || 'Business').replace(/[^a-zA-Z0-9]/g, '-')
+        emailAttachments.push({
+          filename: `Luminar-Additional-Owner-${businessName}-${Date.now()}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf',
+        })
+      } catch (pdfError) {
+        console.error('Additional owner PDF generation failed:', pdfError)
+      }
+
+      if (Array.isArray(incomingAttachments)) {
+        for (const file of incomingAttachments) {
+          try {
+            emailAttachments.push({
+              filename: file.filename,
+              content: Buffer.from(file.content, 'base64'),
+              contentType: file.contentType,
+            })
+          } catch (fileError) {
+            console.error(`Failed to attach file ${file.filename}:`, fileError)
+          }
+        }
+      }
+
+      const response = await sendEmail({
+        to: recipientEmail,
+        cc: ccEmail,
+        subject,
+        htmlMessage: buildAdditionalOwnerAdminEmail(formData) + attributionBlock,
+        attachments: emailAttachments,
+      })
+      console.log('Additional owner admin email sent')
+
+      // Best effort, same as the financing confirmation: never fails the request.
+      const owner = (formData.owner as Record<string, string>) || {}
+      if (owner.email) {
+        try {
+          await sendEmail({
+            to: owner.email,
+            subject: 'Your Details Have Been Received | Luminar Capital',
+            htmlMessage: buildAdditionalOwnerUserEmail(formData),
+            attachments: [],
+          })
+        } catch (confirmError) {
+          console.error('Additional owner confirmation failed (non-fatal):', confirmError)
+        }
+      }
+
+      return res.status(200).json({ success: true, response, error: null })
+    }
 
     // ── Admin financing email — generate PDF, attach files, use branded template
     if (!to && subject && subject.includes('Financing Application') && formData) {

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import { useAppDispatch, useAppSelector } from '@/hooks'
 import CloseIcon from '@/ui/icons/Close'
 import { closeModal, selectModal } from '@/store/slices/modalSlice'
@@ -22,6 +23,7 @@ const ModalWindow = () => {
   const { isOpen, modal, size } = useAppSelector(selectModal) as IModalState
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
+  const router = useRouter()
 
   const handleClose = useCallback(() => {
     dispatch(closeModal())
@@ -38,6 +40,39 @@ const ModalWindow = () => {
       previousFocusRef.current?.focus()
     }
   }, [isOpen])
+
+  // Keep the address bar in step with the popup, so the URL a visitor sees
+  // (and copies) while a form is open is a working direct link to that form,
+  // e.g. /?modal=financing. Shallow replace: no reload, no extra history entry.
+  // Only a real close (open -> closed) clears the parameter, so a page
+  // loaded with ?modal=financing is never stripped before the popup opens.
+  const wasOpenRef = useRef(false)
+  useEffect(() => {
+    if (!router.isReady) return
+    const current = router.query.modal
+    const linkable = modal === 'financing' || modal === 'partner'
+
+    if (isOpen) {
+      wasOpenRef.current = true
+      if (!linkable || current === modal) return
+      const url = new URL(window.location.href)
+      url.searchParams.set('modal', modal as string)
+      router.replace(url.pathname + url.search + url.hash, undefined, {
+        shallow: true,
+        scroll: false,
+      })
+    } else if (wasOpenRef.current) {
+      wasOpenRef.current = false
+      if (!current) return
+      const url = new URL(window.location.href)
+      url.searchParams.delete('modal')
+      router.replace(url.pathname + url.search + url.hash, undefined, {
+        shallow: true,
+        scroll: false,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, modal, router.isReady])
 
   // Close on Escape key
   useEffect(() => {
